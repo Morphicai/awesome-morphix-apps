@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IonApp, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon, IonContent, IonLoading } from '@ionic/react';
+import { IonApp, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon, IonContent } from '@ionic/react';
 import { IonReactHashRouter } from '@ionic/react-router';
 import { Route, Switch } from 'react-router-dom';
 import { leaf, list, barChart, settings } from 'ionicons/icons';
@@ -10,6 +10,7 @@ import TimerTab from './components/TimerTab';
 import TasksTab from './components/TasksTab';
 import StatsTab from './components/StatsTab';
 import SettingsTab from './components/SettingsTab';
+import Loading from './components/Loading';
 import { useTimerStore } from './stores/timerStore';
 import { useTaskStore } from './stores/taskStore';
 import './styles/global.css';
@@ -198,11 +199,9 @@ export default function App() {
   console.log('showLoading', showLoading);
   return (
     <IonApp>
-      <IonLoading
-        key={'loading'}
-        isOpen={showLoading}
-        message="정원을 준비하는 중..."
-        spinner="crescent"
+      <Loading 
+        isVisible={showLoading} 
+        message="정원을 준비하는 중..." 
       />
       
       {initError ? (
