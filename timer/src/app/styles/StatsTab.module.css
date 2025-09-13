@@ -1,0 +1,251 @@
+.container {
+  padding-bottom: 100px;
+}
+
+.periodSelector {
+  background: rgba(74, 124, 89, 0.1);
+  border-radius: 12px;
+  padding: 4px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.periodSelector ion-segment-button {
+  --color: var(--primary-green);
+  --color-checked: white;
+  --background-checked: var(--primary-green);
+  --border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.dailyChart {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 120px;
+  margin-top: 20px;
+  padding: 0 8px;
+  background: linear-gradient(135deg, rgba(190, 216, 163, 0.1), rgba(255, 248, 240, 0.3));
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.dayColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  max-width: 40px;
+}
+
+.dayBar {
+  width: 24px;
+  height: 80px;
+  background: rgba(74, 124, 89, 0.2);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 8px;
+  box-shadow: inset 0 2px 4px rgba(74, 124, 89, 0.1);
+}
+
+.dayBarFill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, var(--secondary-green), var(--primary-green));
+  border-radius: 12px;
+  transition: height 0.3s ease;
+  min-height: 4px;
+  box-shadow: 0 2px 4px rgba(74, 124, 89, 0.3);
+}
+
+.dayLabel {
+  font-size: 12px;
+  color: var(--text-light);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.dayValue {
+  font-size: 14px;
+  color: var(--primary-green);
+  font-weight: 600;
+}
+
+.plantCollection {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.plantStat {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, var(--cream-white), #F8FFF8);
+  border-radius: 12px;
+  border: 2px solid var(--light-green);
+  box-shadow: 0 2px 8px var(--shadow-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.plantStat::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
+}
+
+.plantEmoji {
+  font-size: 32px;
+  flex-shrink: 0;
+  animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-3px); }
+}
+
+.plantInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.plantName {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 2px;
+}
+
+.plantCount {
+  font-size: 14px;
+  color: var(--primary-green);
+  font-weight: 500;
+}
+
+.plantProgress {
+  width: 60px;
+  height: 6px;
+  background: rgba(74, 124, 89, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+:global(.garden-progress-fill) {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.achievements {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.achievement {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--cream-white), #F8FFF8);
+  border-radius: 12px;
+  border: 2px solid var(--light-green);
+  box-shadow: 0 2px 8px var(--shadow-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.achievement::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
+}
+
+.achievementIcon {
+  font-size: 32px;
+  flex-shrink: 0;
+  animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+.achievementText {
+  flex: 1;
+  min-width: 0;
+}
+
+.achievementTitle {
+  font-size: 14px;
+  color: var(--text-light);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.achievementValue {
+  font-size: 18px;
+  color: var(--primary-green);
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(74, 124, 89, 0.1);
+}
+
+@media (max-width: 768px) {
+  .dailyChart {
+    height: 100px;
+    padding: 0 4px;
+  }
+  
+  .dayBar {
+    width: 20px;
+    height: 60px;
+  }
+  
+  .dayLabel {
+    font-size: 11px;
+  }
+  
+  .dayValue {
+    font-size: 12px;
+  }
+  
+  .achievements {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .achievement {
+    padding: 12px;
+  }
+  
+  .achievementIcon {
+    font-size: 28px;
+  }
+  
+  .achievementValue {
+    font-size: 16px;
+  }
+  
+  .plantStat {
+    padding: 10px;
+    gap: 12px;
+  }
+  
+  .plantEmoji {
+    font-size: 28px;
+  }
+}

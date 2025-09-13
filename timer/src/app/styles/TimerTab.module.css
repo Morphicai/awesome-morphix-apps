@@ -1,0 +1,249 @@
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  gap: 16px;
+  color: var(--garden-primary);
+}
+
+.loadingContainer p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.container {
+  padding: 16px;
+  background: linear-gradient(135deg, var(--light-green) 0%, var(--cream-white) 50%, var(--sky-blue) 100%);
+  min-height: 100vh;
+  position: relative;
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="%23BED8A3" opacity="0.3"/><circle cx="80" cy="40" r="1.5" fill="%237FB069" opacity="0.4"/><circle cx="60" cy="80" r="1" fill="%234A7C59" opacity="0.2"/></svg>');
+  pointer-events: none;
+}
+
+.sessionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.sessionEmoji {
+  font-size: 32px;
+  animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+.sessionTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(74, 124, 89, 0.1);
+}
+
+.motivationText {
+  color: var(--text-light);
+  font-size: 16px;
+  margin: 0;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 24px 16px;
+}
+
+.progressGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.progressItem {
+  text-align: center;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--cream-white), #F8FFF8);
+  border-radius: 12px;
+  border: 2px solid var(--light-green);
+  position: relative;
+  overflow: hidden;
+}
+
+.progressItem::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
+}
+
+.progressNumber {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin-bottom: 8px;
+  text-shadow: 0 2px 4px rgba(74, 124, 89, 0.1);
+}
+
+.progressLabel {
+  font-size: 14px;
+  color: var(--text-light);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.progressPlants {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.plantIcon {
+  font-size: 16px;
+  animation: grow-in 0.5s ease-out;
+}
+
+@keyframes grow-in {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.3) rotate(180deg);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+.gardenPreview {
+  background: linear-gradient(135deg, #F0FFF0, var(--cream-white));
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px dashed var(--light-green);
+  position: relative;
+  overflow: hidden;
+}
+
+.gardenPreview::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(190, 216, 163, 0.1) 0%, transparent 70%);
+  animation: gentle-rotate 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes gentle-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.emptyGarden {
+  text-align: center;
+  padding: 40px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.seedling {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 16px;
+  animation: gentle-sway 3s ease-in-out infinite;
+}
+
+@keyframes gentle-sway {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(3deg); }
+  75% { transform: rotate(-3deg); }
+}
+
+.emptyGarden p {
+  color: var(--text-light);
+  font-size: 16px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.plantGarden {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  justify-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.gardenPlant {
+  font-size: 24px;
+  padding: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px rgba(74, 124, 89, 0.2);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.gardenPlant:hover {
+  transform: scale(1.2) rotate(10deg);
+}
+
+.morePlants {
+  grid-column: span 2;
+  font-size: 16px;
+  color: var(--text-light);
+  background: var(--light-green);
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .progressGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .plantGarden {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  
+  .gardenPlant {
+    font-size: 20px;
+    padding: 6px;
+  }
+}

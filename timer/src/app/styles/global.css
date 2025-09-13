@@ -1,0 +1,342 @@
+:root {
+  --primary-green: #4A7C59;
+  --secondary-green: #7FB069;
+  --light-green: #BED8A3;
+  --earth-brown: #8B6B4A;
+  --sky-blue: #A0C8E6;
+  --cream-white: #FFF8F0;
+  --soft-gray: #F5F5F5;
+  --text-dark: #2D3748;
+  --text-light: #718096;
+  --shadow-color: rgba(74, 124, 89, 0.1);
+  --border-color: rgba(74, 124, 89, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  background: linear-gradient(135deg, var(--light-green) 0%, var(--cream-white) 100%);
+  color: var(--text-dark);
+  min-height: 100vh;
+}
+
+.garden-card {
+  background: var(--cream-white);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 16px;
+  box-shadow: 0 4px 20px var(--shadow-color);
+  border: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.garden-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-green), var(--secondary-green), var(--light-green));
+  border-radius: 16px 16px 0 0;
+}
+
+.garden-button {
+  --background: var(--primary-green);
+  --background-hover: var(--secondary-green);
+  --background-activated: var(--primary-green);
+  --color: white;
+  --border-radius: 12px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  font-weight: 600;
+  text-transform: none;
+  box-shadow: 0 4px 12px rgba(74, 124, 89, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.garden-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.garden-button:hover::before {
+  left: 100%;
+}
+
+.garden-button.secondary {
+  --background: var(--earth-brown);
+  --background-hover: #A0845A;
+  --background-activated: var(--earth-brown);
+}
+
+.garden-button.tertiary {
+  --background: var(--sky-blue);
+  --background-hover: #B8D4EA;
+  --background-activated: var(--sky-blue);
+  --color: var(--text-dark);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+}
+
+.timer-circle {
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: var(--cream-white);
+  border: 8px solid var(--light-green);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 32px auto;
+  position: relative;
+  box-shadow: 
+    0 8px 32px rgba(74, 124, 89, 0.2),
+    inset 0 4px 8px rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+}
+
+.timer-circle::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--primary-green), var(--secondary-green), var(--light-green), var(--sky-blue));
+  z-index: -1;
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.timer-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transition: background 0.3s ease;
+}
+
+.timer-time {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--primary-green);
+  text-shadow: 0 2px 4px rgba(74, 124, 89, 0.1);
+  margin-bottom: 8px;
+}
+
+.timer-label {
+  font-size: 16px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 
+      0 8px 32px rgba(74, 124, 89, 0.2),
+      inset 0 4px 8px rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    box-shadow: 
+      0 12px 40px rgba(74, 124, 89, 0.4),
+      inset 0 4px 8px rgba(255, 255, 255, 0.8),
+      0 0 20px rgba(127, 176, 105, 0.6);
+  }
+}
+
+.plant-decoration {
+  position: absolute;
+  font-size: 24px;
+  animation: float 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.plant-decoration:nth-child(1) {
+  top: 20px;
+  right: 20px;
+  animation-delay: 0s;
+}
+
+.plant-decoration:nth-child(2) {
+  bottom: 20px;
+  left: 20px;
+  animation-delay: 0.5s;
+}
+
+.plant-decoration:nth-child(3) {
+  top: 50%;
+  right: 10px;
+  animation-delay: 1s;
+}
+
+.plant-decoration:nth-child(4) {
+  top: 50%;
+  left: 10px;
+  animation-delay: 1.5s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+  66% {
+    transform: translateY(5px) rotate(-3deg);
+  }
+}
+
+.grow-animation {
+  animation: grow 0.8s ease-out;
+}
+
+@keyframes grow {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+.butterfly-float {
+  animation: butterflyFloat 4s ease-in-out infinite;
+}
+
+@keyframes butterflyFloat {
+  0%, 100% {
+    transform: translateX(0px) translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateX(20px) translateY(-15px) rotate(5deg);
+  }
+  50% {
+    transform: translateX(-10px) translateY(-25px) rotate(-3deg);
+  }
+  75% {
+    transform: translateX(-20px) translateY(-10px) rotate(2deg);
+  }
+}
+
+.garden-tab-bar {
+  --background: var(--cream-white);
+  --border: 1px solid var(--border-color);
+  box-shadow: 0 -4px 20px var(--shadow-color);
+}
+
+.tab-button {
+  --color: var(--text-light);
+  --color-selected: var(--primary-green);
+  font-weight: 500;
+}
+
+.tab-button ion-icon {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.wood-texture {
+  background: linear-gradient(45deg, #8B6B4A, #A0845A, #8B6B4A);
+  background-size: 20px 20px;
+  position: relative;
+}
+
+.wood-texture::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 4px
+  );
+}
+
+.stone-shadow {
+  box-shadow: 
+    0 6px 20px rgba(139, 107, 74, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.nature-input {
+  --background: var(--cream-white);
+  --color: var(--text-dark);
+  --border-color: var(--border-color);
+  --border-radius: 12px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.nature-input:focus {
+  --border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
+}
+
+.leaf-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--light-green), transparent);
+  margin: 24px 0;
+  position: relative;
+}
+
+.leaf-divider::before {
+  content: '🌿';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--cream-white);
+  padding: 0 8px;
+  font-size: 16px;
+}

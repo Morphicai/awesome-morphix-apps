@@ -1,0 +1,302 @@
+.container {
+  padding-bottom: 100px;
+}
+
+.appInfo {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.appDescription {
+  color: var(--text-light);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  font-size: 15px;
+}
+
+.version {
+  color: var(--text-light);
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--light-green);
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.settingsList {
+  margin-top: 16px;
+}
+
+.settingItem {
+  --background: linear-gradient(135deg, var(--cream-white), #F8FFF8);
+  --border-color: var(--border-color);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.settingItem ion-label h3 {
+  color: var(--text-dark);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.settingItem ion-label p {
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+.settingItem ion-toggle {
+  --background: rgba(74, 124, 89, 0.3);
+  --background-checked: var(--primary-green);
+  --handle-background: white;
+  --handle-background-checked: white;
+}
+
+.settingItem ion-icon {
+  color: var(--primary-green);
+  font-size: 24px;
+}
+
+.volumeControl {
+  padding: 16px;
+  background: linear-gradient(135deg, var(--cream-white), #F8FFF8);
+  border-radius: 12px;
+  margin-top: 8px;
+  border: 2px solid var(--light-green);
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.volumeControl ion-label {
+  color: var(--text-dark);
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.volumeSlider {
+  --bar-background: rgba(74, 124, 89, 0.3);
+  --bar-background-active: var(--primary-green);
+  --knob-background: var(--primary-green);
+  --pin-background: var(--primary-green);
+  --pin-color: white;
+}
+
+.dataActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.dataInfo {
+  margin-top: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--light-green), var(--cream-white));
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.dataInfo p {
+  color: var(--text-light);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.gardenPreview {
+  margin-top: 16px;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #F0FFF0, var(--cream-white));
+  border-radius: 12px;
+  border: 2px dashed var(--light-green);
+  position: relative;
+  overflow: hidden;
+}
+
+.gardenPreview::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(190, 216, 163, 0.1) 0%, transparent 70%);
+  animation: gentle-rotate 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes gentle-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.emptyGarden {
+  text-align: center;
+  color: var(--text-light);
+  position: relative;
+  z-index: 1;
+}
+
+.seedling {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 12px;
+  animation: gentle-sway 3s ease-in-out infinite;
+}
+
+@keyframes gentle-sway {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(3deg); }
+  75% { transform: rotate(-3deg); }
+}
+
+.plantGarden {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 8px;
+  max-width: 400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.gardenPlant {
+  font-size: 28px;
+  text-align: center;
+  animation: grow-animation 0.6s ease-out;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px rgba(74, 124, 89, 0.2);
+}
+
+@keyframes grow-animation {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+.gardenPlant:hover {
+  transform: scale(1.2) rotate(10deg);
+}
+
+.morePlants {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--primary-green);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px;
+  background: var(--light-green);
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.aboutContent {
+  margin-top: 16px;
+}
+
+.feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--cream-white), #F8FFF8);
+  border-radius: 12px;
+  border: 2px solid var(--light-green);
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
+}
+
+.featureIcon {
+  font-size: 32px;
+  flex-shrink: 0;
+  animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-3px); }
+}
+
+.featureText {
+  flex: 1;
+}
+
+.featureText h4 {
+  color: var(--text-dark);
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.featureText p {
+  color: var(--text-light);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .dataActions {
+    gap: 10px;
+  }
+  
+  .plantGarden {
+    grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));
+    gap: 6px;
+  }
+  
+  .gardenPlant {
+    font-size: 24px;
+  }
+  
+  .feature {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .featureIcon {
+    font-size: 28px;
+  }
+  
+  .featureText h4 {
+    font-size: 15px;
+  }
+  
+  .featureText p {
+    font-size: 13px;
+  }
+}
