@@ -28,13 +28,8 @@ export const createDataSafely = async (collection, data, id = null) => {
   try {
     const payload = {
       collection,
-      data
+      data: id ? { id, ...data } : data
     };
-    
-    // 如果提供了id，将其添加到顶层
-    if (id) {
-      payload.id = id;
-    }
     
     const result = await AppSdk.appData.createData(payload);
     console.log(`Successfully created data for ${collection}:`, result);
@@ -203,11 +198,10 @@ export const getTimerDataSafely = async () => {
         lastUpdated: Date.now()
       };
       
-      timerData = await AppSdk.appData.createData({
-        collection: 'timer',
-        id: 'current',
-        data: defaultData
-      });
+        timerData = await AppSdk.appData.createData({
+          collection: 'timer',
+          data: { id: 'current', ...defaultData }
+        });
     }
     return timerData;
   } catch (error) {

@@ -83,7 +83,7 @@ export const useTimerStore = create((set, get) => ({
       const newPlant = {
         id: Date.now(),
         type: 'flower',
-        completedAt: new Date().toISOString(),
+        completedAt: Date.now(),
         cycle: currentCycle
       };
       
@@ -166,6 +166,9 @@ export const useTimerStore = create((set, get) => ({
           collection: 'timer',
           id: 'current'
         });
+        if (!savedData) {
+          console.log('Timer data is null, will create default data');
+        }
       } catch (error) {
         console.log('Timer data not found, will create default data');
         savedData = null;
@@ -216,8 +219,7 @@ export const useTimerStore = create((set, get) => ({
       try {
         createdData = await AppSdk.appData.createData({
           collection: 'timer',
-          id: 'current',
-          data: defaultData
+          data: { id: 'current', ...defaultData }
         });
       } catch (createError) {
         console.error('Failed to create timer data, using memory defaults:', createError);
@@ -301,6 +303,9 @@ export const useTimerStore = create((set, get) => ({
           collection: 'timer',
           id: 'current'
         });
+        if (!existingData) {
+          console.log('Timer data is null, will create new');
+        }
       } catch (error) {
         console.log('No existing timer data found, will create new');
         existingData = null;
@@ -318,8 +323,7 @@ export const useTimerStore = create((set, get) => ({
         // 数据不存在，创建
         await AppSdk.appData.createData({
           collection: 'timer',
-          id: 'current',
-          data: dataToSave
+          data: { id: 'current', ...dataToSave }
         });
         console.log('Timer data created successfully');
       }
@@ -340,7 +344,15 @@ export const useTimerStore = create((set, get) => ({
           collection: 'timer',
           id: 'current'
         });
+        if (!timerData) {
+          console.log('Timer data is null, creating default data');
+        }
       } catch (error) {
+        console.log('Error getting timer data, creating default data');
+        timerData = null;
+      }
+      
+      if (!timerData) {
         // 如果不存在，创建默认数据
         const defaultData = {
           duration: POMODORO_TIME,
@@ -359,8 +371,7 @@ export const useTimerStore = create((set, get) => ({
         
         timerData = await AppSdk.appData.createData({
           collection: 'timer',
-          id: 'current',
-          data: defaultData
+          data: { id: 'current', ...defaultData }
         });
       }
       return timerData;
@@ -382,5 +393,26 @@ export const useTimerStore = create((set, get) => ({
         plants: []
       };
     }
+  },
+
+  // Get today's statistics
+  getTodayStats: () => {
+    const { plants, completedPomodoros, totalFocusTime } = get();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayTime = today.getTime();
+
+    const todayPlants = plants.filter(plant => {
+      const plantDate = new Date(plant.completedAt);
+      plantDate.setHours(0, 0, 0, 0);
+      return plantDate.getTime() === todayTime;
+    });
+
+    return {
+      todayPomodoros: todayPlants.length,
+      todayFocusTime: todayPlants.length * 25 * 60, // 25 minutes per pomodoro in seconds
+      totalPomodoros: completedPomodoros,
+      totalFocusTime: totalFocusTime
+    };
   }
 }));

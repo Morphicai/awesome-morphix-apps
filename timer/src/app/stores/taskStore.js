@@ -43,7 +43,12 @@ export const useTaskStore = create((set, get) => ({
             collection: 'tasks',
             id: 'list'
           });
-          tasksData = listData?.items || [];
+          if (listData) {
+            tasksData = listData.items || [];
+          } else {
+            console.log('Tasks list data is null, starting with empty array');
+            tasksData = [];
+          }
         } catch (getError) {
           console.log('No tasks data found, starting with empty array');
           tasksData = [];
@@ -83,6 +88,7 @@ export const useTaskStore = create((set, get) => ({
       
       let savedTask;
       try {
+        // 对于单个任务，不传 id，让系统自动生成
         savedTask = await AppSdk.appData.createData({
           collection: 'tasks',
           data: newTask
@@ -248,5 +254,21 @@ export const useTaskStore = create((set, get) => ({
       console.error('Error clearing completed tasks:', error);
       await reportError(error, 'JavaScriptError', { component: 'TaskStore' });
     }
+  },
+
+  // Get task statistics
+  getTaskStats: () => {
+    const { tasks } = get();
+    const total = tasks.length;
+    const completed = tasks.filter(task => task.completed).length;
+    const pending = total - completed;
+    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    return {
+      total,
+      completed,
+      pending,
+      completionRate
+    };
   }
 }));

@@ -12,7 +12,6 @@ import StatsTab from './components/StatsTab';
 import SettingsTab from './components/SettingsTab';
 import { useTimerStore } from './stores/timerStore';
 import { useTaskStore } from './stores/taskStore';
-import { initializeDefaultData } from './utils/dataHelpers';
 import './styles/global.css';
 
 // 全局初始化状态，防止重复初始化
@@ -36,13 +35,36 @@ const initializeAppData = async () => {
           collection: "timer",
           id: "current"
         });
-        console.log("已找到timer数据:", timerData);
+        if (timerData) {
+          console.log("已找到timer数据:", timerData);
+        } else {
+          console.log("timer数据为null，正在创建默认设置...");
+          await AppSdk.appData.createData({
+            collection: "timer",
+            data: {
+              id: "current",
+              duration: 25 * 60,
+              shortBreak: 5 * 60,
+              longBreak: 15 * 60,
+              cycles: 4,
+              currentCycle: 1,
+              isRunning: false,
+              remainingTime: 25 * 60,
+              mode: "focus",
+              completedPomodoros: 0,
+              totalFocusTime: 0,
+              plants: [],
+              lastUpdated: Date.now()
+            }
+          });
+          console.log("成功创建timer默认数据");
+        }
       } catch (error) {
-        console.log("未找到timer数据，正在创建默认设置...");
+        console.log("获取timer数据时发生错误，正在创建默认设置...");
         await AppSdk.appData.createData({
           collection: "timer",
-          id: "current",
           data: {
+            id: "current",
             duration: 25 * 60,
             shortBreak: 5 * 60,
             longBreak: 15 * 60,
@@ -66,13 +88,25 @@ const initializeAppData = async () => {
           collection: "tasks",
           id: "list"
         });
-        console.log("已找到tasks数据:", tasksData);
+        if (tasksData) {
+          console.log("已找到tasks数据:", tasksData);
+        } else {
+          console.log("tasks数据为null，正在创建默认设置...");
+          await AppSdk.appData.createData({
+            collection: "tasks",
+            data: {
+              id: "list",
+              items: []
+            }
+          });
+          console.log("成功创建tasks默认数据");
+        }
       } catch (error) {
-        console.log("未找到tasks数据，正在创建默认设置...");
+        console.log("获取tasks数据时发生错误，正在创建默认设置...");
         await AppSdk.appData.createData({
           collection: "tasks",
-          id: "list",
           data: {
+            id: "list",
             items: []
           }
         });
@@ -85,13 +119,26 @@ const initializeAppData = async () => {
           collection: "stats",
           id: "history"
         });
-        console.log("已找到stats数据:", statsData);
+        if (statsData) {
+          console.log("已找到stats数据:", statsData);
+        } else {
+          console.log("stats数据为null，正在创建默认设置...");
+          await AppSdk.appData.createData({
+            collection: "stats",
+            data: {
+              id: "history",
+              completed: [],
+              plants: []
+            }
+          });
+          console.log("成功创建stats默认数据");
+        }
       } catch (error) {
-        console.log("未找到stats数据，正在创建默认设置...");
+        console.log("获取stats数据时发生错误，正在创建默认设置...");
         await AppSdk.appData.createData({
           collection: "stats",
-          id: "history",
           data: {
+            id: "history",
             completed: [],
             plants: []
           }
@@ -147,22 +194,18 @@ export default function App() {
     
     checkDataInitialization();
   }, [initializeTimer, loadTasks]);
-
-  if (!isDataInitialized) {
-    return (
-      <IonApp>
-        <IonLoading
-          isOpen={true}
-          message="정원을 준비하는 중..."
-          spinner="crescent"
-        />
-      </IonApp>
-    );
-  }
-
-  if (initError) {
-    return (
-      <IonApp>
+  const showLoading = !isDataInitialized && !initError;
+  console.log('showLoading', showLoading);
+  return (
+    <IonApp>
+      <IonLoading
+        key={'loading'}
+        isOpen={showLoading}
+        message="정원을 준비하는 중..."
+        spinner="crescent"
+      />
+      
+      {initError ? (
         <div style={{
           display: 'flex',
           flexDirection: 'column',
@@ -188,83 +231,79 @@ export default function App() {
             다시 시도
           </button>
         </div>
-      </IonApp>
-    );
-  }
+      ) : isDataInitialized ? (
+        <IonReactHashRouter>
+          <IonTabs>
+            <IonRouterOutlet>
+              <Switch>
+                <Route exact path="/timer">
+                  <div id="timer-page">
+                    <PageHeader title="자연 정원 뽀모도로" />
+                    <IonContent>
+                      <TimerTab />
+                    </IonContent>
+                  </div>
+                </Route>
+                
+                <Route exact path="/tasks">
+                  <div id="tasks-page">
+                    <PageHeader title="할일 관리" />
+                    <IonContent>
+                      <TasksTab />
+                    </IonContent>
+                  </div>
+                </Route>
+                
+                <Route exact path="/stats">
+                  <div id="stats-page">
+                    <PageHeader title="정원 통계" />
+                    <IonContent>
+                      <StatsTab />
+                    </IonContent>
+                  </div>
+                </Route>
+                
+                <Route exact path="/settings">
+                  <div id="settings-page">
+                    <PageHeader title="설정" />
+                    <IonContent>
+                      <SettingsTab />
+                    </IonContent>
+                  </div>
+                </Route>
+                
+                <Route exact path="/">
+                  <div id="timer-page">
+                    <PageHeader title="자연 정원 뽀모도로" />
+                    <IonContent>
+                      <TimerTab />
+                    </IonContent>
+                  </div>
+                </Route>
+              </Switch>
+            </IonRouterOutlet>
 
-  return (
-    <IonApp>
-      <IonReactHashRouter>
-        <IonTabs>
-          <IonRouterOutlet>
-            <Switch>
-              <Route exact path="/timer">
-                <div id="timer-page">
-                  <PageHeader title="자연 정원 뽀모도로" />
-                  <IonContent>
-                    <TimerTab />
-                  </IonContent>
-                </div>
-              </Route>
-              
-              <Route exact path="/tasks">
-                <div id="tasks-page">
-                  <PageHeader title="할일 관리" />
-                  <IonContent>
-                    <TasksTab />
-                  </IonContent>
-                </div>
-              </Route>
-              
-              <Route exact path="/stats">
-                <div id="stats-page">
-                  <PageHeader title="정원 통계" />
-                  <IonContent>
-                    <StatsTab />
-                  </IonContent>
-                </div>
-              </Route>
-              
-              <Route exact path="/settings">
-                <div id="settings-page">
-                  <PageHeader title="설정" />
-                  <IonContent>
-                    <SettingsTab />
-                  </IonContent>
-                </div>
-              </Route>
-              
-              <Route exact path="/">
-                <div id="timer-page">
-                  <PageHeader title="자연 정원 뽀모도로" />
-                  <IonContent>
-                    <TimerTab />
-                  </IonContent>
-                </div>
-              </Route>
-            </Switch>
-          </IonRouterOutlet>
-
-          <IonTabBar slot="bottom" className="garden-tab-bar">
-            <IonTabButton tab="timer" href="/timer" className="tab-button">
-              <IonIcon icon={leaf} />
-              타이머
-            </IonTabButton>
-            <IonTabButton tab="tasks" href="/tasks" className="tab-button">
-              <IonIcon icon={list} />
-              할일
-            </IonTabButton>
-            <IonTabButton tab="stats" href="/stats" className="tab-button">
-              <IonIcon icon={barChart} />
-              통계
-            </IonTabButton>
-            <IonTabButton tab="settings" href="/settings" className="tab-button">
-              <IonIcon icon={settings} />
-              설정
-            </IonTabButton>
-          </IonTabBar>
-        </IonTabs>
-      </IonReactHashRouter>
+            <IonTabBar slot="bottom" className="garden-tab-bar">
+              <IonTabButton tab="timer" href="/timer" className="tab-button">
+                <IonIcon icon={leaf} />
+                타이머
+              </IonTabButton>
+              <IonTabButton tab="tasks" href="/tasks" className="tab-button">
+                <IonIcon icon={list} />
+                할일
+              </IonTabButton>
+              <IonTabButton tab="stats" href="/stats" className="tab-button">
+                <IonIcon icon={barChart} />
+                통계
+              </IonTabButton>
+              <IonTabButton tab="settings" href="/settings" className="tab-button">
+                <IonIcon icon={settings} />
+                설정
+              </IonTabButton>
+            </IonTabBar>
+          </IonTabs>
+        </IonReactHashRouter>
+      ) : null}
     </IonApp>
   );
 }
