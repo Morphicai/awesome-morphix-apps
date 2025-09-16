@@ -170,6 +170,12 @@
   overflow-wrap: break-word;
   hyphens: auto;
   max-width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
 }
 
 .userMessage .messageBubble {
@@ -193,13 +199,55 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: pre-wrap;
-  max-width: 100%;
+  flex: 1;
 }
 
 .loadingSpinner {
   --color: #7FB069;
   width: 20px;
   height: 20px;
+}
+
+/* 长按和复制状态样式 */
+.messageBubble:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+}
+
+.messageBubble.copied {
+  border: 2px solid #4A7C59;
+  box-shadow: 0 0 0 2px rgba(74, 124, 89, 0.2);
+}
+
+.userMessage .messageBubble.copied {
+  border: 2px solid #7FB069;
+  box-shadow: 0 0 0 2px rgba(127, 176, 105, 0.2);
+}
+
+.copiedIcon {
+  color: #4A7C59;
+  font-size: 18px;
+  flex-shrink: 0;
+  animation: checkmarkPulse 0.3s ease;
+}
+
+.userMessage .copiedIcon {
+  color: white;
+}
+
+@keyframes checkmarkPulse {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* 빠른 질문 섹션 */

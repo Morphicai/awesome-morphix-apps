@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { IonButton, IonIcon, IonModal, IonContent, IonHeader, IonToolbar, IonTitle, IonItem, IonInput, IonSpinner, IonChip, IonActionSheet } from '@ionic/react';
-import { sparkles, chatbubble, send, close, leaf, heart, star, swapHorizontal } from 'ionicons/icons';
+import { sparkles, chatbubble, send, close, leaf, heart, star, swapHorizontal, copy, checkmark } from 'ionicons/icons';
 import AppSdk from '@morphixai/app-sdk';
 import { reportError } from '@morphixai/lib';
 import { t, getCurrentLanguage } from '../utils/i18n';
@@ -21,7 +21,44 @@ export default function GardenFairy({
   const [fairyMood, setFairyMood] = useState('happy');
   const [selectedModel, setSelectedModel] = useState('openai/gpt-4o');
   const [showModelSelector, setShowModelSelector] = useState(false);
+  const [copiedMessageId, setCopiedMessageId] = useState(null);
+  const [showCopyActionSheet, setShowCopyActionSheet] = useState(false);
+  const [selectedMessageForCopy, setSelectedMessageForCopy] = useState(null);
   const messagesEndRef = useRef(null);
+
+  // 长按处理逻辑（不使用Hook）
+  const createLongPressHandlers = (message) => {
+    let timeout = null;
+    let longPressTriggered = false;
+
+    const start = (event) => {
+      event.preventDefault();
+      timeout = setTimeout(() => {
+        handleLongPress(message);
+        longPressTriggered = true;
+      }, 500);
+    };
+
+    const clear = (event) => {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      if (longPressTriggered) {
+        event.preventDefault();
+        longPressTriggered = false;
+      }
+    };
+
+    return {
+      onMouseDown: start,
+      onTouchStart: start,
+      onMouseUp: clear,
+      onTouchEnd: clear,
+      onMouseLeave: clear,
+      onContextMenu: (e) => e.preventDefault(), // 防止右键菜单
+    };
+  };
 
   // 模型配置映射
   const modelConfigs = {
@@ -238,6 +275,48 @@ ${t('situationalResponses')}
     }
   };
 
+  // 长按处理
+  const handleLongPress = (message) => {
+    setSelectedMessageForCopy(message);
+    setShowCopyActionSheet(true);
+  };
+
+  // 复制消息到剪贴板
+  const copyMessage = async () => {
+    if (!selectedMessageForCopy) return;
+    
+    try {
+      await navigator.clipboard.writeText(selectedMessageForCopy.content);
+      setCopiedMessageId(selectedMessageForCopy.id);
+      
+      // 3秒后清除复制状态
+      setTimeout(() => {
+        setCopiedMessageId(null);
+      }, 3000);
+    } catch (error) {
+      console.error('复制失败:', error);
+      // 如果现代API失败，尝试使用传统方法
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = selectedMessageForCopy.content;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        setCopiedMessageId(selectedMessageForCopy.id);
+        setTimeout(() => {
+          setCopiedMessageId(null);
+        }, 3000);
+      } catch (fallbackError) {
+        console.error('备用复制方法也失败了:', fallbackError);
+      }
+    } finally {
+      setShowCopyActionSheet(false);
+      setSelectedMessageForCopy(null);
+    }
+  };
+
   // 자동 인사 메시지
   useEffect(() => {
     if (isModalOpen && messages.length === 0) {
@@ -324,8 +403,14 @@ ${t('situationalResponses')}
                   {message.type === 'fairy' && (
                     <span className={styles.messageIcon}>🧚🏻‍♀️</span>
                   )}
-                  <div className={styles.messageBubble}>
+                  <div 
+                    className={`${styles.messageBubble} ${copiedMessageId === message.id ? styles.copied : ''}`}
+                    {...createLongPressHandlers(message)}
+                  >
                     <p className={styles.messageText}>{message.content}</p>
+                    {copiedMessageId === message.id && (
+                      <IonIcon icon={checkmark} className={styles.copiedIcon} />
+                    )}
                   </div>
                 </div>
               </div>
@@ -390,6 +475,31 @@ ${t('situationalResponses')}
           </div>
         </div>
       </IonModal>
+
+      {/* 复制消息ActionSheet */}
+      <IonActionSheet
+        isOpen={showCopyActionSheet}
+        onDidDismiss={() => {
+          setShowCopyActionSheet(false);
+          setSelectedMessageForCopy(null);
+        }}
+        header={t('messageActions')}
+        buttons={[
+          {
+            text: t('copyMessage'),
+            icon: copy,
+            handler: copyMessage
+          },
+          {
+            text: t('cancel'),
+            role: 'cancel',
+            handler: () => {
+              setShowCopyActionSheet(false);
+              setSelectedMessageForCopy(null);
+            }
+          }
+        ]}
+      />
 
       {/* 模型选择器 */}
       <IonActionSheet

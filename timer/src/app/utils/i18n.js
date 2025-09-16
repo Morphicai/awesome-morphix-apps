@@ -135,6 +135,10 @@ const translations = {
     cancel: "취소",
     delete: "삭제",
     edit: "편집",
+    
+    // 消息操作
+    messageActions: "메시지 작업",
+    copyMessage: "메시지 복사",
     complete: "완료",
     
     // 时间格式
@@ -548,6 +552,10 @@ const translations = {
     cancel: "取消",
     delete: "删除",
     edit: "编辑",
+    
+    // 消息操作
+    messageActions: "消息操作",
+    copyMessage: "复制消息",
     complete: "完成",
     
     // 时间格式
