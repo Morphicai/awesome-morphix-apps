@@ -47,7 +47,7 @@
   text-shadow: 0 1px 2px rgba(46, 125, 50, 0.1);
 }
 
-/* Period Selector - 할일 페이지 스타일 */
+/* Period Selector - 使用 indicator-color 优化 */
 .periodSelector {
   background: rgba(200, 230, 201, 0.15);
   border-radius: 16px;
@@ -57,45 +57,39 @@
     inset 0 1px 2px rgba(200, 230, 201, 0.1);
   border: 1px solid rgba(200, 230, 201, 0.2);
   
-  /* 强制覆盖 Ionic 默认样式 */
+  /* 使用 Ionic 推荐的 CSS 变量 */
   --background: rgba(200, 230, 201, 0.15);
-  --color-checked: white;
-  --background-checked: #2E7D32;
   --border-radius: 16px;
 }
 
 .periodSelector ion-segment-button {
+  /* 基础样式 */
   --color: #2E7D32;
   --color-checked: white;
-  --background-checked: #2E7D32;
   --background: transparent;
   --border-radius: 12px;
+  
+  /* 使用 indicator 相关变量优化选中效果 */
+  --indicator-color: #2E7D32;
+  --indicator-height: 100%;
+  --indicator-box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+  --indicator-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* 文字和布局 */
   font-weight: 600;
   font-size: 14px;
-  transition: all 0.3s ease;
   margin: 2px;
 }
 
-.periodSelector ion-segment-button.segment-button-checked {
-  background: #2E7D32 !important;
-  color: white !important;
-  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
-}
-
-/* 更强制的选中状态样式 */
-.periodSelector ion-segment-button[aria-checked="true"] {
-  background: #2E7D32 !important;
-  color: white !important;
-}
-
-.periodSelector ion-segment-button.ion-focused.segment-button-checked,
-.periodSelector ion-segment-button.segment-button-checked.ion-activated {
-  background: #2E7D32 !important;
-  color: white !important;
-}
-
+/* Hover和Focus效果 */
 .periodSelector ion-segment-button:hover {
-  --background: rgba(200, 230, 201, 0.1);
+  --background-hover: rgba(200, 230, 201, 0.2);
+  --background-hover-opacity: 1;
+}
+
+.periodSelector ion-segment-button:focus {
+  --background-focused: rgba(200, 230, 201, 0.15);
+  --background-focused-opacity: 1;
 }
 
 /* Stats Grid - 할일 페이지와 동일한 스타일 */
