@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { IonButton, IonIcon, IonModal, IonContent, IonHeader, IonToolbar, IonTitle, IonItem, IonInput, IonSpinner, IonChip } from '@ionic/react';
 import { sparkles, chatbubble, send, close, leaf, heart, star } from 'ionicons/icons';
 import AppSdk from '@morphixai/app-sdk';
 import { reportError } from '@morphixai/lib';
+import { t, getCurrentLanguage } from '../utils/i18n';
 import styles from '../styles/GardenFairy.module.css';
 
 export default function GardenFairy({ 
@@ -17,6 +18,7 @@ export default function GardenFairy({
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
   const [fairyMood, setFairyMood] = useState('happy');
 
   // 요정의 기분 상태 업데이트
@@ -54,28 +56,32 @@ export default function GardenFairy({
         fairyMood
       };
 
-      const systemPrompt = `당신은 친근한 정원 요정입니다. 사용자의 집중과 할일 관리를 도와주는 역할을 합니다.
+      // AI 시스템 프롬프트 설정 - 다국어 지원
+      const timerStatusText = isTimerRunning ? (isBreak ? t('resting') : t('focusing')) : t('stopped');
+      const selectedTaskText = selectedTask?.text || t('selectedTaskNone');
+      
+      const systemPrompt = `${t('fairySystemPrompt')}
 
-현재 상황:
-- 타이머 상태: ${isTimerRunning ? (isBreak ? '휴식 중' : '집중 중') : '정지됨'}
-- 완료한 뽀모도로: ${completedPomodoros}개
-- 현재 작업: ${selectedTask?.text || '선택된 작업 없음'}
-- 남은 시간: ${Math.floor(timeLeft / 60)}분
-- 요정 기분: ${fairyMood}
+${t('currentSituation')}
+- ${t('timerStatus')}: ${timerStatusText}
+- ${t('completedPomodoros')}: ${completedPomodoros}${t('count')}
+- ${t('currentTask')}: ${selectedTaskText}
+- ${t('remainingTime')}: ${Math.floor(timeLeft / 60)}${t('minutes')}
+- ${t('fairyMood')}: ${fairyMood}
 
-성격과 말투:
-- 항상 자연스럽고 따뜻한 말투로 대화
-- 정원과 식물에 관련된 비유를 자주 사용
-- 짧고 간결하게 답변 (1-2문장)
-- 이모지를 적절히 사용하여 친근함 표현
-- 사용자를 격려하고 동기부여 제공
+${t('personalityAndTone')}
+- ${t('naturalWarmTone')}
+- ${t('gardenMetaphors')}
+- ${t('shortConciseAnswers')}
+- ${t('useEmojis')}
+- ${t('encourageMotivate')}
 
-상황별 대응:
-- 집중 시작 시: 새로운 씨앗을 심는다는 표현 사용
-- 집중 중: 식물이 자라고 있다는 격려
-- 휴식 시: 정원에서 쉬는 표현 사용
-- 완료 시: 꽃이 피었다는 축하 표현
-- 고민 상담: 자연의 지혜로 조언 제공`;
+${t('situationalResponses')}
+- ${t('focusStart')}
+- ${t('duringFocus')}
+- ${t('duringRest')}
+- ${t('onCompletion')}
+- ${t('counseling')}`;
 
       const response = await AppSdk.AI.chat({
         messages: [
@@ -92,7 +98,7 @@ export default function GardenFairy({
     } catch (error) {
       console.error('AI 대화 오류:', error);
       await reportError(error, 'JavaScriptError', { component: 'GardenFairy' });
-      return '죄송해요, 지금은 대화하기 어려워요. 잠시 후 다시 시도해주세요 🌿';
+      return t('fairyConnectionError');
     }
   };
 
@@ -128,7 +134,7 @@ export default function GardenFairy({
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
         type: 'fairy',
-        content: '미안해요, 지금은 대답하기 어려워요 🌿',
+        content: t('fairyErrorMessage'),
         timestamp: new Date()
       }]);
     } finally {
@@ -138,10 +144,10 @@ export default function GardenFairy({
 
   // 빠른 질문 버튼들
   const quickQuestions = [
-    { text: '집중 도움 요청', icon: '🌱', message: '집중하는 데 도움이 필요해요' },
-    { text: '할일 정리 도움', icon: '📝', message: '할일을 어떻게 정리하면 좋을까요?' },
-    { text: '동기부여 필요', icon: '✨', message: '동기부여가 필요해요' },
-    { text: '휴식 추천', icon: '🦋', message: '어떻게 휴식하면 좋을까요?' }
+    { text: t('focusHelpRequest'), icon: '🌱', message: t('focusHelpMessage') },
+    { text: t('taskOrganizationHelp'), icon: '📝', message: t('taskOrganizationMessage') },
+    { text: t('motivationNeeded'), icon: '✨', message: t('motivationMessage') },
+    { text: t('restRecommendation'), icon: '🦋', message: t('restMessage') }
   ];
 
   // 빠른 질문 전송
@@ -170,7 +176,7 @@ export default function GardenFairy({
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
         type: 'fairy',
-        content: '미안해요, 지금은 대답하기 어려워요 🌿',
+        content: t('fairyErrorMessage'),
         timestamp: new Date()
       }]);
     } finally {
@@ -178,14 +184,24 @@ export default function GardenFairy({
     }
   };
 
+  // 自动滚动到底部
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // 消息变化时自动滚动
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
+
   // 자동 인사 메시지
   useEffect(() => {
     if (isModalOpen && messages.length === 0) {
       const getGreeting = () => {
         const hour = new Date().getHours();
-        if (hour < 12) return '좋은 아침이에요! 오늘도 아름다운 정원을 가꿔볼까요? 🌸';
-        if (hour < 18) return '안녕하세요! 오후의 정원에서 집중의 꽃을 피워보세요 🌻';
-        return '좋은 저녁이에요! 밤의 정원에서도 차분히 집중해보아요 🌙';
+        if (hour < 12) return t('goodMorningGreeting');
+        if (hour < 18) return t('goodAfternoonGreeting');
+        return t('goodEveningGreeting');
       };
 
       setMessages([{
@@ -208,7 +224,7 @@ export default function GardenFairy({
           </div>
         </div>
         <div className={styles.fairyTooltip}>
-          정원 요정과 대화하기
+          {t('gardenFairyChat')}
         </div>
       </div>
 
@@ -218,7 +234,7 @@ export default function GardenFairy({
           <IonToolbar className={styles.modalHeader}>
             <IonTitle className={styles.modalTitle}>
               <span className={styles.titleIcon}>🧚‍♀️</span>
-              정원 요정과의 대화
+              {t('gardenFairyChatTitle')}
             </IonTitle>
             <IonButton 
               fill="clear" 
@@ -232,42 +248,48 @@ export default function GardenFairy({
         </IonHeader>
 
         <IonContent className={styles.modalContent}>
-          {/* 메시지 목록 */}
-          <div className={styles.messagesList}>
-            {messages.map((message) => (
-              <div 
-                key={message.id} 
-                className={`${styles.messageItem} ${
-                  message.type === 'user' ? styles.userMessage : styles.fairyMessage
-                }`}
-              >
-                <div className={styles.messageContent}>
-                  {message.type === 'fairy' && (
+          {/* 消息容器 */}
+          <div className={styles.messagesContainer}>
+            {/* 메시지 목록 */}
+            <div className={styles.messagesList}>
+              {messages.map((message) => (
+                <div 
+                  key={message.id} 
+                  className={`${styles.messageItem} ${
+                    message.type === 'user' ? styles.userMessage : styles.fairyMessage
+                  }`}
+                >
+                  <div className={styles.messageContent}>
+                    {message.type === 'fairy' && (
+                      <span className={styles.messageIcon}>🧚‍♀️</span>
+                    )}
+                    <div className={styles.messageBubble}>
+                      <p className={styles.messageText}>{message.content}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              {isLoading && (
+                <div className={`${styles.messageItem} ${styles.fairyMessage}`}>
+                  <div className={styles.messageContent}>
                     <span className={styles.messageIcon}>🧚‍♀️</span>
-                  )}
-                  <div className={styles.messageBubble}>
-                    <p className={styles.messageText}>{message.content}</p>
+                    <div className={styles.messageBubble}>
+                      <IonSpinner name="dots" className={styles.loadingSpinner} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-            
-            {isLoading && (
-              <div className={`${styles.messageItem} ${styles.fairyMessage}`}>
-                <div className={styles.messageContent}>
-                  <span className={styles.messageIcon}>🧚‍♀️</span>
-                  <div className={styles.messageBubble}>
-                    <IonSpinner name="dots" className={styles.loadingSpinner} />
-                  </div>
-                </div>
-              </div>
-            )}
+              )}
+              
+              {/* 用于自动滚动定位的元素 */}
+              <div ref={messagesEndRef} />
+            </div>
           </div>
 
           {/* 빠른 질문 버튼들 */}
           {messages.length <= 1 && (
             <div className={styles.quickQuestions}>
-              <h4 className={styles.quickQuestionsTitle}>빠른 질문</h4>
+              <h4 className={styles.quickQuestionsTitle}>{t('quickQuestions')}</h4>
               <div className={styles.quickQuestionButtons}>
                 {quickQuestions.map((question, index) => (
                   <IonChip
@@ -289,7 +311,7 @@ export default function GardenFairy({
             <IonItem className={styles.inputItem}>
               <IonInput
                 value={inputMessage}
-                placeholder="정원 요정에게 메시지를 보내세요..."
+                placeholder={t('fairyMessagePlaceholder')}
                 onIonInput={(e) => setInputMessage(e.detail.value)}
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                 disabled={isLoading}
