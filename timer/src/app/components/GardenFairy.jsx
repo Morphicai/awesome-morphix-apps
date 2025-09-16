@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { IonButton, IonIcon, IonModal, IonContent, IonHeader, IonToolbar, IonTitle, IonItem, IonInput, IonSpinner, IonChip } from '@ionic/react';
-import { sparkles, chatbubble, send, close, leaf, heart, star } from 'ionicons/icons';
+import { IonButton, IonIcon, IonModal, IonContent, IonHeader, IonToolbar, IonTitle, IonItem, IonInput, IonSpinner, IonChip, IonActionSheet } from '@ionic/react';
+import { sparkles, chatbubble, send, close, leaf, heart, star, swapHorizontal } from 'ionicons/icons';
 import AppSdk from '@morphixai/app-sdk';
 import { reportError } from '@morphixai/lib';
 import { t, getCurrentLanguage } from '../utils/i18n';
@@ -19,7 +19,31 @@ export default function GardenFairy({
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [fairyMood, setFairyMood] = useState('happy');
+  const [selectedModel, setSelectedModel] = useState('openai/gpt-5-mini');
+  const [showModelSelector, setShowModelSelector] = useState(false);
   const messagesEndRef = useRef(null);
+
+  // 模型配置映射
+  const modelConfigs = {
+    'openai/gpt-5-mini': {
+      name: t('fairyLuna'),
+      personality: t('fairyPersonalityLuna'),
+      icon: '🌙',
+      model: 'openai/gpt-5-mini'
+    },
+    'deepseek/deepseek-chat-v3.1:free': {
+      name: t('fairyVera'),
+      personality: t('fairyPersonalityVera'),
+      icon: '🌸',
+      model: 'deepseek/deepseek-chat-v3.1:free'
+    },
+    'anthropic/claude-sonnet-4': {
+      name: t('fairySage'),
+      personality: t('fairyPersonalitySage'),
+      icon: '✨',
+      model: 'anthropic/claude-sonnet-4'
+    }
+  };
 
   // 요정의 기분 상태 업데이트
   useEffect(() => {
@@ -36,12 +60,8 @@ export default function GardenFairy({
 
   // 요정 아이콘 선택
   const getFairyIcon = () => {
-    switch (fairyMood) {
-      case 'focused': return '🧚‍♀️';
-      case 'relaxed': return '🌟';
-      case 'proud': return '✨';
-      default: return '🧚‍♀️';
-    }
+    // 首页始终使用浅肤色精灵图标
+    return '🧚🏻‍♀️';
   };
 
   // 요정과 AI 대화
@@ -89,7 +109,7 @@ ${t('situationalResponses')}
           { role: 'user', content: userMessage }
         ],
         options: {
-          model: 'deepseek/deepseek-chat:free',
+          model: modelConfigs[selectedModel].model,
           temperature: 0.8
         }
       });
@@ -258,8 +278,8 @@ ${t('situationalResponses')}
           <IonHeader>
             <IonToolbar className={styles.modalHeader}>
               <IonTitle className={styles.modalTitle}>
-                <span className={styles.titleIcon}>🧚‍♀️</span>
-                {t('gardenFairyChatTitle')}
+                <span className={styles.titleIcon}>{modelConfigs[selectedModel].icon}</span>
+                {modelConfigs[selectedModel].name}
               </IonTitle>
               <IonButton 
                 fill="clear" 
@@ -285,7 +305,7 @@ ${t('situationalResponses')}
               >
                 <div className={styles.messageContent}>
                   {message.type === 'fairy' && (
-                    <span className={styles.messageIcon}>🧚‍♀️</span>
+                    <span className={styles.messageIcon}>🧚🏻‍♀️</span>
                   )}
                   <div className={styles.messageBubble}>
                     <p className={styles.messageText}>{message.content}</p>
@@ -297,7 +317,7 @@ ${t('situationalResponses')}
             {isLoading && (
               <div className={`${styles.messageItem} ${styles.fairyMessage}`}>
                 <div className={styles.messageContent}>
-                  <span className={styles.messageIcon}>🧚‍♀️</span>
+                  <span className={styles.messageIcon}>🧚🏻‍♀️</span>
                   <div className={styles.messageBubble}>
                     <IonSpinner name="dots" className={styles.loadingSpinner} />
                   </div>
@@ -332,27 +352,64 @@ ${t('situationalResponses')}
 
           {/* 输入框区域 - 固定在底部 */}
           <div className={styles.inputContainer}>
-            <IonItem className={styles.inputItem}>
-              <IonInput
-                value={inputMessage}
-                placeholder={t('fairyMessagePlaceholder')}
-                onIonInput={(e) => setInputMessage(e.detail.value)}
-                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                disabled={isLoading}
-                className={styles.textInput}
-              />
+            <div className={styles.inputRow}>
+              {/* 模型切换按钮 - 放在 IonItem 外面 */}
               <IonButton
                 fill="clear"
-                onClick={sendMessage}
-                disabled={!inputMessage.trim() || isLoading}
-                className={styles.sendButton}
+                onClick={() => setShowModelSelector(true)}
+                className={styles.modelSwitchButton}
+                disabled={isLoading}
               >
-                <IonIcon icon={send} />
+                <span className={styles.modelIcon}>{modelConfigs[selectedModel].icon}</span>
+                <IonIcon icon={swapHorizontal} className={styles.switchIcon} />
               </IonButton>
-            </IonItem>
+              
+              <IonItem className={styles.inputItem}>
+                <IonInput
+                  value={inputMessage}
+                  placeholder={t('fairyMessagePlaceholder')}
+                  onIonInput={(e) => setInputMessage(e.detail.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                  disabled={isLoading}
+                  className={styles.textInput}
+                />
+                <IonButton
+                  fill="clear"
+                  onClick={sendMessage}
+                  disabled={!inputMessage.trim() || isLoading}
+                  className={styles.sendButton}
+                >
+                  <IonIcon icon={send} />
+                </IonButton>
+              </IonItem>
+            </div>
           </div>
         </div>
       </IonModal>
+
+      {/* 模型选择器 */}
+      <IonActionSheet
+        isOpen={showModelSelector}
+        onDidDismiss={() => setShowModelSelector(false)}
+        header={t('selectFairy')}
+        buttons={[
+          ...Object.entries(modelConfigs).map(([modelKey, config]) => ({
+            text: `${config.icon} ${config.name}`,
+            handler: () => {
+              setSelectedModel(modelKey);
+              setShowModelSelector(false);
+            },
+            cssClass: selectedModel === modelKey ? 'selected-fairy' : ''
+          })),
+          {
+            text: t('cancel'),
+            role: 'cancel',
+            handler: () => {
+              setShowModelSelector(false);
+            }
+          }
+        ]}
+      />
     </>
   );
 }

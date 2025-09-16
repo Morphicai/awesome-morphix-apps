@@ -372,6 +372,16 @@ const translations = {
     restMessage: "어떻게 휴식하면 좋을까요?",
     fairyErrorMessage: "미안해요, 지금은 대답하기 어려워요 🌿",
     fairyConnectionError: "죄송해요, 지금은 대화하기 어려워요. 잠시 후 다시 시도해주세요 🌿",
+    
+    // 정원 요정 선택
+    selectFairy: "요정 선택",
+    fairyLuna: "루나 🌙", // GPT-5 Mini - 달빛 요정
+    fairyVera: "베라 🌸", // Deepseek - 꽃잎 요정  
+    fairySage: "세이지 ✨", // Claude - 지혜 요정
+    fairyPersonalityLuna: "빠르고 친근한 달빛 요정",
+    fairyPersonalityVera: "자유롭고 창의적인 꽃잎 요정",
+    fairyPersonalitySage: "깊이 있고 현명한 지혜 요정",
+    
     goodMorningGreeting: "좋은 아침이에요! 오늘도 아름다운 정원을 가꿔볼까요? 🌸",
     goodAfternoonGreeting: "안녕하세요! 오후의 정원에서 집중의 꽃을 피워보세요 🌻",
     goodEveningGreeting: "좋은 저녁이에요! 밤의 정원에서도 차분히 집중해보아요 🌙",
@@ -774,6 +784,16 @@ const translations = {
     restMessage: "如何更好地休息呢?",
     fairyErrorMessage: "抱歉，现在无法回答 🌿",
     fairyConnectionError: "抱歉，现在无法对话。请稍后再试 🌿",
+    
+    // 花园精灵选择
+    selectFairy: "选择精灵",
+    fairyLuna: "Luna 🌙", // GPT-5 Mini
+    fairyVera: "Vera 🌸", // Deepseek
+    fairySage: "Sage ✨", // Claude
+    fairyPersonalityLuna: "快速友好",
+    fairyPersonalityVera: "自由创意", 
+    fairyPersonalitySage: "深邃智慧",
+    
     goodMorningGreeting: "早上好！今天也来培育美丽的花园吧 🌸",
     goodAfternoonGreeting: "下午好！在午后的花园里绽放专注之花吧 🌻",
     goodEveningGreeting: "晚上好！在夜晚的花园里也要静心专注哦 🌙",

@@ -219,11 +219,18 @@
   border-top: 1px solid rgba(74, 124, 89, 0.1);
 }
 
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .inputItem {
   --background: #F8FDF8;
   --border-color: rgba(74, 124, 89, 0.3);
   border-radius: 25px;
-  padding: 0 16px;
+  padding: 0 16px 0 0;
+  flex: 1;
 }
 
 .textInput {
@@ -239,6 +246,30 @@
 
 .sendButton:hover {
   --color: #4A7C59;
+}
+
+/* 模型切换按钮样式 */
+.modelSwitchButton {
+  --color: #7FB069;
+  --padding-start: 8px;
+  --padding-end: 8px;
+  height: 40px;
+  min-width: 50px;
+  flex-shrink: 0;
+}
+
+.modelSwitchButton:hover {
+  --color: #4A7C59;
+}
+
+.modelIcon {
+  font-size: 18px;
+  margin-right: 4px;
+}
+
+.switchIcon {
+  font-size: 14px;
+  opacity: 0.7;
 }
 
 /* 애니메이션 */
