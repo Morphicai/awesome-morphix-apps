@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IonApp, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon, IonContent } from '@ionic/react';
+import { IonApp, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon, IonContent, IonPage } from '@ionic/react';
 import { IonReactHashRouter } from '@ionic/react-router';
 import { Route, Switch } from 'react-router-dom';
 import { leaf, list, barChart, settings } from 'ionicons/icons';
@@ -11,15 +11,15 @@ import TasksTab from './components/TasksTab';
 import StatsTab from './components/StatsTab';
 import SettingsTab from './components/SettingsTab';
 import Loading from './components/Loading';
+import ErrorToast from './components/ErrorToast';
 import { useTimerStore } from './stores/timerStore';
 import { useTaskStore } from './stores/taskStore';
+import { t, addLanguageListener } from './utils/i18n';
 import './styles/global.css';
 
-// 全局初始化状态，防止重复初始化
 let isInitializing = false;
 let initializationPromise = null;
 
-// 应用启动时的数据初始化函数
 const initializeAppData = async () => {
   if (isInitializing) {
     return initializationPromise;
@@ -30,7 +30,6 @@ const initializeAppData = async () => {
   
   initializationPromise = (async () => {
     try {
-      // 检查timer数据
       try {
         const timerData = await AppSdk.appData.getData({
           collection: "timer",
@@ -83,7 +82,6 @@ const initializeAppData = async () => {
         console.log("成功创建timer默认数据");
       }
       
-      // 检查tasks数据
       try {
         const tasksData = await AppSdk.appData.getData({
           collection: "tasks",
@@ -114,7 +112,6 @@ const initializeAppData = async () => {
         console.log("成功创建tasks默认数据");
       }
       
-      // 检查stats数据
       try {
         const statsData = await AppSdk.appData.getData({
           collection: "stats",
@@ -147,6 +144,108 @@ const initializeAppData = async () => {
         console.log("成功创建stats默认数据");
       }
       
+      try {
+        const languageData = await AppSdk.appData.getData({
+          collection: "settings",
+          id: "language"
+        });
+        if (languageData) {
+          console.log("已找到language设置:", languageData);
+        } else {
+          console.log("language设置为null，正在创建默认设置...");
+          await AppSdk.appData.createData({
+            collection: "settings",
+            data: {
+              id: "language",
+              current: "ko",
+              available: ["ko", "zh"],
+              autoDetect: true
+            }
+          });
+          console.log("成功创建language默认设置");
+        }
+      } catch (error) {
+        console.log("获取language设置时发生错误，正在创建默认设置...");
+        await AppSdk.appData.createData({
+          collection: "settings",
+          data: {
+            id: "language",
+            current: "ko",
+            available: ["ko", "zh"],
+            autoDetect: true
+          }
+        });
+        console.log("成功创建language默认设置");
+      }
+      
+      try {
+        const timerSettingsData = await AppSdk.appData.getData({
+          collection: "settings",
+          id: "timer"
+        });
+        if (timerSettingsData) {
+          console.log("已找到timer设置:", timerSettingsData);
+        } else {
+          console.log("timer设置为null，正在创建默认设置...");
+          await AppSdk.appData.createData({
+            collection: "settings",
+            data: {
+              id: "timer",
+              keepScreenOn: false,
+              backgroundMode: true,
+              notifications: true,
+              sound: true
+            }
+          });
+          console.log("成功创建timer默认设置");
+        }
+      } catch (error) {
+        console.log("获取timer设置时发生错误，正在创建默认设置...");
+        await AppSdk.appData.createData({
+          collection: "settings",
+          data: {
+            id: "timer",
+            keepScreenOn: false,
+            backgroundMode: true,
+            notifications: true,
+            sound: true
+          }
+        });
+        console.log("成功创建timer默认设置");
+      }
+      
+      try {
+        const themeData = await AppSdk.appData.getData({
+          collection: "settings",
+          id: "theme"
+        });
+        if (themeData) {
+          console.log("已找到theme设置:", themeData);
+        } else {
+          console.log("theme设置为null，正在创建默认设置...");
+          await AppSdk.appData.createData({
+            collection: "settings",
+            data: {
+              id: "theme",
+              mode: "light",
+              gardenStyle: "natural"
+            }
+          });
+          console.log("成功创建theme默认设置");
+        }
+      } catch (error) {
+        console.log("获取theme设置时发生错误，正在创建默认设置...");
+        await AppSdk.appData.createData({
+          collection: "settings",
+          data: {
+            id: "theme",
+            mode: "light",
+            gardenStyle: "natural"
+          }
+        });
+        console.log("成功创建theme默认设置");
+      }
+      
       console.log("应用数据初始化完成");
     } catch (error) {
       console.error("应用数据初始化失败:", error);
@@ -164,20 +263,25 @@ export default function App() {
   const { loadTasks } = useTaskStore();
   const [isDataInitialized, setIsDataInitialized] = useState(false);
   const [initError, setInitError] = useState(null);
+  const [currentLanguage, setCurrentLanguage] = useState('ko');
+
+  useEffect(() => {
+    const unsubscribe = addLanguageListener((newLanguage) => {
+      setCurrentLanguage(newLanguage);
+    });
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     const checkDataInitialization = async () => {
       try {
-        // 先执行数据初始化
         await initializeAppData();
         
         console.log('Starting app initialization...');
         
-        // 初始化timer store
         await initializeTimer();
         console.log('Timer initialized successfully');
         
-        // 加载tasks
         await loadTasks();
         console.log('Tasks loaded successfully');
         
@@ -195,13 +299,15 @@ export default function App() {
     
     checkDataInitialization();
   }, [initializeTimer, loadTasks]);
+  
   const showLoading = !isDataInitialized && !initError;
   console.log('showLoading', showLoading);
+  
   return (
     <IonApp>
       <Loading 
         isVisible={showLoading} 
-        message="정원을 준비하는 중..." 
+        message={t('loadingGarden')} 
       />
       
       {initError ? (
@@ -214,8 +320,8 @@ export default function App() {
           padding: '20px',
           textAlign: 'center'
         }}>
-          <h2>앱 초기화 중 오류가 발생했습니다</h2>
-          <p>앱을 다시 시작해 주세요.</p>
+          <h2>{t('error')}</h2>
+          <p>{t('retry')}</p>
           <button 
             onClick={() => window.location.reload()}
             style={{
@@ -227,7 +333,7 @@ export default function App() {
               cursor: 'pointer'
             }}
           >
-            다시 시도
+            {t('retry')}
           </button>
         </div>
       ) : isDataInitialized ? (
@@ -236,48 +342,38 @@ export default function App() {
             <IonRouterOutlet>
               <Switch>
                 <Route exact path="/timer">
-                  <div id="timer-page">
-                    <PageHeader title="자연 정원 뽀모도로" />
+                  <IonPage>
+                    <PageHeader title={t('appTitle')} />
                     <IonContent>
                       <TimerTab />
                     </IonContent>
-                  </div>
+                  </IonPage>
                 </Route>
                 
                 <Route exact path="/tasks">
-                  <div id="tasks-page">
-                    <PageHeader title="할일 관리" />
-                    <IonContent>
-                      <TasksTab />
-                    </IonContent>
-                  </div>
+                  <TasksTab />
                 </Route>
                 
                 <Route exact path="/stats">
-                  <div id="stats-page">
-                    <PageHeader title="정원 통계" />
+                  <IonPage>
+                    <PageHeader title={t('gardenStats')} />
                     <IonContent>
                       <StatsTab />
                     </IonContent>
-                  </div>
+                  </IonPage>
                 </Route>
                 
                 <Route exact path="/settings">
-                  <div id="settings-page">
-                    <PageHeader title="설정" />
-                    <IonContent>
-                      <SettingsTab />
-                    </IonContent>
-                  </div>
+                  <SettingsTab />
                 </Route>
                 
                 <Route exact path="/">
-                  <div id="timer-page">
-                    <PageHeader title="자연 정원 뽀모도로" />
+                  <IonPage>
+                    <PageHeader title={t('appTitle')} />
                     <IonContent>
                       <TimerTab />
                     </IonContent>
-                  </div>
+                  </IonPage>
                 </Route>
               </Switch>
             </IonRouterOutlet>
@@ -285,19 +381,19 @@ export default function App() {
             <IonTabBar slot="bottom" className="garden-tab-bar">
               <IonTabButton tab="timer" href="/timer" className="tab-button">
                 <IonIcon icon={leaf} />
-                타이머
+                {t('timer')}
               </IonTabButton>
               <IonTabButton tab="tasks" href="/tasks" className="tab-button">
                 <IonIcon icon={list} />
-                할일
+                {t('tasks')}
               </IonTabButton>
               <IonTabButton tab="stats" href="/stats" className="tab-button">
                 <IonIcon icon={barChart} />
-                통계
+                {t('stats')}
               </IonTabButton>
               <IonTabButton tab="settings" href="/settings" className="tab-button">
                 <IonIcon icon={settings} />
-                설정
+                {t('settings')}
               </IonTabButton>
             </IonTabBar>
           </IonTabs>

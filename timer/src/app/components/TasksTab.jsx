@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { IonButton, IonIcon, IonInput, IonSelect, IonSelectOption, IonCheckbox, IonSpinner, IonItem, IonLabel } from '@ionic/react';
-import { add, trash, create, checkmark } from 'ionicons/icons';
+import { IonButton, IonIcon, IonInput, IonSelect, IonSelectOption, IonCheckbox, IonSpinner, IonItem, IonLabel, IonFab, IonFabButton, IonPage, IonContent } from '@ionic/react';
+import { add, trash, create, checkmark, close } from 'ionicons/icons';
+import { PageHeader } from '@morphixai/components';
 import { useTaskStore } from '../stores/taskStore';
 import styles from '../styles/TasksTab.module.css';
 
@@ -21,10 +22,12 @@ export default function TasksTab() {
   const [editingTask, setEditingTask] = useState(null);
   const [editText, setEditText] = useState('');
   const [isDataReady, setIsDataReady] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [completedTasks, setCompletedTasks] = useState(new Set());
+  const [removingTasks, setRemovingTasks] = useState(new Set());
 
-  // 检查数据是否已准备好
+  // 检查数据是否准备完毕
   useEffect(() => {
-    // 当tasks数组已定义且不在加载状态时，认为数据已准备好
     if (Array.isArray(tasks) && !loading) {
       setIsDataReady(true);
     }
@@ -36,6 +39,7 @@ export default function TasksTab() {
         await addTask(newTaskText, newTaskPriority);
         setNewTaskText('');
         setNewTaskPriority('medium');
+        setShowAddForm(false);
       } catch (error) {
         console.error('Failed to add task:', error);
       }
@@ -44,6 +48,18 @@ export default function TasksTab() {
 
   const handleToggleTask = async (taskId) => {
     try {
+      const task = tasks.find(t => t.id === taskId);
+      if (!task.completed) {
+        // 完成动画触发
+        setCompletedTasks(prev => new Set([...prev, taskId]));
+        setTimeout(() => {
+          setCompletedTasks(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(taskId);
+            return newSet;
+          });
+        }, 1000);
+      }
       await toggleTask(taskId);
     } catch (error) {
       console.error('Failed to toggle task:', error);
@@ -52,9 +68,26 @@ export default function TasksTab() {
 
   const handleDeleteTask = async (taskId) => {
     try {
-      await deleteTask(taskId);
+      // 添加删除动画
+      setRemovingTasks(prev => new Set([...prev, taskId]));
+      
+      // 等待动画完成后删除
+      setTimeout(async () => {
+        await deleteTask(taskId);
+        setRemovingTasks(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(taskId);
+          return newSet;
+        });
+      }, 300);
     } catch (error) {
       console.error('Failed to delete task:', error);
+      // 如果删除失败，移除动画状态
+      setRemovingTasks(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(taskId);
+        return newSet;
+      });
     }
   };
 
@@ -97,22 +130,22 @@ export default function TasksTab() {
     }
   };
 
-  const getPriorityColor = (priority) => {
-    const colors = {
-      high: '#ff6b6b',
-      medium: '#feca57',
-      low: '#48dbfb'
+  const getPriorityIcon = (priority) => {
+    const icons = {
+      high: '🌹',
+      medium: '🌻', 
+      low: '🌿'
     };
-    return colors[priority] || colors.medium;
+    return icons[priority] || icons.medium;
   };
 
-  const getFlowerEmoji = (priority) => {
-    const flowers = {
-      high: '🌹',
-      medium: '🌷',
-      low: '🌼'
+  const getPriorityBorderColor = (priority) => {
+    const colors = {
+      high: '#E74C3C',
+      medium: '#F39C12',
+      low: '#7FB069'
     };
-    return flowers[priority] || flowers.medium;
+    return colors[priority] || colors.medium;
   };
 
   const getTaskStats = () => {
@@ -122,13 +155,18 @@ export default function TasksTab() {
     return { total, completed, pending };
   };
 
-  // 如果数据未准备好，显示加载状态
+  // 数据未准备好时显示加载状态
   if (!isDataReady) {
     return (
-      <div className={styles.loadingContainer}>
-        <IonSpinner name="crescent" />
-        <p>할일 목록을 불러오는 중...</p>
-      </div>
+      <IonPage>
+        <PageHeader title="나의 할일 花园" />
+        <IonContent>
+          <div className={styles.loadingContainer}>
+            <IonSpinner name="crescent" />
+            <p>할일 목록을 불러오는 중...</p>
+          </div>
+        </IonContent>
+      </IonPage>
     );
   }
 
@@ -136,194 +174,265 @@ export default function TasksTab() {
   const stats = getTaskStats();
 
   return (
-    <div className={styles.container}>
-      <div className={styles.gardenBackground}>
-        {/* 统计信息 */}
-        <div className={styles.statsSection}>
-          <div className={styles.statCard}>
-            <span className={styles.statNumber}>{stats.total}</span>
-            <span className={styles.statLabel}>전체</span>
-          </div>
-          <div className={styles.statCard}>
-            <span className={styles.statNumber}>{stats.completed}</span>
-            <span className={styles.statLabel}>완료</span>
-          </div>
-          <div className={styles.statCard}>
-            <span className={styles.statNumber}>{stats.pending}</span>
-            <span className={styles.statLabel}>대기</span>
-          </div>
-        </div>
-
-        {/* 添加新任务 */}
-        <div className={styles.addTaskSection}>
-          <div className={styles.inputGroup}>
-            <IonInput
-              value={newTaskText}
-              placeholder="새로운 할일을 입력하세요..."
-              onIonInput={(e) => setNewTaskText(e.detail.value)}
-              className={styles.taskInput}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleAddTask();
-                }
-              }}
-            />
-            <IonSelect
-              value={newTaskPriority}
-              onIonChange={(e) => setNewTaskPriority(e.detail.value)}
-              className={styles.prioritySelect}
-            >
-              <IonSelectOption value="high">높음 🌹</IonSelectOption>
-              <IonSelectOption value="medium">보통 🌷</IonSelectOption>
-              <IonSelectOption value="low">낮음 🌼</IonSelectOption>
-            </IonSelect>
-            <IonButton
-              onClick={handleAddTask}
-              disabled={!newTaskText.trim()}
-              className={styles.addButton}
-            >
-              <IonIcon icon={add} />
-            </IonButton>
-          </div>
-        </div>
-
-        {/* 过滤器 */}
-        <div className={styles.filterSection}>
-          <IonSelect
-            value={filter}
-            onIonChange={(e) => setFilter(e.detail.value)}
-            className={styles.filterSelect}
-          >
-            <IonSelectOption value="all">전체 보기</IonSelectOption>
-            <IonSelectOption value="pending">대기 중</IonSelectOption>
-            <IonSelectOption value="completed">완료됨</IonSelectOption>
-            <IonSelectOption value="high">높은 우선순위</IonSelectOption>
-            <IonSelectOption value="medium">보통 우선순위</IonSelectOption>
-            <IonSelectOption value="low">낮은 우선순위</IonSelectOption>
-          </IonSelect>
-        </div>
-
-        {/* 任务列表 */}
-        <div className={styles.tasksList}>
-          {filteredTasks.length === 0 ? (
-            <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>🌱</div>
-              <p className={styles.emptyText}>
-                {filter === 'all' ? '아직 할일이 없습니다' : '해당하는 할일이 없습니다'}
-              </p>
+    <IonPage>
+      <PageHeader title="나의 할일 花园" />
+      <IonContent>
+        <div className={styles.container}>
+          {/* 자연 배경 */}
+          <div className={styles.gardenBackground}>
+            
+            {/* 페이지 제목 */}
+            <div className={styles.pageHeader}>
+              <h1 className={styles.pageTitle}>나의 할일 花园</h1>
+              <p className={styles.pageSubtitle}>오늘도 아름다운 작업들을 가꾸어보세요</p>
             </div>
-          ) : (
-            filteredTasks.map((task) => (
-              <div
-                key={task.id}
-                className={`${styles.taskCard} ${task.completed ? styles.completed : ''}`}
+
+            {/* 통계 카드 */}
+            <div className={styles.statsContainer}>
+              <div className={styles.statCard}>
+                <div className={styles.statIcon}>🌱</div>
+                <div className={styles.statNumber}>{stats.total}</div>
+                <div className={styles.statLabel}>전체 작업</div>
+              </div>
+              <div className={styles.statCard}>
+                <div className={styles.statIcon}>🌸</div>
+                <div className={styles.statNumber}>{stats.completed}</div>
+                <div className={styles.statLabel}>완료된 작업</div>
+              </div>
+              <div className={styles.statCard}>
+                <div className={styles.statIcon}>🌿</div>
+                <div className={styles.statNumber}>{stats.pending}</div>
+                <div className={styles.statLabel}>대기 중</div>
+              </div>
+            </div>
+
+            {/* 필터 섹션 */}
+            <div className={styles.filterSection}>
+              <IonSelect
+                value={filter}
+                onIonChange={(e) => setFilter(e.detail.value)}
+                className={styles.filterSelect}
+                placeholder="작업 필터"
               >
-                <div className={styles.taskContent}>
-                  <IonCheckbox
-                    checked={task.completed}
-                    onIonChange={() => handleToggleTask(task.id)}
-                    className={styles.taskCheckbox}
+                <IonSelectOption value="all">🌺 전체 보기</IonSelectOption>
+                <IonSelectOption value="pending">🌱 대기 중</IonSelectOption>
+                <IonSelectOption value="completed">🌸 완료됨</IonSelectOption>
+                <IonSelectOption value="high">🌹 높은 우선순위</IonSelectOption>
+                <IonSelectOption value="medium">🌻 보통 우선순위</IonSelectOption>
+                <IonSelectOption value="low">🌿 낮은 우선순위</IonSelectOption>
+              </IonSelect>
+            </div>
+
+            {/* 할일 추가 폼 */}
+            {showAddForm && (
+              <div className={styles.addTaskForm}>
+                <div className={styles.formCard}>
+                  <div className={styles.formHeader}>
+                    <span className={styles.formIcon}>🌱</span>
+                    <span className={styles.formTitle}>새로운 작업 심기</span>
+                    <IonButton 
+                      fill="clear" 
+                      size="small"
+                      onClick={() => setShowAddForm(false)}
+                      className={styles.closeButton}
+                    >
+                      <IonIcon icon={close} />
+                    </IonButton>
+                  </div>
+                  
+                  <IonInput
+                    value={newTaskText}
+                    placeholder="새로운 花园 작업을 심어보세요..."
+                    onIonInput={(e) => setNewTaskText(e.detail.value ?? '')}
+                    className={styles.taskInput}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleAddTask();
+                      }
+                    }}
                   />
                   
-                  <div className={styles.taskInfo}>
-                    {editingTask === task.id ? (
-                      <div className={styles.editMode}>
-                        <IonInput
-                          value={editText}
-                          onIonInput={(e) => setEditText(e.detail.value)}
-                          className={styles.editInput}
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              saveEdit();
-                            } else if (e.key === 'Escape') {
-                              cancelEdit();
-                            }
-                          }}
-                        />
-                        <div className={styles.editActions}>
-                          <IonButton size="small" onClick={saveEdit}>
-                            <IonIcon icon={checkmark} />
-                          </IonButton>
-                          <IonButton size="small" fill="clear" onClick={cancelEdit}>
-                            취소
-                          </IonButton>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <div className={styles.taskText}>
-                          <span className={styles.priorityEmoji}>
-                            {getFlowerEmoji(task.priority)}
-                          </span>
-                          <span className={task.completed ? styles.completedText : ''}>
-                            {task.text}
-                          </span>
-                        </div>
-                        <div className={styles.taskMeta}>
-                          <span 
-                            className={styles.priorityBadge}
-                            style={{ backgroundColor: getPriorityColor(task.priority) }}
-                          >
-                            {task.priority === 'high' ? '높음' : 
-                             task.priority === 'medium' ? '보통' : '낮음'}
-                          </span>
-                          {task.completedAt && (
-                            <span className={styles.completedTime}>
-                              {new Date(task.completedAt).toLocaleDateString()}
-                            </span>
-                          )}
-                        </div>
-                      </>
-                    )}
+                  <IonSelect
+                    value={newTaskPriority}
+                    onIonChange={(e) => setNewTaskPriority(e.detail.value)}
+                    className={styles.prioritySelect}
+                    placeholder="우선순위 선택"
+                  >
+                    <IonSelectOption value="high">🌹 높음 - 빨간 장미</IonSelectOption>
+                    <IonSelectOption value="medium">🌻 보통 - 해바라기</IonSelectOption>
+                    <IonSelectOption value="low">🌿 낮음 - 잎사귀</IonSelectOption>
+                  </IonSelect>
+                  
+                  <div className={styles.formActions}>
+                    <IonButton
+                      onClick={handleAddTask}
+                      disabled={!newTaskText.trim()}
+                      className={styles.plantButton}
+                      expand="block"
+                    >
+                      <IonIcon icon={add} slot="start" />
+                      작업 심기
+                    </IonButton>
                   </div>
                 </div>
+              </div>
+            )}
 
-                <div className={styles.taskActions}>
-                  {editingTask !== task.id && (
-                    <>
-                      <IonButton
-                        fill="clear"
-                        size="small"
-                        onClick={() => startEditing(task)}
-                        className={styles.editButton}
-                      >
-                        <IonIcon icon={create} />
-                      </IonButton>
-                      <IonButton
-                        fill="clear"
-                        size="small"
-                        onClick={() => handleDeleteTask(task.id)}
-                        className={styles.deleteButton}
-                      >
-                        <IonIcon icon={trash} />
-                      </IonButton>
-                    </>
+            {/* 할일 목록 */}
+            <div className={styles.tasksList}>
+              {filteredTasks.length === 0 ? (
+                <div className={styles.emptyState}>
+                  <div className={styles.emptyIcon}>🌱</div>
+                  <h3 className={styles.emptyTitle}>아직 심어진 작업이 없어요</h3>
+                  <p className={styles.emptyText}>
+                    {filter === 'all' 
+                      ? '첫 번째 씨앗을 심어보세요!' 
+                      : '해당하는 작업이 없습니다'}
+                  </p>
+                  {filter === 'all' && (
+                    <IonButton 
+                      onClick={() => setShowAddForm(true)}
+                      className={styles.emptyActionButton}
+                    >
+                      <IonIcon icon={add} slot="start" />
+                      첫 작업 심기
+                    </IonButton>
                   )}
                 </div>
-              </div>
-            ))
+              ) : (
+                filteredTasks.map((task) => (
+                  <div
+                    key={task.id}
+                    className={`${styles.taskCard} ${task.completed ? styles.completed : ''} ${completedTasks.has(task.id) ? styles.completing : ''} ${removingTasks.has(task.id) ? styles.removing : ''}`}
+                  >
+                    <div 
+                      className={styles.priorityBorder}
+                      style={{ borderColor: getPriorityBorderColor(task.priority) }}
+                    />
+                    
+                    <div className={styles.taskContent}>
+                      <div className={styles.taskLeft}>
+                        <IonCheckbox
+                          checked={task.completed}
+                          onIonChange={() => handleToggleTask(task.id)}
+                          className={styles.taskCheckbox}
+                        />
+                        
+                        <div className={styles.priorityIcon}>
+                          {getPriorityIcon(task.priority)}
+                        </div>
+                      </div>
+                      
+                      <div className={styles.taskInfo}>
+                        {editingTask === task.id ? (
+                          <div className={styles.editMode}>
+                            <IonInput
+                              value={editText}
+                              onIonInput={(e) => setEditText(e.detail.value ?? '')}
+                              className={styles.editInput}
+                              onKeyPress={(e) => {
+                                if (e.key === 'Enter') {
+                                  saveEdit();
+                                } else if (e.key === 'Escape') {
+                                  cancelEdit();
+                                }
+                              }}
+                            />
+                            <div className={styles.editActions}>
+                              <IonButton size="small" onClick={saveEdit} className={styles.saveButton}>
+                                <IonIcon icon={checkmark} />
+                              </IonButton>
+                              <IonButton size="small" fill="clear" onClick={cancelEdit} className={styles.cancelButton}>
+                                <IonIcon icon={close} />
+                              </IonButton>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className={`${styles.taskText} ${task.completed ? styles.completedText : ''}`}>
+                              {task.text}
+                            </div>
+                            <div className={styles.taskMeta}>
+                              <span className={styles.priorityLabel}>
+                                {task.priority === 'high' ? '높음' : 
+                                 task.priority === 'medium' ? '보통' : '낮음'}
+                              </span>
+                              {task.completedAt && (
+                                <span className={styles.completedTime}>
+                                  {new Date(task.completedAt).toLocaleDateString('ko-KR')}
+                                </span>
+                              )}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      
+                      <div className={styles.taskActions}>
+                        {editingTask !== task.id && (
+                          <>
+                            <IonButton
+                              fill="clear"
+                              size="small"
+                              onClick={() => startEditing(task)}
+                              className={styles.editButton}
+                            >
+                              <IonIcon icon={create} />
+                            </IonButton>
+                            <IonButton
+                              fill="clear"
+                              size="small"
+                              onClick={() => handleDeleteTask(task.id)}
+                              className={styles.deleteButton}
+                            >
+                              <IonIcon icon={trash} />
+                            </IonButton>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 완료 애니메이션 */}
+                    {completedTasks.has(task.id) && (
+                      <div className={styles.completionAnimation}>
+                        <span className={styles.growthAnimation}>🌱→🌸</span>
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* 장식용 꽃들 */}
+            <div className={styles.decorativeElements}>
+              {Array.from({ length: Math.min(stats.completed, 8) }, (_, i) => (
+                <span 
+                  key={i} 
+                  className={styles.decorativeFlower}
+                  style={{
+                    left: `${5 + (i % 4) * 22}%`,
+                    bottom: `${2 + Math.floor(i / 4) * 8}%`,
+                    animationDelay: `${i * 0.5}s`
+                  }}
+                >
+                  {i % 3 === 0 ? '🌺' : i % 3 === 1 ? '🌸' : '🌼'}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* 플로팅 추가 버튼 */}
+          {!showAddForm && (
+            <IonFab vertical="bottom" horizontal="end" slot="fixed">
+              <IonFabButton 
+                onClick={() => setShowAddForm(true)}
+                className={styles.fabButton}
+              >
+                🌱
+              </IonFabButton>
+            </IonFab>
           )}
         </div>
-
-        {/* 装饰性花园元素 */}
-        <div className={styles.gardenElements}>
-          <div className={styles.decorativeFlowers}>
-            {Array.from({ length: Math.min(stats.completed, 6) }, (_, i) => (
-              <span 
-                key={i} 
-                className={styles.decorativeFlower}
-                style={{
-                  left: `${10 + (i % 3) * 30}%`,
-                  bottom: `${5 + Math.floor(i / 3) * 10}%`,
-                  animationDelay: `${i * 0.3}s`
-                }}
-              >
-                🌺
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
+      </IonContent>
+    </IonPage>
   );
 }

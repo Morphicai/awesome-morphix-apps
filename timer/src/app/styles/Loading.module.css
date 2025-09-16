@@ -21,8 +21,8 @@
   padding: 2rem;
   background: linear-gradient(135deg, #f0f8f0 0%, #e8f5e8 100%);
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(74, 124, 89, 0.1);
-  border: 1px solid rgba(74, 124, 89, 0.1);
+  box-shadow: 0 10px 30px rgba(46, 125, 50, 0.1);
+  border: 1px solid rgba(46, 125, 50, 0.1);
   backdrop-filter: blur(10px);
   min-width: 200px;
   text-align: center;
@@ -67,7 +67,7 @@
 }
 
 .message {
-  color: #4A7C59;
+  color: #2E7D32;
   font-size: 1rem;
   font-weight: 500;
   margin: 0;
@@ -148,21 +148,5 @@
       opacity: 1;
       scale: 1;
     }
-  }
-}
-
-/* 暗色模式支持 */
-@media (prefers-color-scheme: dark) {
-  .overlay {
-    background: rgba(0, 0, 0, 0.85);
-  }
-  
-  .container {
-    background: linear-gradient(135deg, #1a2e1a 0%, #0f1f0f 100%);
-    border: 1px solid rgba(74, 124, 89, 0.3);
-  }
-  
-  .message {
-    color: #90c695;
   }
 }

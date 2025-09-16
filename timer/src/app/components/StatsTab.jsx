@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IonSegment, IonSegmentButton, IonLabel } from '@ionic/react';
+import { IonSegment, IonSegmentButton, IonLabel, IonContent } from '@ionic/react';
 import { useTimerStore } from '../stores/timerStore';
 import { useTaskStore } from '../stores/taskStore';
 import styles from '../styles/StatsTab.module.css';
@@ -52,33 +52,33 @@ export default function StatsTab() {
         return {
           pomodoros: timerStats.todayPomodoros,
           focusTime: timerStats.todayFocusTime,
-          label: '오늘'
+          label: '오늘의 정원'
         };
       case 'week':
         const weekStats = getWeeklyStats();
         return {
           pomodoros: weekStats.pomodoros,
           focusTime: weekStats.focusTime,
-          label: '이번 주'
+          label: '이번주 정원 성장'
         };
       case 'month':
         const monthStats = getMonthlyStats();
         return {
           pomodoros: monthStats.pomodoros,
           focusTime: monthStats.focusTime,
-          label: '이번 달'
+          label: '이번달 꽃밭'
         };
       case 'total':
         return {
           pomodoros: timerStats.totalPomodoros,
           focusTime: timerStats.totalFocusTime,
-          label: '전체'
+          label: '전체 정원 현황'
         };
       default:
         return {
           pomodoros: 0,
           focusTime: 0,
-          label: '오늘'
+          label: '오늘의 정원'
         };
     }
   };
@@ -102,10 +102,10 @@ export default function StatsTab() {
     }, {});
 
     const plantTypes = [
-      { type: 'seedling', emoji: '🌱', name: '새싹' },
-      { type: 'flower', emoji: '🌿', name: '잎사귀' },
-      { type: 'fruit', emoji: '🌸', name: '꽃' },
-      { type: 'tree', emoji: '🌳', name: '나무' }
+      { type: 'seedling', emoji: '🌱', name: '심은 새싹' },
+      { type: 'flower', emoji: '🌿', name: '자란 잎사귀' },
+      { type: 'fruit', emoji: '🌸', name: '핀 꽃' },
+      { type: 'tree', emoji: '🌳', name: '자란 나무' }
     ];
 
     return plantTypes.map(plant => ({
@@ -135,7 +135,7 @@ export default function StatsTab() {
       days.push({
         date: date.toLocaleDateString('ko-KR', { weekday: 'short' }),
         pomodoros: dayPlants.length,
-        focusTime: dayPlants.length * 25
+        focusTime: dayPlants.length * 25 * 60
       });
     }
     
@@ -146,142 +146,173 @@ export default function StatsTab() {
   const maxDailyPomodoros = Math.max(...dailyPattern.map(d => d.pomodoros), 1);
 
   return (
-    <div className={styles.container}>
-      {/* Period Selector */}
-      <div className="garden-card">
-        <IonSegment 
-          value={selectedPeriod} 
-          onIonChange={(e) => setSelectedPeriod(e.detail.value)}
-          className={styles.periodSelector}
-        >
-          <IonSegmentButton value="today">
-            <IonLabel>오늘</IonLabel>
-          </IonSegmentButton>
-          <IonSegmentButton value="week">
-            <IonLabel>주간</IonLabel>
-          </IonSegmentButton>
-          <IonSegmentButton value="month">
-            <IonLabel>월간</IonLabel>
-          </IonSegmentButton>
-          <IonSegmentButton value="total">
-            <IonLabel>전체</IonLabel>
-          </IonSegmentButton>
-        </IonSegment>
-      </div>
-
-      {/* Main Stats */}
-      <div className="garden-card">
-        <h3 className="gradient-text">{currentStats.label} 통계</h3>
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-number">{currentStats.pomodoros}</div>
-            <div className="stat-label">완료한 뽀모도로</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">{formatTime(currentStats.focusTime)}</div>
-            <div className="stat-label">집중한 시간</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">{taskStats.completed}</div>
-            <div className="stat-label">완료한 할일</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">{taskStats.completionRate}%</div>
-            <div className="stat-label">할일 완료율</div>
-          </div>
+    <IonContent style={{ '--background': '#FFFFFF' }}>
+      <div className={styles.container}>
+        {/* Period Selector */}
+        <div className={styles.gardenCard}>
+          <h3 className={styles.cardTitle}>🌺 기간 선택</h3>
+          <IonSegment 
+            value={selectedPeriod} 
+            onIonChange={(e) => setSelectedPeriod(e.detail.value)}
+            className={styles.periodSelector}
+          >
+            <IonSegmentButton value="today">
+              <IonLabel>오늘</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="week">
+              <IonLabel>주간</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="month">
+              <IonLabel>월간</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="total">
+              <IonLabel>전체</IonLabel>
+            </IonSegmentButton>
+          </IonSegment>
         </div>
-      </div>
 
-      {/* Daily Pattern */}
-      <div className="garden-card">
-        <h3 className="gradient-text">최근 7일 집중 패턴</h3>
-        <div className={styles.dailyChart}>
-          {dailyPattern.map((day, index) => (
-            <div key={index} className={styles.dayColumn}>
-              <div className={styles.dayBar}>
-                <div 
-                  className={styles.dayBarFill}
-                  style={{ 
-                    height: `${(day.pomodoros / maxDailyPomodoros) * 100}%` 
-                  }}
-                />
-              </div>
-              <div className={styles.dayLabel}>{day.date}</div>
-              <div className={styles.dayValue}>{day.pomodoros}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Plant Collection */}
-      <div className="garden-card">
-        <h3 className="gradient-text">식물 컬렉션</h3>
-        <div className={styles.plantCollection}>
-          {plantTypeStats.map((plant) => (
-            <div key={plant.type} className={styles.plantStat}>
-              <div className={styles.plantEmoji}>{plant.emoji}</div>
-              <div className={styles.plantInfo}>
-                <div className={styles.plantName}>{plant.name}</div>
-                <div className={styles.plantCount}>{plant.count}개</div>
-              </div>
-              <div className={styles.plantProgress}>
-                <div 
-                  className="garden-progress-fill"
-                  style={{ 
-                    width: `${plants.length > 0 ? (plant.count / plants.length) * 100 : 0}%` 
-                  }}
-                />
+        {/* Main Stats */}
+        <div className={styles.gardenCard}>
+          <h3 className={styles.cardTitle}>🌻 {currentStats.label} 현황</h3>
+          <div className={styles.statsGrid}>
+            <div className={styles.statCard}>
+              <div className={styles.statIcon}>🌱</div>
+              <div className={styles.statContent}>
+                <div className={styles.statNumber}>{currentStats.pomodoros}</div>
+                <div className={styles.statLabel}>심은 씨앗</div>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Achievement Summary */}
-      <div className="garden-card">
-        <h3 className="gradient-text">성취 요약</h3>
-        <div className={styles.achievements}>
-          <div className={styles.achievement}>
-            <span className={styles.achievementIcon}>🏆</span>
-            <div className={styles.achievementText}>
-              <div className={styles.achievementTitle}>총 집중 시간</div>
-              <div className={styles.achievementValue}>
-                {formatTime(timerStats.totalFocusTime)}
+            <div className={styles.statCard}>
+              <div className={styles.statIcon}>⏰</div>
+              <div className={styles.statContent}>
+                <div className={styles.statNumber}>{formatTime(currentStats.focusTime)}</div>
+                <div className={styles.statLabel}>집중한 시간</div>
               </div>
             </div>
-          </div>
-          
-          <div className={styles.achievement}>
-            <span className={styles.achievementIcon}>🌱</span>
-            <div className={styles.achievementText}>
-              <div className={styles.achievementTitle}>키운 식물</div>
-              <div className={styles.achievementValue}>
-                {plants.length}개
+            <div className={styles.statCard}>
+              <div className={styles.statIcon}>✅</div>
+              <div className={styles.statContent}>
+                <div className={styles.statNumber}>{taskStats.completed}</div>
+                <div className={styles.statLabel}>완료한 할일</div>
               </div>
             </div>
-          </div>
-          
-          <div className={styles.achievement}>
-            <span className={styles.achievementIcon}>✅</span>
-            <div className={styles.achievementText}>
-              <div className={styles.achievementTitle}>완료한 할일</div>
-              <div className={styles.achievementValue}>
-                {taskStats.completed}개
-              </div>
-            </div>
-          </div>
-          
-          <div className={styles.achievement}>
-            <span className={styles.achievementIcon}>📈</span>
-            <div className={styles.achievementText}>
-              <div className={styles.achievementTitle}>평균 완료율</div>
-              <div className={styles.achievementValue}>
-                {taskStats.completionRate}%
+            <div className={styles.statCard}>
+              <div className={styles.statIcon}>📈</div>
+              <div className={styles.statContent}>
+                <div className={styles.statNumber}>{taskStats.completionRate}%</div>
+                <div className={styles.statLabel}>할일 완료율</div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Daily Pattern */}
+        <div className={styles.gardenCard}>
+          <h3 className={styles.cardTitle}>🌿 최근 7일 정원 성장 기록</h3>
+          <div className={styles.dailyChart}>
+            {dailyPattern.map((day, index) => (
+              <div key={index} className={styles.dayColumn}>
+                <div className={styles.dayBar}>
+                  <div 
+                    className={styles.dayBarFill}
+                    style={{ 
+                      height: `${(day.pomodoros / maxDailyPomodoros) * 100}%` 
+                    }}
+                  />
+                </div>
+                <div className={styles.dayLabel}>{day.date}</div>
+                <div className={styles.dayValue}>
+                  {day.pomodoros > 0 ? '🌸' : '🌱'} {day.pomodoros}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Plant Collection */}
+        <div className={styles.gardenCard}>
+          <h3 className={styles.cardTitle}>🌺 나의 식물 컬렉션</h3>
+          <div className={styles.plantCollection}>
+            {plantTypeStats.map((plant) => (
+              <div key={plant.type} className={styles.plantStat}>
+                <div className={styles.plantEmoji}>{plant.emoji}</div>
+                <div className={styles.plantInfo}>
+                  <div className={styles.plantName}>{plant.name}</div>
+                  <div className={styles.plantCount}>{plant.count}개</div>
+                </div>
+                <div className={styles.plantProgress}>
+                  <div 
+                    className={styles.plantProgressFill}
+                    style={{ 
+                      width: `${plants.length > 0 ? (plant.count / plants.length) * 100 : 0}%` 
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Achievement Summary */}
+        <div className={styles.gardenCard}>
+          <h3 className={styles.cardTitle}>🏆 정원 성취 요약</h3>
+          <div className={styles.achievements}>
+            <div className={styles.achievement}>
+              <span className={styles.achievementIcon}>🌻</span>
+              <div className={styles.achievementText}>
+                <div className={styles.achievementTitle}>총 집중 시간</div>
+                <div className={styles.achievementValue}>
+                  {formatTime(timerStats.totalFocusTime)}
+                </div>
+              </div>
+            </div>
+            
+            <div className={styles.achievement}>
+              <span className={styles.achievementIcon}>🌱</span>
+              <div className={styles.achievementText}>
+                <div className={styles.achievementTitle}>키운 식물</div>
+                <div className={styles.achievementValue}>
+                  {plants.length}개
+                </div>
+              </div>
+            </div>
+            
+            <div className={styles.achievement}>
+              <span className={styles.achievementIcon}>🌸</span>
+              <div className={styles.achievementText}>
+                <div className={styles.achievementTitle}>완료한 할일</div>
+                <div className={styles.achievementValue}>
+                  {taskStats.completed}개
+                </div>
+              </div>
+            </div>
+            
+            <div className={styles.achievement}>
+              <span className={styles.achievementIcon}>🦋</span>
+              <div className={styles.achievementText}>
+                <div className={styles.achievementTitle}>평균 완료율</div>
+                <div className={styles.achievementValue}>
+                  {taskStats.completionRate}%
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Empty State */}
+        {plants.length === 0 && (
+          <div className={styles.gardenCard}>
+            <div className={styles.emptyState}>
+              <div className={styles.emptyIcon}>🌱</div>
+              <h3 className={styles.emptyTitle}>아직 심어진 씨앗이 없어요</h3>
+              <p className={styles.emptyMessage}>
+                타이머를 시작해서 첫 번째 씨앗을 심어보세요!<br/>
+                집중할 때마다 아름다운 정원이 자라날 거예요.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </IonContent>
   );
 }

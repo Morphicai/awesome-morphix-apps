@@ -1,401 +1,415 @@
 import { create } from 'zustand';
 import AppSdk from '@morphixai/app-sdk';
 import { reportError } from '@morphixai/lib';
-
-const POMODORO_TIME = 25 * 60; // 25 minutes in seconds
-const SHORT_BREAK_TIME = 5 * 60; // 5 minutes in seconds
-const LONG_BREAK_TIME = 15 * 60; // 15 minutes in seconds
+import { 
+  debugReminder, 
+  cleanupTimerRemindersSafely, 
+  createReminderSafely, 
+  deleteReminderSafely,
+  handleReminderError 
+} from '../utils/errorHandlers';
 
 export const useTimerStore = create((set, get) => ({
-  // Timer state
-  duration: POMODORO_TIME,
-  shortBreak: SHORT_BREAK_TIME,
-  longBreak: LONG_BREAK_TIME,
-  cycles: 4,
-  currentCycle: 1,
   isRunning: false,
-  remainingTime: POMODORO_TIME,
-  mode: 'focus', // 'focus', 'shortBreak', 'longBreak'
-  timeLeft: POMODORO_TIME,
+  mode: 'focus',
+  remainingTime: 25 * 60,
+  duration: 25 * 60,
+  shortBreak: 5 * 60,
+  longBreak: 15 * 60,
+  currentSession: 1,
+  totalSessions: 4,
+  plants: [],
   completedPomodoros: 0,
   totalFocusTime: 0,
-  plants: [],
-  isBreak: false,
-  currentSession: 'focus',
-
-  // Timer actions
-  startTimer: () => {
-    set({ isRunning: true });
-    get().saveTimerData();
-  },
-
-  pauseTimer: () => {
-    set({ isRunning: false });
-    get().saveTimerData();
-  },
-
-  resetTimer: () => {
-    const { mode, duration, shortBreak, longBreak } = get();
-    let newTime;
-    
-    switch (mode) {
-      case 'shortBreak':
-        newTime = shortBreak;
-        break;
-      case 'longBreak':
-        newTime = longBreak;
-        break;
-      default:
-        newTime = duration;
-    }
-    
-    set({ 
-      isRunning: false, 
-      remainingTime: newTime,
-      timeLeft: newTime
-    });
-    get().saveTimerData();
-  },
-
-  tick: () => {
-    const { remainingTime, isRunning } = get();
-    if (isRunning && remainingTime > 0) {
-      const newTime = remainingTime - 1;
-      set({ 
-        remainingTime: newTime,
-        timeLeft: newTime
-      });
-      
-      if (newTime === 0) {
-        get().completeSession();
-      }
-    }
-  },
-
-  completeSession: () => {
-    const { mode, currentCycle, cycles, shortBreak, longBreak, duration, completedPomodoros, totalFocusTime } = get();
-    
-    if (mode === 'focus') {
-      const newCompletedPomodoros = completedPomodoros + 1;
-      const newTotalFocusTime = totalFocusTime + duration;
-      
-      // Add a new plant for completed pomodoro
-      const newPlant = {
-        id: Date.now(),
-        type: 'flower',
-        completedAt: Date.now(),
-        cycle: currentCycle
-      };
-      
-      const { plants } = get();
-      const newPlants = [...plants, newPlant];
-      
-      if (currentCycle >= cycles) {
-        // Long break after completing all cycles
-        set({
-          mode: 'longBreak',
-          remainingTime: longBreak,
-          timeLeft: longBreak,
-          currentCycle: 1,
-          isRunning: false,
-          isBreak: true,
-          currentSession: 'break',
-          completedPomodoros: newCompletedPomodoros,
-          totalFocusTime: newTotalFocusTime,
-          plants: newPlants
-        });
-      } else {
-        // Short break
-        set({
-          mode: 'shortBreak',
-          remainingTime: shortBreak,
-          timeLeft: shortBreak,
-          currentCycle: currentCycle + 1,
-          isRunning: false,
-          isBreak: true,
-          currentSession: 'break',
-          completedPomodoros: newCompletedPomodoros,
-          totalFocusTime: newTotalFocusTime,
-          plants: newPlants
-        });
-      }
-    } else {
-      // Break completed, return to focus
-      set({
-        mode: 'focus',
-        remainingTime: duration,
-        timeLeft: duration,
-        isRunning: false,
-        isBreak: false,
-        currentSession: 'focus'
-      });
-    }
-    
-    get().saveTimerData();
-  },
-
-  updateSettings: (newSettings) => {
-    const { mode } = get();
-    const updates = { ...newSettings };
-    
-    // Update remaining time if we're in the corresponding mode
-    if (mode === 'focus' && newSettings.duration) {
-      updates.remainingTime = newSettings.duration;
-      updates.timeLeft = newSettings.duration;
-    } else if (mode === 'shortBreak' && newSettings.shortBreak) {
-      updates.remainingTime = newSettings.shortBreak;
-      updates.timeLeft = newSettings.shortBreak;
-    } else if (mode === 'longBreak' && newSettings.longBreak) {
-      updates.remainingTime = newSettings.longBreak;
-      updates.timeLeft = newSettings.longBreak;
-    }
-    
-    set(updates);
-    get().saveTimerData();
-  },
-
-  // Initialize timer from saved data
+  currentReminderId: null,
+  
   initializeTimer: async () => {
     try {
-      console.log('Initializing timer store...');
+      console.log('Initializing timer...');
+      const timerData = await AppSdk.appData.getData({
+        collection: 'timer',
+        id: 'current'
+      });
       
-      // 先检查数据是否存在
-      let savedData;
-      try {
-        savedData = await AppSdk.appData.getData({
-          collection: 'timer',
-          id: 'current'
+      if (timerData) {
+        console.log('Found existing timer data:', timerData);
+        set({
+          isRunning: timerData.isRunning || false,
+          mode: timerData.mode || 'focus',
+          remainingTime: timerData.remainingTime || 25 * 60,
+          duration: timerData.duration || 25 * 60,
+          shortBreak: timerData.shortBreak || 5 * 60,
+          longBreak: timerData.longBreak || 15 * 60,
+          currentSession: timerData.currentCycle || 1,
+          totalSessions: timerData.cycles || 4,
+          completedPomodoros: timerData.completedPomodoros || 0,
+          totalFocusTime: timerData.totalFocusTime || 0,
+          plants: timerData.plants || []
         });
-        if (!savedData) {
-          console.log('Timer data is null, will create default data');
-        }
-      } catch (error) {
-        console.log('Timer data not found, will create default data');
-        savedData = null;
       }
       
-      // If data exists, update store with saved data
-      if (savedData) {
-        const isBreak = savedData.mode !== 'focus';
-        
+      const statsData = await AppSdk.appData.getData({
+        collection: 'stats',
+        id: 'history'
+      });
+      
+      if (statsData) {
+        console.log('Found existing stats data:', statsData);
         set({
-          duration: savedData.duration || POMODORO_TIME,
-          shortBreak: savedData.shortBreak || SHORT_BREAK_TIME,
-          longBreak: savedData.longBreak || LONG_BREAK_TIME,
-          cycles: savedData.cycles || 4,
-          currentCycle: savedData.currentCycle || 1,
-          remainingTime: savedData.remainingTime || POMODORO_TIME,
-          mode: savedData.mode || 'focus',
-          timeLeft: savedData.remainingTime || POMODORO_TIME,
-          completedPomodoros: savedData.completedPomodoros || 0,
-          totalFocusTime: savedData.totalFocusTime || 0,
-          plants: savedData.plants || [],
-          isBreak: isBreak,
-          currentSession: isBreak ? 'break' : 'focus',
-          isRunning: false // Always start with timer stopped
+          completedPomodoros: statsData.completedPomodoros || get().completedPomodoros,
+          totalFocusTime: statsData.totalFocusTime || get().totalFocusTime
         });
-        
-        console.log('Timer initialized from saved data:', savedData);
+      }
+      
+      console.log('Timer initialization completed');
+    } catch (error) {
+      console.error('Failed to initialize timer:', error);
+      await reportError(error, 'TimerInitError');
+    }
+  },
+  
+  tick: async () => {
+    const { remainingTime, isRunning } = get();
+    
+    if (!isRunning || remainingTime <= 0) {
+      return;
+    }
+    
+    const newRemainingTime = remainingTime - 1;
+    
+    if (newRemainingTime <= 0) {
+      await get().completeSession();
+    } else {
+      set({ remainingTime: newRemainingTime });
+      
+      if (newRemainingTime % 10 === 0) {
+        await get().saveTimerState();
+      }
+    }
+  },
+  
+  restoreTimer: async () => {
+    try {
+      const { currentReminderId, isRunning } = get();
+      
+      if (!isRunning || !currentReminderId) {
         return;
       }
       
-      // If no data exists, create default data
-      const defaultData = {
-        duration: POMODORO_TIME,
-        shortBreak: SHORT_BREAK_TIME,
-        longBreak: LONG_BREAK_TIME,
-        cycles: 4,
-        currentCycle: 1,
-        isRunning: false,
-        remainingTime: POMODORO_TIME,
-        mode: 'focus',
-        completedPomodoros: 0,
-        totalFocusTime: 0,
-        plants: [],
-        lastUpdated: Date.now()
-      };
+      console.log('Restoring timer from background...');
       
-      let createdData;
-      try {
-        createdData = await AppSdk.appData.createData({
-          collection: 'timer',
-          data: { id: 'current', ...defaultData }
-        });
-      } catch (createError) {
-        console.error('Failed to create timer data, using memory defaults:', createError);
-        // Use default data in memory if creation fails
-        createdData = { id: 'current', ...defaultData };
+      const reminder = await AppSdk.reminder.getReminder({ id: currentReminderId });
+      
+      if (!reminder) {
+        console.log('Reminder not found, timer may have completed');
+        await get().completeSession();
+        return;
       }
       
-      // Update store with created data
-      set({
-        duration: defaultData.duration,
-        shortBreak: defaultData.shortBreak,
-        longBreak: defaultData.longBreak,
-        cycles: defaultData.cycles,
-        currentCycle: defaultData.currentCycle,
-        remainingTime: defaultData.remainingTime,
-        mode: defaultData.mode,
-        timeLeft: defaultData.remainingTime,
-        completedPomodoros: defaultData.completedPomodoros,
-        totalFocusTime: defaultData.totalFocusTime,
-        plants: defaultData.plants,
-        isBreak: false,
-        currentSession: 'focus',
-        isRunning: false
-      });
+      const now = Date.now();
+      const reminderTime = reminder.start_time;
+      const timeLeft = Math.max(0, Math.floor((reminderTime - now) / 1000));
       
-      console.log('Created and initialized default timer data:', createdData);
+      console.log(`Timer restored: ${timeLeft} seconds remaining`);
       
-    } catch (error) {
-      console.error('Error initializing timer:', error);
-      await reportError(error, 'JavaScriptError', { component: 'TimerStore' });
-      
-      // Set default values in memory as fallback
-      set({
-        duration: POMODORO_TIME,
-        shortBreak: SHORT_BREAK_TIME,
-        longBreak: LONG_BREAK_TIME,
-        cycles: 4,
-        currentCycle: 1,
-        remainingTime: POMODORO_TIME,
-        mode: 'focus',
-        timeLeft: POMODORO_TIME,
-        completedPomodoros: 0,
-        totalFocusTime: 0,
-        plants: [],
-        isBreak: false,
-        currentSession: 'focus',
-        isRunning: false
-      });
-      
-      console.log('Timer initialized with fallback defaults');
-    }
-  },
-
-  // Save timer data with enhanced error handling
-  saveTimerData: async () => {
-    try {
-      const { 
-        duration, shortBreak, longBreak, cycles, currentCycle, 
-        remainingTime, mode, completedPomodoros, totalFocusTime, plants 
-      } = get();
-      
-      const dataToSave = {
-        duration,
-        shortBreak,
-        longBreak,
-        cycles,
-        currentCycle,
-        isRunning: false, // Always save as stopped
-        remainingTime,
-        mode,
-        completedPomodoros,
-        totalFocusTime,
-        plants,
-        lastUpdated: Date.now()
-      };
-      
-      // 先检查数据是否存在
-      let existingData;
-      try {
-        existingData = await AppSdk.appData.getData({
-          collection: 'timer',
-          id: 'current'
-        });
-        if (!existingData) {
-          console.log('Timer data is null, will create new');
-        }
-      } catch (error) {
-        console.log('No existing timer data found, will create new');
-        existingData = null;
-      }
-      
-      if (existingData) {
-        // 数据存在，更新
-        await AppSdk.appData.updateData({
-          collection: 'timer',
-          id: 'current',
-          data: dataToSave
-        });
-        console.log('Timer data updated successfully');
+      if (timeLeft <= 0) {
+        await get().completeSession();
       } else {
-        // 数据不存在，创建
-        await AppSdk.appData.createData({
-          collection: 'timer',
-          data: { id: 'current', ...dataToSave }
-        });
-        console.log('Timer data created successfully');
+        set({ remainingTime: timeLeft });
+        await get().saveTimerState();
       }
       
     } catch (error) {
-      console.error('Error saving timer data:', error);
-      await reportError(error, 'JavaScriptError', { component: 'TimerStore' });
+      console.error('Failed to restore timer:', error);
+      await reportError(error, 'TimerRestoreError');
     }
   },
-
-  // Get timer data safely with existence check
-  getTimerData: async () => {
+  
+  saveTimerState: async () => {
     try {
-      // 先检查数据是否存在
-      let timerData;
-      try {
-        timerData = await AppSdk.appData.getData({
-          collection: 'timer',
-          id: 'current'
-        });
-        if (!timerData) {
-          console.log('Timer data is null, creating default data');
+      const state = get();
+      
+      await AppSdk.appData.updateData({
+        collection: 'timer',
+        id: 'current',
+        data: {
+          isRunning: state.isRunning,
+          mode: state.mode,
+          remainingTime: state.remainingTime,
+          duration: state.duration,
+          shortBreak: state.shortBreak,
+          longBreak: state.longBreak,
+          currentCycle: state.currentSession,
+          cycles: state.totalSessions,
+          completedPomodoros: state.completedPomodoros,
+          totalFocusTime: state.totalFocusTime,
+          plants: state.plants,
+          lastUpdated: Date.now()
         }
-      } catch (error) {
-        console.log('Error getting timer data, creating default data');
-        timerData = null;
+      });
+      
+    } catch (error) {
+      console.error('Failed to save timer state:', error);
+    }
+  },
+  
+  startTimer: async () => {
+    try {
+      const { remainingTime, mode } = get();
+      
+      const reminderResult = await createReminderSafely({
+        message: mode === 'focus' ? '집중 시간이 끝났습니다!' : '휴식 시간이 끝났습니다!',
+        start_time: Date.now() + (remainingTime * 1000),
+        title: '자연 정원 뽀모도로',
+        sub_title: mode === 'focus' ? '휴식을 취하세요' : '다시 집중할 시간입니다'
+      });
+      
+      if (reminderResult.success) {
+        set({ 
+          isRunning: true, 
+          currentReminderId: reminderResult.reminder.id 
+        });
+        
+        await get().saveTimerState();
+      } else {
+        throw new Error(reminderResult.error || '리마인더 생성에 실패했습니다.');
       }
       
-      if (!timerData) {
-        // 如果不存在，创建默认数据
-        const defaultData = {
-          duration: POMODORO_TIME,
-          shortBreak: SHORT_BREAK_TIME,
-          longBreak: LONG_BREAK_TIME,
-          cycles: 4,
-          currentCycle: 1,
-          isRunning: false,
-          remainingTime: POMODORO_TIME,
-          mode: 'focus',
-          completedPomodoros: 0,
-          totalFocusTime: 0,
-          plants: [],
-          lastUpdated: Date.now()
+    } catch (error) {
+      console.error('Failed to start timer:', error);
+      await reportError(error, 'TimerStartError');
+      await handleReminderError(error, 'startTimer');
+    }
+  },
+  
+  pauseTimer: async () => {
+    try {
+      const { currentReminderId } = get();
+      
+      if (currentReminderId) {
+        const deleteResult = await deleteReminderSafely(currentReminderId);
+        if (!deleteResult.success) {
+          console.warn('리마인더 삭제 실패:', deleteResult.error);
+        }
+      }
+      
+      set({ 
+        isRunning: false, 
+        currentReminderId: null 
+      });
+      
+      await get().saveTimerState();
+      
+    } catch (error) {
+      console.error('Failed to pause timer:', error);
+      await reportError(error, 'TimerPauseError');
+      await handleReminderError(error, 'pauseTimer');
+    }
+  },
+  
+  resetTimer: async () => {
+    try {
+      const { currentReminderId, mode, duration, shortBreak, longBreak } = get();
+      
+      if (currentReminderId) {
+        const deleteResult = await deleteReminderSafely(currentReminderId);
+        if (!deleteResult.success) {
+          console.warn('리마인더 삭제 실패:', deleteResult.error);
+        }
+      }
+      
+      let newDuration;
+      switch (mode) {
+        case 'focus':
+          newDuration = duration;
+          break;
+        case 'shortBreak':
+          newDuration = shortBreak;
+          break;
+        case 'longBreak':
+          newDuration = longBreak;
+          break;
+        default:
+          newDuration = duration;
+      }
+      
+      set({ 
+        isRunning: false, 
+        remainingTime: newDuration,
+        currentReminderId: null 
+      });
+      
+      await get().saveTimerState();
+      
+    } catch (error) {
+      console.error('Failed to reset timer:', error);
+      await reportError(error, 'TimerResetError');
+      await handleReminderError(error, 'resetTimer');
+    }
+  },
+  
+  completeSession: async () => {
+    try {
+      const { mode, currentSession, totalSessions, plants, completedPomodoros, totalFocusTime } = get();
+      
+      if (mode === 'focus') {
+        const newPlant = {
+          id: Date.now(),
+          type: 'tree',
+          completedAt: Date.now(),
+          session: currentSession
         };
         
-        timerData = await AppSdk.appData.createData({
-          collection: 'timer',
-          data: { id: 'current', ...defaultData }
+        const updatedPlants = [...plants, newPlant];
+        const newCompletedPomodoros = completedPomodoros + 1;
+        const newTotalFocusTime = totalFocusTime + (25 * 60);
+        
+        set({
+          plants: updatedPlants,
+          completedPomodoros: newCompletedPomodoros,
+          totalFocusTime: newTotalFocusTime
         });
+        
+        try {
+          await AppSdk.appData.createData({
+            collection: 'plants',
+            data: newPlant
+          });
+          
+          await AppSdk.appData.updateData({
+            collection: 'stats',
+            id: 'history',
+            data: {
+              completedPomodoros: newCompletedPomodoros,
+              totalFocusTime: newTotalFocusTime
+            }
+          });
+        } catch (storageError) {
+          console.error('Failed to save plant data:', storageError);
+        }
       }
-      return timerData;
-    } catch (error) {
-      console.error('获取计时器数据失败:', error);
-      await reportError(error, 'JavaScriptError', { component: 'TimerStore' });
-      // 返回一个默认对象，防止应用崩溃
-      return {
-        duration: POMODORO_TIME,
-        shortBreak: SHORT_BREAK_TIME,
-        longBreak: LONG_BREAK_TIME,
-        cycles: 4,
-        currentCycle: 1,
+      
+      let nextMode;
+      let nextSession = currentSession;
+      
+      if (mode === 'focus') {
+        if (currentSession % 4 === 0) {
+          nextMode = 'longBreak';
+        } else {
+          nextMode = 'shortBreak';
+        }
+        nextSession = currentSession + 1;
+      } else {
+        nextMode = 'focus';
+      }
+      
+      if (nextSession > totalSessions) {
+        nextSession = 1;
+      }
+      
+      const { duration, shortBreak, longBreak } = get();
+      let newDuration;
+      switch (nextMode) {
+        case 'focus':
+          newDuration = duration;
+          break;
+        case 'shortBreak':
+          newDuration = shortBreak;
+          break;
+        case 'longBreak':
+          newDuration = longBreak;
+          break;
+        default:
+          newDuration = duration;
+      }
+      
+      set({
+        mode: nextMode,
+        currentSession: nextSession,
+        remainingTime: newDuration,
         isRunning: false,
-        remainingTime: POMODORO_TIME,
-        mode: 'focus',
-        completedPomodoros: 0,
-        totalFocusTime: 0,
-        plants: []
-      };
+        currentReminderId: null
+      });
+      
+      await get().saveTimerState();
+      
+    } catch (error) {
+      console.error('Failed to complete session:', error);
+      await reportError(error, 'SessionCompleteError');
     }
   },
-
-  // Get today's statistics
+  
+  updateRemainingTime: (time) => {
+    set({ remainingTime: time });
+  },
+  
+  setMode: (mode) => {
+    const { duration, shortBreak, longBreak } = get();
+    let newDuration;
+    
+    switch (mode) {
+      case 'focus':
+        newDuration = duration;
+        break;
+      case 'shortBreak':
+        newDuration = shortBreak;
+        break;
+      case 'longBreak':
+        newDuration = longBreak;
+        break;
+      default:
+        newDuration = duration;
+    }
+    
+    set({ 
+      mode, 
+      remainingTime: newDuration,
+      isRunning: false 
+    });
+  },
+  
+  updateSettings: (settings) => {
+    const { mode } = get();
+    let newRemainingTime = get().remainingTime;
+    
+    if (mode === 'focus' && settings.duration) {
+      newRemainingTime = settings.duration;
+    } else if (mode === 'shortBreak' && settings.shortBreak) {
+      newRemainingTime = settings.shortBreak;
+    } else if (mode === 'longBreak' && settings.longBreak) {
+      newRemainingTime = settings.longBreak;
+    }
+    
+    set({ 
+      ...settings,
+      remainingTime: newRemainingTime
+    });
+  },
+  
+  loadData: async () => {
+    try {
+      const plantsData = await AppSdk.appData.queryData({
+        collection: 'plants',
+        query: []
+      });
+      
+      const statsData = await AppSdk.appData.getData({
+        collection: 'stats',
+        id: 'history'
+      });
+      
+      set({
+        plants: plantsData || [],
+        completedPomodoros: statsData?.completedPomodoros || 0,
+        totalFocusTime: statsData?.totalFocusTime || 0
+      });
+      
+    } catch (error) {
+      console.error('Failed to load timer data:', error);
+      await reportError(error, 'TimerDataLoadError');
+    }
+  },
+  
   getTodayStats: () => {
     const { plants, completedPomodoros, totalFocusTime } = get();
     const today = new Date();
@@ -410,9 +424,28 @@ export const useTimerStore = create((set, get) => ({
 
     return {
       todayPomodoros: todayPlants.length,
-      todayFocusTime: todayPlants.length * 25 * 60, // 25 minutes per pomodoro in seconds
+      todayFocusTime: todayPlants.length * 25 * 60,
       totalPomodoros: completedPomodoros,
       totalFocusTime: totalFocusTime
     };
+  },
+
+  debugReminderIssues: async (reminderId) => {
+    console.log('=== 타이머 스토어 리마인더 디버깅 ===');
+    await debugReminder(reminderId);
+    
+    const { isRunning, mode, remainingTime } = get();
+    console.log('현재 타이머 상태:', {
+      isRunning,
+      mode,
+      remainingTime
+    });
+    
+    console.log('타이머 리마인더 정리 테스트 시작...');
+    const cleanupResult = await cleanupTimerRemindersSafely();
+    console.log('정리 결과:', cleanupResult);
+    
+    console.log('=== 디버깅 완료 ===');
+    return cleanupResult;
   }
 }));

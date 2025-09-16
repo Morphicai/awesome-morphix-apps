@@ -47,11 +47,9 @@ export const createDataSafely = async (collection, data, id = null) => {
 // 通用的数据更新函数，带有存在性检查
 export const updateDataSafely = async (collection, id, data) => {
   try {
-    // 先检查数据是否存在
     const existingData = await getDataSafely(collection, id);
     
     if (existingData) {
-      // 数据存在，更新
       const result = await AppSdk.appData.updateData({
         collection,
         id,
@@ -60,7 +58,6 @@ export const updateDataSafely = async (collection, id, data) => {
       console.log(`Successfully updated data for ${collection}:${id}`);
       return result;
     } else {
-      // 数据不存在，创建
       const result = await createDataSafely(collection, data, id);
       console.log(`Created new data for ${collection}:${id} (update fallback)`);
       return result;
@@ -154,7 +151,6 @@ export const initializeDefaultData = async () => {
 
   for (const dataSet of defaultDataSets) {
     try {
-      // 检查数据是否已存在
       const existingData = await getDataSafely(dataSet.collection, dataSet.id);
       
       if (!existingData) {
@@ -174,7 +170,6 @@ export const initializeDefaultData = async () => {
 // 安全获取计时器数据的函数
 export const getTimerDataSafely = async () => {
   try {
-    // 先检查数据是否存在
     let timerData;
     try {
       timerData = await AppSdk.appData.getData({
@@ -182,7 +177,6 @@ export const getTimerDataSafely = async () => {
         id: 'current'
       });
     } catch (error) {
-      // 如果不存在，创建默认数据
       const defaultData = {
         duration: 25 * 60,
         shortBreak: 5 * 60,
@@ -198,10 +192,10 @@ export const getTimerDataSafely = async () => {
         lastUpdated: Date.now()
       };
       
-        timerData = await AppSdk.appData.createData({
-          collection: 'timer',
-          data: { id: 'current', ...defaultData }
-        });
+      timerData = await AppSdk.appData.createData({
+        collection: 'timer',
+        data: { id: 'current', ...defaultData }
+      });
     }
     return timerData;
   } catch (error) {
@@ -210,7 +204,6 @@ export const getTimerDataSafely = async () => {
       component: 'DataHelpers',
       context: 'getTimerDataSafely'
     });
-    // 返回一个默认对象，防止应用崩溃
     return {
       duration: 25 * 60,
       shortBreak: 5 * 60,
@@ -226,3 +219,116 @@ export const getTimerDataSafely = async () => {
     };
   }
 };
+
+// 安全获取设置数据的通用函数
+export const getSetting = async (settingId, defaultValue) => {
+  try {
+    const settingData = await AppSdk.appData.getData({
+      collection: "settings",
+      id: settingId
+    });
+    
+    if (settingData) {
+      console.log(`找到设置数据 ${settingId}:`, settingData);
+      return settingData;
+    } else {
+      console.log(`设置数据 ${settingId} 为null，创建默认值...`);
+      const newSetting = await AppSdk.appData.createData({
+        collection: "settings",
+        data: {
+          id: settingId,
+          ...defaultValue
+        }
+      });
+      return newSetting;
+    }
+  } catch (error) {
+    console.log(`获取设置 ${settingId} 时发生错误，创建默认值...`);
+    
+    try {
+      const newSetting = await AppSdk.appData.createData({
+        collection: "settings",
+        data: {
+          id: settingId,
+          ...defaultValue
+        }
+      });
+      console.log(`成功创建默认设置 ${settingId}`);
+      return newSetting;
+    } catch (createError) {
+      console.error(`创建默认设置 ${settingId} 失败:`, createError);
+      await reportError(createError, 'JavaScriptError', { 
+        component: 'DataHelpers',
+        context: `getSetting-${settingId}`
+      });
+      return { id: settingId, ...defaultValue };
+    }
+  }
+};
+
+// 获取语言设置
+export const getLanguageSetting = async () => {
+  const defaultLanguage = {
+    current: "ko",
+    available: ["ko", "zh"],
+    autoDetect: true
+  };
+  
+  return await getSetting("language", defaultLanguage);
+};
+
+// 获取计时器设置
+export const getTimerSetting = async () => {
+  const defaultTimer = {
+    keepScreenOn: false,
+    backgroundMode: true,
+    notifications: true,
+    sound: true
+  };
+  
+  return await getSetting("timer", defaultTimer);
+};
+
+// 获取主题设置
+export const getThemeSetting = async () => {
+  const defaultTheme = {
+    mode: "light",
+    gardenStyle: "natural"
+  };
+  
+  return await getSetting("theme", defaultTheme);
+};
+
+// 更新设置的安全函数
+export const updateSetting = async (settingId, newData) => {
+  try {
+    const existingSetting = await getDataSafely("settings", settingId);
+    
+    if (existingSetting) {
+      const result = await AppSdk.appData.updateData({
+        collection: "settings",
+        id: settingId,
+        data: newData
+      });
+      console.log(`成功更新设置 ${settingId}`);
+      return result;
+    } else {
+      const result = await AppSdk.appData.createData({
+        collection: "settings",
+        data: {
+          id: settingId,
+          ...newData
+        }
+      });
+      console.log(`创建新设置 ${settingId}`);
+      return result;
+    }
+  } catch (error) {
+    console.error(`更新设置 ${settingId} 失败:`, error);
+    await reportError(error, 'JavaScriptError', { 
+      component: 'DataHelpers',
+      context: `updateSetting-${settingId}`
+    });
+    return null;
+  }
+}

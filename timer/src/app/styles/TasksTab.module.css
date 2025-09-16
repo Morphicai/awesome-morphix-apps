@@ -1,52 +1,538 @@
 .container {
-  padding-bottom: 100px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #F8FBF6 0%, #E8F5E8 50%, #F0F8F0 100%);
+  position: relative;
+  overflow-x: hidden;
 }
 
+.gardenBackground {
+  position: relative;
+  padding: 20px;
+  padding-bottom: 100px;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(127, 176, 105, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(190, 216, 163, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(74, 124, 89, 0.05) 0%, transparent 50%);
+}
+
+/* 페이지 헤더 */
+.pageHeader {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(74, 124, 89, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.pageTitle {
+  font-size: 28px;
+  font-weight: 700;
+  color: #4A7C59;
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 4px rgba(74, 124, 89, 0.1);
+}
+
+.pageSubtitle {
+  font-size: 16px;
+  color: #7FB069;
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* 통계 카드 */
+.statsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.statCard {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 251, 246, 0.9) 100%);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(74, 124, 89, 0.1);
+  border: 2px solid rgba(127, 176, 105, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #4A7C59, #7FB069, #BED8A3);
+}
+
+.statCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(74, 124, 89, 0.15);
+}
+
+.statIcon {
+  font-size: 24px;
+  margin-bottom: 8px;
+  display: block;
+  animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+.statNumber {
+  font-size: 32px;
+  font-weight: 700;
+  color: #4A7C59;
+  margin-bottom: 4px;
+  display: block;
+  text-shadow: 0 2px 4px rgba(74, 124, 89, 0.1);
+}
+
+.statLabel {
+  font-size: 14px;
+  color: #7FB069;
+  font-weight: 500;
+}
+
+/* 필터 섹션 */
+.filterSection {
+  margin-bottom: 24px;
+}
+
+.filterSelect {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #BED8A3;
+  border-radius: 16px;
+  padding: 16px 20px;
+  font-size: 16px;
+  color: #4A7C59;
+  box-shadow: 0 4px 16px rgba(74, 124, 89, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.filterSelect:hover {
+  border-color: #7FB069;
+  box-shadow: 0 6px 20px rgba(74, 124, 89, 0.15);
+}
+
+/* 할일 추가 폼 */
 .addTaskForm {
+  margin-bottom: 30px;
+  animation: slide-down 0.3s ease-out;
+}
+
+.formCard {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 251, 246, 0.95) 100%);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 40px rgba(74, 124, 89, 0.15);
+  border: 2px solid rgba(190, 216, 163, 0.3);
+  backdrop-filter: blur(15px);
+  position: relative;
+  overflow: hidden;
+}
+
+.formCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #4A7C59, #7FB069, #BED8A3);
+}
+
+.formHeader {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
   gap: 12px;
-  margin-top: 16px;
+}
+
+.formIcon {
+  font-size: 24px;
+  animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+.formTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #4A7C59;
+  flex: 1;
+}
+
+.closeButton {
+  --color: #7FB069;
+  --background: transparent;
+}
+
+.taskInput {
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid #BED8A3;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  color: #4A7C59;
+  transition: all 0.3s ease;
+}
+
+.taskInput:focus {
+  border-color: #7FB069;
+  box-shadow: 0 0 0 4px rgba(127, 176, 105, 0.1);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .prioritySelect {
-  background: var(--cream-white);
-  border: 2px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid #BED8A3;
   border-radius: 12px;
-  padding: 12px 16px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
   font-size: 16px;
-  box-shadow: 0 2px 8px var(--shadow-color);
+  color: #4A7C59;
+  transition: all 0.3s ease;
 }
 
-.filterButtons {
+.prioritySelect:hover {
+  border-color: #7FB069;
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+}
+
+.plantButton {
+  --background: linear-gradient(135deg, #7FB069, #4A7C59);
+  --color: white;
+  --border-radius: 12px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(127, 176, 105, 0.3);
+  transition: all 0.3s ease;
+}
+
+.plantButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(127, 176, 105, 0.4);
+}
+
+/* 할일 목록 */
+.tasksList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.taskCard {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 251, 246, 0.9) 100%);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(74, 124, 89, 0.1);
+  border: 2px solid rgba(190, 216, 163, 0.3);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  animation: slide-up 0.3s ease-out;
+}
+
+.taskCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #4A7C59, #7FB069);
+  transition: all 0.3s ease;
+}
+
+.taskCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(74, 124, 89, 0.15);
+}
+
+.taskCard:hover::before {
+  width: 6px;
+}
+
+.priorityBorder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  border-left: 4px solid;
+  transition: all 0.3s ease;
+}
+
+.taskContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.taskLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.taskCheckbox {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  --border-color: #7FB069;
+  --checkmark-color: white;
+  --background-checked: #7FB069;
+  transition: all 0.3s ease;
+}
+
+.taskCheckbox:hover {
+  transform: scale(1.1);
+}
+
+.priorityIcon {
+  font-size: 24px;
+  animation: gentle-sway 3s ease-in-out infinite;
+}
+
+.taskInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.taskText {
+  font-size: 16px;
+  color: #4A7C59;
+  line-height: 1.5;
+  margin-bottom: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.completedText {
+  text-decoration: line-through;
+  color: #7FB069;
+  opacity: 0.7;
+}
+
+.taskMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.priorityLabel {
+  background: rgba(127, 176, 105, 0.2);
+  color: #4A7C59;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.completedTime {
+  color: #7FB069;
+  opacity: 0.8;
+}
+
+.taskActions {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-shrink: 0;
 }
 
-.taskList {
-  margin-top: 16px;
+.editButton, .deleteButton {
+  --color: #7FB069;
+  --background: transparent;
+  --border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
-.loading {
-  text-align: center;
-  color: var(--text-light);
-  padding: 40px 20px;
+.editButton:hover {
+  --background: rgba(127, 176, 105, 0.1);
+}
+
+.deleteButton:hover {
+  --color: #E74C3C;
+  --background: rgba(231, 76, 60, 0.1);
+}
+
+/* 편집 모드 */
+.editMode {
+  width: 100%;
+}
+
+.editInput {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #BED8A3;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
   font-size: 16px;
+  color: #4A7C59;
 }
 
+.editActions {
+  display: flex;
+  gap: 8px;
+}
+
+.saveButton {
+  --background: #7FB069;
+  --color: white;
+  --border-radius: 8px;
+}
+
+.cancelButton {
+  --color: #7FB069;
+  --background: transparent;
+  --border-radius: 8px;
+}
+
+/* 완료된 할일 스타일 */
+.completed {
+  opacity: 0.8;
+  background: linear-gradient(135deg, rgba(190, 216, 163, 0.3) 0%, rgba(248, 251, 246, 0.8) 100%);
+}
+
+.completed .taskText {
+  color: #7FB069;
+}
+
+/* 완료 애니메이션 */
+.completing {
+  animation: completion-celebration 1s ease-out;
+}
+
+.completionAnimation {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.growthAnimation {
+  font-size: 32px;
+  animation: growth-burst 1s ease-out;
+}
+
+/* 빈 상태 */
 .emptyState {
   text-align: center;
-  color: var(--text-light);
-  padding: 40px 20px;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 251, 246, 0.6) 100%);
+  border-radius: 20px;
+  border: 2px dashed #BED8A3;
+  backdrop-filter: blur(10px);
 }
 
 .emptyIcon {
-  font-size: 48px;
+  font-size: 64px;
+  margin-bottom: 20px;
   display: block;
-  margin-bottom: 16px;
-  animation: gentle-sway 3s ease-in-out infinite;
+  animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+.emptyTitle {
+  font-size: 20px;
+  color: #4A7C59;
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.emptyText {
+  font-size: 16px;
+  color: #7FB069;
+  margin: 0 0 24px 0;
+  opacity: 0.8;
+}
+
+.emptyActionButton {
+  --background: linear-gradient(135deg, #7FB069, #4A7C59);
+  --color: white;
+  --border-radius: 12px;
+  --padding-start: 24px;
+  --padding-end: 24px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(127, 176, 105, 0.3);
+}
+
+/* 플로팅 버튼 */
+.fabButton {
+  --background: linear-gradient(135deg, #7FB069, #4A7C59);
+  --color: white;
+  --box-shadow: 0 8px 24px rgba(127, 176, 105, 0.4);
+  transition: all 0.3s ease;
+}
+
+.fabButton:hover {
+  transform: scale(1.1);
+  --box-shadow: 0 12px 32px rgba(127, 176, 105, 0.5);
+}
+
+/* 장식 요소 */
+.decorativeElements {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.decorativeFlower {
+  position: absolute;
+  font-size: 20px;
+  animation: gentle-float 4s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+/* 로딩 상태 */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 20px;
+  color: #4A7C59;
+}
+
+.loadingContainer p {
+  margin: 0;
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+/* 애니메이션 */
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
 }
 
 @keyframes gentle-sway {
@@ -55,236 +541,121 @@
   75% { transform: rotate(-3deg); }
 }
 
-.taskPlant {
-  font-size: 24px;
-  flex-shrink: 0;
-  animation: grow-in 0.5s ease-out;
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(5deg); }
+  66% { transform: translateY(-5px) rotate(-3deg); }
 }
 
-@keyframes grow-in {
+@keyframes slide-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes completion-celebration {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); background: rgba(127, 176, 105, 0.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes growth-burst {
   0% {
     transform: scale(0) rotate(0deg);
     opacity: 0;
   }
   50% {
-    transform: scale(1.3) rotate(180deg);
-    opacity: 0.7;
+    transform: scale(1.5) rotate(180deg);
+    opacity: 1;
   }
   100% {
     transform: scale(1) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* 삭제 애니메이션 */
+.removing {
+  animation: fade-out 0.3s ease-out forwards;
+}
+
+@keyframes fade-out {
+  0% {
     opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
   }
 }
 
-.taskContent {
-  flex: 1;
-  min-width: 0;
-}
-
-.taskMeta {
-  display: flex;
-  gap: 12px;
-  margin-top: 4px;
-  font-size: 12px;
-}
-
-.priority {
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.completedTime {
-  color: var(--text-light);
-}
-
-.taskActions {
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.editForm {
-  width: 100%;
-}
-
-.editButtons {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-/* Global task item styles */
-:global(.task-item) {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  background: var(--cream-white);
-  border-radius: 12px;
-  margin-bottom: 12px;
-  border: 2px solid var(--border-color);
-  box-shadow: 0 2px 8px var(--shadow-color);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-:global(.task-item::before) {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
-}
-
-:global(.task-item:hover) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px var(--shadow-color);
-}
-
-:global(.task-item.completed) {
-  opacity: 0.7;
-  background: linear-gradient(135deg, var(--light-green), var(--cream-white));
-}
-
-:global(.task-checkbox) {
-  width: 24px;
-  height: 24px;
-  border: 2px solid var(--primary-green);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background: var(--cream-white);
-  flex-shrink: 0;
-}
-
-:global(.task-checkbox:hover) {
-  background: var(--light-green);
-  transform: scale(1.1);
-}
-
-:global(.task-checkbox.checked) {
-  background: var(--primary-green);
-  color: white;
-  font-weight: bold;
-}
-
-:global(.task-text) {
-  font-size: 16px;
-  color: var(--text-dark);
-  cursor: pointer;
-  transition: color 0.3s ease;
-  line-height: 1.4;
-}
-
-:global(.task-text:hover) {
-  color: var(--primary-green);
-}
-
-:global(.task-text.completed) {
-  text-decoration: line-through;
-  color: var(--text-light);
-}
-
-/* Global stats grid styles */
-:global(.stats-grid) {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
-}
-
-:global(.stat-card) {
-  text-align: center;
-  padding: 16px;
-  background: linear-gradient(135deg, var(--cream-white), #F8FFF8);
-  border-radius: 12px;
-  border: 2px solid var(--light-green);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 2px 8px var(--shadow-color);
-}
-
-:global(.stat-card::before) {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
-}
-
-:global(.stat-number) {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--primary-green);
-  margin-bottom: 8px;
-  text-shadow: 0 2px 4px rgba(74, 124, 89, 0.1);
-}
-
-:global(.stat-label) {
-  font-size: 14px;
-  color: var(--text-light);
-  font-weight: 500;
-}
-
+/* 반응형 디자인 */
 @media (max-width: 768px) {
-  .filterButtons {
-    gap: 6px;
+  .gardenBackground {
+    padding: 16px;
+    padding-bottom: 100px;
   }
   
-  .filterButtons ion-button {
-    font-size: 12px;
-    padding: 8px 12px;
+  .pageTitle {
+    font-size: 24px;
   }
   
-  .addTaskForm {
-    gap: 10px;
+  .pageSubtitle {
+    font-size: 14px;
+  }
+  
+  .statsContainer {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  
+  .statCard {
+    padding: 16px;
+  }
+  
+  .statNumber {
+    font-size: 24px;
+  }
+  
+  .taskCard {
+    padding: 16px;
+  }
+  
+  .taskContent {
+    gap: 12px;
   }
   
   .taskActions {
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
   }
   
-  .editButtons {
-    flex-direction: column;
-    gap: 6px;
+  .formCard {
+    padding: 20px;
   }
   
-  :global(.stats-grid) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+  .emptyState {
+    padding: 40px 16px;
   }
   
-  :global(.stat-card) {
-    padding: 12px;
+  .emptyIcon {
+    font-size: 48px;
   }
-  
-  :global(.stat-number) {
-    font-size: 24px;
-  }
-}
-
-.loadingContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-  gap: 16px;
-  color: var(--garden-primary);
-}
-
-.loadingContainer p {
-  margin: 0;
-  font-size: 14px;
-  opacity: 0.8;
 }

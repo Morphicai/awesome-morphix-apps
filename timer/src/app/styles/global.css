@@ -1,5 +1,5 @@
 :root {
-  --primary-green: #4A7C59;
+  --primary-green: #2E7D32;
   --secondary-green: #7FB069;
   --light-green: #BED8A3;
   --earth-brown: #8B6B4A;
@@ -8,8 +8,8 @@
   --soft-gray: #F5F5F5;
   --text-dark: #2D3748;
   --text-light: #718096;
-  --shadow-color: rgba(74, 124, 89, 0.1);
-  --border-color: rgba(74, 124, 89, 0.2);
+  --shadow-color: rgba(46, 125, 50, 0.1);
+  --border-color: rgba(46, 125, 50, 0.2);
 }
 
 * {
@@ -20,7 +20,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-  background: linear-gradient(135deg, var(--light-green) 0%, var(--cream-white) 100%);
+  background: #FAFCFA;
   color: var(--text-dark);
   min-height: 100vh;
 }
@@ -59,7 +59,7 @@ body {
   --padding-bottom: 12px;
   font-weight: 600;
   text-transform: none;
-  box-shadow: 0 4px 12px rgba(74, 124, 89, 0.3);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
   position: relative;
   overflow: hidden;
 }
@@ -114,7 +114,7 @@ body {
   margin: 32px auto;
   position: relative;
   box-shadow: 
-    0 8px 32px rgba(74, 124, 89, 0.2),
+    0 8px 32px rgba(46, 125, 50, 0.2),
     inset 0 4px 8px rgba(255, 255, 255, 0.8);
   overflow: hidden;
 }
@@ -151,7 +151,7 @@ body {
   font-size: 48px;
   font-weight: 700;
   color: var(--primary-green);
-  text-shadow: 0 2px 4px rgba(74, 124, 89, 0.1);
+  text-shadow: 0 2px 4px rgba(46, 125, 50, 0.1);
   margin-bottom: 8px;
 }
 
@@ -168,12 +168,12 @@ body {
 @keyframes pulseGlow {
   0%, 100% {
     box-shadow: 
-      0 8px 32px rgba(74, 124, 89, 0.2),
+      0 8px 32px rgba(46, 125, 50, 0.2),
       inset 0 4px 8px rgba(255, 255, 255, 0.8);
   }
   50% {
     box-shadow: 
-      0 12px 40px rgba(74, 124, 89, 0.4),
+      0 12px 40px rgba(46, 125, 50, 0.4),
       inset 0 4px 8px rgba(255, 255, 255, 0.8),
       0 0 20px rgba(127, 176, 105, 0.6);
   }
@@ -320,7 +320,7 @@ body {
 
 .nature-input:focus {
   --border-color: var(--primary-green);
-  box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
 }
 
 .leaf-divider {
