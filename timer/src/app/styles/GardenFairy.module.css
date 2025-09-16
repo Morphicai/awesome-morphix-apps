@@ -85,20 +85,27 @@
   --color: white;
 }
 
-.modalContent {
-  --background: linear-gradient(to bottom, #F0F8F0, #E8F5E8);
+/* 模态框容器 - 使用 flex 布局 */
+.modalContainer {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh;
+  background: linear-gradient(to bottom, #F0F8F0, #E8F5E8);
+}
+
+/* 消息列表容器 - 可滚动区域 */
+.messagesContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  padding-bottom: 0;
 }
 
 .messagesList {
-  flex: 1;
-  padding: 16px;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-height: 100%;
 }
 
 .messageItem {
@@ -204,8 +211,9 @@
   font-weight: 500;
 }
 
-/* 메시지 입력 */
-.messageInput {
+/* 输入框容器 - 固定在底部 */
+.inputContainer {
+  flex-shrink: 0;
   padding: 16px;
   background: white;
   border-top: 1px solid rgba(74, 124, 89, 0.1);

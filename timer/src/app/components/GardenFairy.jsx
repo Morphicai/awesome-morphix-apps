@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { IonButton, IonIcon, IonModal, IonContent, IonHeader, IonToolbar, IonTitle, IonItem, IonInput, IonSpinner, IonChip } from '@ionic/react';
 import { sparkles, chatbubble, send, close, leaf, heart, star } from 'ionicons/icons';
 import AppSdk from '@morphixai/app-sdk';
@@ -19,6 +19,7 @@ export default function GardenFairy({
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [fairyMood, setFairyMood] = useState('happy');
+  const messagesEndRef = useRef(null);
 
   // 요정의 기분 상태 업데이트
   useEffect(() => {
@@ -141,6 +142,16 @@ ${t('situationalResponses')}
     }
   };
 
+  // 自动滚动到底部
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // 消息变化时自动滚动
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
+
   // 빠른 질문 버튼들
   const quickQuestions = [
     { text: t('focusHelpRequest'), icon: '🌱', message: t('focusHelpMessage') },
@@ -219,24 +230,27 @@ ${t('situationalResponses')}
 
       {/* 대화 모달 */}
       <IonModal isOpen={isModalOpen} onDidDismiss={() => setIsModalOpen(false)}>
-        <IonHeader>
-          <IonToolbar className={styles.modalHeader}>
-            <IonTitle className={styles.modalTitle}>
-              <span className={styles.titleIcon}>🧚‍♀️</span>
-              {t('gardenFairyChatTitle')}
-            </IonTitle>
-            <IonButton 
-              fill="clear" 
-              slot="end" 
-              onClick={() => setIsModalOpen(false)}
-              className={styles.closeButton}
-            >
-              <IonIcon icon={close} />
-            </IonButton>
-          </IonToolbar>
-        </IonHeader>
+        <div className={styles.modalContainer}>
+          {/* 头部 */}
+          <IonHeader>
+            <IonToolbar className={styles.modalHeader}>
+              <IonTitle className={styles.modalTitle}>
+                <span className={styles.titleIcon}>🧚‍♀️</span>
+                {t('gardenFairyChatTitle')}
+              </IonTitle>
+              <IonButton 
+                fill="clear" 
+                slot="end" 
+                onClick={() => setIsModalOpen(false)}
+                className={styles.closeButton}
+              >
+                <IonIcon icon={close} />
+              </IonButton>
+            </IonToolbar>
+          </IonHeader>
 
-        <IonContent className={styles.modalContent}>
+          {/* 消息列表区域 - 可滚动 */}
+          <div className={styles.messagesContainer}>
           {/* 메시지 목록 */}
           <div className={styles.messagesList}>
             {messages.map((message) => (
@@ -267,30 +281,34 @@ ${t('situationalResponses')}
                 </div>
               </div>
             )}
-          </div>
 
-          {/* 빠른 질문 버튼들 */}
-          {messages.length <= 1 && (
-            <div className={styles.quickQuestions}>
-              <h4 className={styles.quickQuestionsTitle}>{t('quickQuestions')}</h4>
-              <div className={styles.quickQuestionButtons}>
-                {quickQuestions.map((question, index) => (
-                  <IonChip
-                    key={index}
-                    className={styles.quickQuestionChip}
-                    onClick={() => sendQuickQuestion(question)}
-                    disabled={isLoading}
-                  >
-                    <span className={styles.quickQuestionIcon}>{question.icon}</span>
-                    <span className={styles.quickQuestionText}>{question.text}</span>
-                  </IonChip>
-                ))}
+            {/* 빠른 질문 버튼들 - 消息列表内 */}
+            {messages.length <= 1 && (
+              <div className={styles.quickQuestions}>
+                <h4 className={styles.quickQuestionsTitle}>{t('quickQuestions')}</h4>
+                <div className={styles.quickQuestionButtons}>
+                  {quickQuestions.map((question, index) => (
+                    <IonChip
+                      key={index}
+                      className={styles.quickQuestionChip}
+                      onClick={() => sendQuickQuestion(question)}
+                      disabled={isLoading}
+                    >
+                      <span className={styles.quickQuestionIcon}>{question.icon}</span>
+                      <span className={styles.quickQuestionText}>{question.text}</span>
+                    </IonChip>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+            
+            {/* 用于自动滚动定位的元素 */}
+            <div ref={messagesEndRef} />
+          </div>
+        </div>
 
-          {/* 메시지 입력 */}
-          <div className={styles.messageInput}>
+          {/* 输入框区域 - 固定在底部 */}
+          <div className={styles.inputContainer}>
             <IonItem className={styles.inputItem}>
               <IonInput
                 value={inputMessage}
@@ -310,7 +328,7 @@ ${t('situationalResponses')}
               </IonButton>
             </IonItem>
           </div>
-        </IonContent>
+        </div>
       </IonModal>
     </>
   );
