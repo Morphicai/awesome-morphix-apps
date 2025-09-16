@@ -94,7 +94,20 @@ ${t('situationalResponses')}
         }
       });
 
-      return response.content || response;
+      // Properly extract string content from AI response
+      let content;
+      if (typeof response === 'string') {
+        content = response;
+      } else if (response && typeof response.content === 'string') {
+        content = response.content;
+      } else if (response && typeof response === 'object') {
+        // If response is an object, try to extract text content
+        content = JSON.stringify(response);
+      } else {
+        content = t('fairyConnectionError');
+      }
+
+      return content;
     } catch (error) {
       console.error('AI 대화 오류:', error);
       await reportError(error, 'JavaScriptError', { component: 'GardenFairy' });
@@ -123,11 +136,16 @@ ${t('situationalResponses')}
       // AI 응답 받기
       const fairyResponse = await chatWithFairy(userMessage);
       
+      // Ensure response is a string for rendering
+      const responseContent = typeof fairyResponse === 'string' 
+        ? fairyResponse 
+        : t('fairyConnectionError');
+      
       // 요정 응답 추가
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
         type: 'fairy',
-        content: fairyResponse,
+        content: responseContent,
         timestamp: new Date()
       }]);
     } catch (error) {
@@ -176,10 +194,15 @@ ${t('situationalResponses')}
     try {
       const fairyResponse = await chatWithFairy(question.message);
       
+      // Ensure response is a string for rendering
+      const responseContent = typeof fairyResponse === 'string' 
+        ? fairyResponse 
+        : t('fairyConnectionError');
+      
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
         type: 'fairy',
-        content: fairyResponse,
+        content: responseContent,
         timestamp: new Date()
       }]);
     } catch (error) {

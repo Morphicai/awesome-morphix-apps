@@ -213,14 +213,14 @@ export default function TasksTab() {
                 value={filter}
                 onIonChange={(e) => setFilter(e.detail.value)}
                 className={styles.filterSelect}
-                placeholder="작업 필터"
+                placeholder={t('taskFilterPlaceholder')}
               >
-                <IonSelectOption value="all">🌺 전체 보기</IonSelectOption>
-                <IonSelectOption value="pending">🌱 대기 중</IonSelectOption>
-                <IonSelectOption value="completed">🌸 완료됨</IonSelectOption>
-                <IonSelectOption value="high">🌹 높은 우선순위</IonSelectOption>
-                <IonSelectOption value="medium">🌻 보통 우선순위</IonSelectOption>
-                <IonSelectOption value="low">🌿 낮은 우선순위</IonSelectOption>
+                <IonSelectOption value="all">🌺 {t('viewAll')}</IonSelectOption>
+                <IonSelectOption value="pending">🌱 {t('viewPending')}</IonSelectOption>
+                <IonSelectOption value="completed">🌸 {t('viewCompleted')}</IonSelectOption>
+                <IonSelectOption value="high">🌹 {t('highPriorityFilter')}</IonSelectOption>
+                <IonSelectOption value="medium">🌻 {t('mediumPriorityFilter')}</IonSelectOption>
+                <IonSelectOption value="low">🌿 {t('lowPriorityFilter')}</IonSelectOption>
               </IonSelect>
             </div>
 
@@ -230,7 +230,7 @@ export default function TasksTab() {
                 <div className={styles.formCard}>
                   <div className={styles.formHeader}>
                     <span className={styles.formIcon}>🌱</span>
-                    <span className={styles.formTitle}>새로운 작업 심기</span>
+                    <span className={styles.formTitle}>{t('formTitleNewTask')}</span>
                     <IonButton 
                       fill="clear" 
                       size="small"
@@ -243,7 +243,7 @@ export default function TasksTab() {
                   
                   <IonInput
                     value={newTaskText}
-                    placeholder="새로운 花园 작업을 심어보세요..."
+                    placeholder={t('newTaskInputPlaceholder')}
                     onIonInput={(e) => setNewTaskText(e.detail.value ?? '')}
                     className={styles.taskInput}
                     onKeyPress={(e) => {
@@ -257,11 +257,11 @@ export default function TasksTab() {
                     value={newTaskPriority}
                     onIonChange={(e) => setNewTaskPriority(e.detail.value)}
                     className={styles.prioritySelect}
-                    placeholder="우선순위 선택"
+                    placeholder={t('prioritySelectionPlaceholder')}
                   >
-                    <IonSelectOption value="high">🌹 높음 - 빨간 장미</IonSelectOption>
-                    <IonSelectOption value="medium">🌻 보통 - 해바라기</IonSelectOption>
-                    <IonSelectOption value="low">🌿 낮음 - 잎사귀</IonSelectOption>
+                    <IonSelectOption value="high">🌹 {t('highPriorityOption')}</IonSelectOption>
+                    <IonSelectOption value="medium">🌻 {t('mediumPriorityOption')}</IonSelectOption>
+                    <IonSelectOption value="low">🌿 {t('lowPriorityOption')}</IonSelectOption>
                   </IonSelect>
                   
                   <div className={styles.formActions}>
@@ -272,7 +272,7 @@ export default function TasksTab() {
                       expand="block"
                     >
                       <IonIcon icon={add} slot="start" />
-                      작업 심기
+                      {t('plantTaskButtonText')}
                     </IonButton>
                   </div>
                 </div>
@@ -284,11 +284,11 @@ export default function TasksTab() {
               {filteredTasks.length === 0 ? (
                 <div className={styles.emptyState}>
                   <div className={styles.emptyIcon}>🌱</div>
-                  <h3 className={styles.emptyTitle}>아직 심어진 작업이 없어요</h3>
+                  <h3 className={styles.emptyTitle}>{t('noTasksEmptyTitle')}</h3>
                   <p className={styles.emptyText}>
                     {filter === 'all' 
-                      ? '첫 번째 씨앗을 심어보세요!' 
-                      : '해당하는 작업이 없습니다'}
+                      ? t('firstSeedPlantMessage') 
+                      : t('noMatchingTasksMessage')}
                   </p>
                   {filter === 'all' && (
                     <IonButton 
@@ -296,7 +296,7 @@ export default function TasksTab() {
                       className={styles.emptyActionButton}
                     >
                       <IonIcon icon={add} slot="start" />
-                      첫 작업 심기
+                      {t('plantFirstTaskButtonText')}
                     </IonButton>
                   )}
                 </div>
@@ -355,8 +355,8 @@ export default function TasksTab() {
                             </div>
                             <div className={styles.taskMeta}>
                               <span className={styles.priorityLabel}>
-                                {task.priority === 'high' ? '높음' : 
-                                 task.priority === 'medium' ? '보통' : '낮음'}
+                                {task.priority === 'high' ? t('highPriorityLabel') : 
+                                 task.priority === 'medium' ? t('mediumPriorityLabel') : t('lowPriorityLabel')}
                               </span>
                               {task.completedAt && (
                                 <span className={styles.completedTime}>

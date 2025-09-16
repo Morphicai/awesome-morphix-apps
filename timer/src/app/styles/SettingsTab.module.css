@@ -314,12 +314,27 @@
 .startButton {
   margin-top: 16px;
   padding: 12px 24px;
-  background: #2E7D32;
+  background: var(--button-primary-bg);
   color: white;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
   display: inline-block;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px var(--button-primary-shadow);
+}
+
+.startButton:hover {
+  background: var(--button-primary-hover-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--button-primary-hover-shadow);
+}
+
+.startButton:active {
+  background: var(--button-primary-active-bg);
+  transform: translateY(0);
+  box-shadow: 0 1px 4px var(--button-primary-active-shadow);
 }
 
 /* 励志语录 */

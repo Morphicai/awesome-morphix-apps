@@ -10,6 +10,17 @@
   --text-light: #718096;
   --shadow-color: rgba(46, 125, 50, 0.1);
   --border-color: rgba(46, 125, 50, 0.2);
+  
+  /* 按钮主题变量 */
+  --button-primary-bg: linear-gradient(135deg, var(--secondary-green), var(--primary-green));
+  --button-primary-hover-bg: linear-gradient(135deg, #8FC470, #357A39);
+  --button-primary-active-bg: linear-gradient(135deg, #6FA05B, #1E5F22);
+  --button-primary-shadow: rgba(127, 176, 105, 0.3);
+  --button-primary-hover-shadow: rgba(127, 176, 105, 0.4);
+  --button-primary-active-shadow: rgba(127, 176, 105, 0.5);
+  --button-secondary-color: var(--secondary-green);
+  --button-secondary-hover-bg: rgba(127, 176, 105, 0.1);
+  --button-secondary-active-bg: rgba(127, 176, 105, 0.2);
 }
 
 * {

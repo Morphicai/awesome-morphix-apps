@@ -325,6 +325,17 @@ const translations = {
     decorativeFlowers: "장식용 꽃들",
     floatingAddButton: "플로팅 추가 버튼",
     
+    // TasksTab 补充翻译键
+    taskFilterPlaceholder: "작업 필터",
+    formTitleNewTask: "새로운 작업 심기",
+    newTaskInputPlaceholder: "새로운 花园 작업을 심어보세요...",
+    prioritySelectionPlaceholder: "우선순위 선택",
+    plantTaskButtonText: "작업 심기",
+    noTasksEmptyTitle: "아직 심어진 작업이 없어요",
+    firstSeedPlantMessage: "첫 번째 씨앗을 심어보세요!",
+    noMatchingTasksMessage: "해당하는 작업이 없습니다",
+    plantFirstTaskButtonText: "첫 작업 심기",
+    
     // TimerTab 新增翻译
     focusingBackground: "집중 중 (백그라운드)",
     restingBackground: "휴식 중 (백그라운드)",
@@ -715,6 +726,17 @@ const translations = {
     completionAnimation: "完成动画",
     decorativeFlowers: "装饰花朵",
     floatingAddButton: "浮动添加按钮",
+    
+    // TasksTab 补充翻译键
+    taskFilterPlaceholder: "任务筛选",
+    formTitleNewTask: "种植新任务",
+    newTaskInputPlaceholder: "请输入新的花园任务...",
+    prioritySelectionPlaceholder: "优先级选择",
+    plantTaskButtonText: "种植任务",
+    noTasksEmptyTitle: "还没有种植任务呢",
+    firstSeedPlantMessage: "种下第一颗种子吧!",
+    noMatchingTasksMessage: "没有符合条件的任务",
+    plantFirstTaskButtonText: "种植第一个任务",
     
     // TimerTab 新增翻译
     focusingBackground: "专注中 (后台)",

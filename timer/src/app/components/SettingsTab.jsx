@@ -31,6 +31,14 @@ export default function SettingsTab() {
     completedTasks: 0
   });
 
+  const handleGoToTimer = () => {
+    // 切换到计时器 Tab
+    const timerTab = document.querySelector('ion-tab-button[tab="timer"]');
+    if (timerTab) {
+      timerTab.click();
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = addLanguageListener((newLanguage) => {
       setCurrentLanguage(newLanguage);
@@ -538,7 +546,10 @@ export default function SettingsTab() {
                 <div className={styles.emptyGardenIcon}>🌱</div>
                 <h4>{t('noSeedsPlanted')}</h4>
                 <p>{t('startTimerMessage')}</p>
-                <div className={styles.startButton}>
+                <div 
+                  className={styles.startButton}
+                  onClick={handleGoToTimer}
+                >
                   <span>{t('startFromTimerTab')} →</span>
                 </div>
               </div>

@@ -211,7 +211,7 @@
 }
 
 .plantButton {
-  --background: linear-gradient(135deg, #7FB069, #4A7C59);
+  --background: var(--button-primary-bg);
   --color: white;
   --border-radius: 12px;
   --padding-start: 20px;
@@ -219,13 +219,20 @@
   --padding-top: 16px;
   --padding-bottom: 16px;
   font-weight: 600;
-  box-shadow: 0 4px 16px rgba(127, 176, 105, 0.3);
+  box-shadow: 0 4px 16px var(--button-primary-shadow);
   transition: all 0.3s ease;
 }
 
 .plantButton:hover {
+  --background: var(--button-primary-hover-bg);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(127, 176, 105, 0.4);
+  box-shadow: 0 6px 20px var(--button-primary-hover-shadow);
+}
+
+.plantButton:active {
+  --background: var(--button-primary-active-bg);
+  transform: translateY(0);
+  box-shadow: 0 2px 8px var(--button-primary-active-shadow);
 }
 
 /* 할일 목록 */
@@ -362,19 +369,28 @@
 }
 
 .editButton, .deleteButton {
-  --color: #7FB069;
+  --color: var(--button-secondary-color);
   --background: transparent;
   --border-radius: 8px;
   transition: all 0.3s ease;
 }
 
 .editButton:hover {
-  --background: rgba(127, 176, 105, 0.1);
+  --background: var(--button-secondary-hover-bg);
+}
+
+.editButton:active {
+  --background: var(--button-secondary-active-bg);
 }
 
 .deleteButton:hover {
   --color: #E74C3C;
   --background: rgba(231, 76, 60, 0.1);
+}
+
+.deleteButton:active {
+  --color: #C0392B;
+  --background: rgba(231, 76, 60, 0.2);
 }
 
 /* 편집 모드 */
@@ -398,15 +414,33 @@
 }
 
 .saveButton {
-  --background: #7FB069;
+  --background: var(--button-primary-bg);
   --color: white;
   --border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.saveButton:hover {
+  --background: var(--button-primary-hover-bg);
+}
+
+.saveButton:active {
+  --background: var(--button-primary-active-bg);
 }
 
 .cancelButton {
-  --color: #7FB069;
+  --color: var(--button-secondary-color);
   --background: transparent;
   --border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.cancelButton:hover {
+  --background: var(--button-secondary-hover-bg);
+}
+
+.cancelButton:active {
+  --background: var(--button-secondary-active-bg);
 }
 
 /* 완료된 할일 스타일 */
@@ -470,7 +504,7 @@
 }
 
 .emptyActionButton {
-  --background: linear-gradient(135deg, #7FB069, #4A7C59);
+  --background: var(--button-primary-bg);
   --color: white;
   --border-radius: 12px;
   --padding-start: 24px;
@@ -478,20 +512,40 @@
   --padding-top: 16px;
   --padding-bottom: 16px;
   font-weight: 600;
-  box-shadow: 0 4px 16px rgba(127, 176, 105, 0.3);
+  box-shadow: 0 4px 16px var(--button-primary-shadow);
+  transition: all 0.3s ease;
+}
+
+.emptyActionButton:hover {
+  --background: var(--button-primary-hover-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--button-primary-hover-shadow);
+}
+
+.emptyActionButton:active {
+  --background: var(--button-primary-active-bg);
+  transform: translateY(0);
+  box-shadow: 0 2px 8px var(--button-primary-active-shadow);
 }
 
 /* 플로팅 버튼 */
 .fabButton {
-  --background: linear-gradient(135deg, #7FB069, #4A7C59);
+  --background: var(--button-primary-bg);
   --color: white;
-  --box-shadow: 0 8px 24px rgba(127, 176, 105, 0.4);
+  --box-shadow: 0 8px 24px var(--button-primary-hover-shadow);
   transition: all 0.3s ease;
 }
 
 .fabButton:hover {
+  --background: var(--button-primary-hover-bg);
   transform: scale(1.1);
-  --box-shadow: 0 12px 32px rgba(127, 176, 105, 0.5);
+  --box-shadow: 0 12px 32px var(--button-primary-active-shadow);
+}
+
+.fabButton:active {
+  --background: var(--button-primary-active-bg);
+  transform: scale(1.05);
+  --box-shadow: 0 6px 16px var(--button-primary-shadow);
 }
 
 /* 장식 요소 */
