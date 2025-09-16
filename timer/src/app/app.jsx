@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IonApp, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon, IonContent, IonPage } from '@ionic/react';
-import { IonReactHashRouter } from '@ionic/react-router';
-import { Route, Switch } from 'react-router-dom';
+import { IonApp, IonTabs, IonTab, IonTabBar, IonTabButton, IonIcon, IonContent, IonPage } from '@ionic/react';
 import { leaf, list, barChart, settings } from 'ionicons/icons';
 import { PageHeader } from '@morphixai/components';
 import { reportError } from '@morphixai/lib';
@@ -337,68 +335,55 @@ export default function App() {
           </button>
         </div>
       ) : isDataInitialized ? (
-        <IonReactHashRouter>
-          <IonTabs>
-            <IonRouterOutlet>
-              <Switch>
-                <Route exact path="/timer">
-                  <IonPage>
-                    <PageHeader title={t('appTitle')} />
-                    <IonContent>
-                      <TimerTab />
-                    </IonContent>
-                  </IonPage>
-                </Route>
-                
-                <Route exact path="/tasks">
-                  <TasksTab />
-                </Route>
-                
-                <Route exact path="/stats">
-                  <IonPage>
-                    <PageHeader title={t('gardenStats')} />
-                    <IonContent>
-                      <StatsTab />
-                    </IonContent>
-                  </IonPage>
-                </Route>
-                
-                <Route exact path="/settings">
-                  <SettingsTab />
-                </Route>
-                
-                <Route exact path="/">
-                  <IonPage>
-                    <PageHeader title={t('appTitle')} />
-                    <IonContent>
-                      <TimerTab />
-                    </IonContent>
-                  </IonPage>
-                </Route>
-              </Switch>
-            </IonRouterOutlet>
+        <IonTabs>
+          <IonTab tab="timer">
+            <IonPage>
+              <PageHeader title={t('appTitle')} />
+              <IonContent>
+                <TimerTab />
+              </IonContent>
+            </IonPage>
+          </IonTab>
+          
+          <IonTab tab="tasks">
+            <TasksTab />
+          </IonTab>
+          
+          <IonTab tab="stats">
+            <IonPage>
+              <PageHeader title={t('gardenStats')} />
+              <IonContent>
+                <StatsTab />
+              </IonContent>
+            </IonPage>
+          </IonTab>
+          
+          <IonTab tab="settings">
+            <SettingsTab />
+          </IonTab>
 
-            <IonTabBar slot="bottom" className="garden-tab-bar">
-              <IonTabButton tab="timer" href="/timer" className="tab-button">
-                <IonIcon icon={leaf} />
-                {t('timer')}
-              </IonTabButton>
-              <IonTabButton tab="tasks" href="/tasks" className="tab-button">
-                <IonIcon icon={list} />
-                {t('tasks')}
-              </IonTabButton>
-              <IonTabButton tab="stats" href="/stats" className="tab-button">
-                <IonIcon icon={barChart} />
-                {t('stats')}
-              </IonTabButton>
-              <IonTabButton tab="settings" href="/settings" className="tab-button">
-                <IonIcon icon={settings} />
-                {t('settings')}
-              </IonTabButton>
-            </IonTabBar>
-          </IonTabs>
-        </IonReactHashRouter>
+          <IonTabBar slot="bottom" className="garden-tab-bar">
+            <IonTabButton tab="timer" className="tab-button">
+              <IonIcon icon={leaf} />
+              {t('timer')}
+            </IonTabButton>
+            <IonTabButton tab="tasks" className="tab-button">
+              <IonIcon icon={list} />
+              {t('tasks')}
+            </IonTabButton>
+            <IonTabButton tab="stats" className="tab-button">
+              <IonIcon icon={barChart} />
+              {t('stats')}
+            </IonTabButton>
+            <IonTabButton tab="settings" className="tab-button">
+              <IonIcon icon={settings} />
+              {t('settings')}
+            </IonTabButton>
+          </IonTabBar>
+        </IonTabs>
       ) : null}
+      
+      <ErrorToast />
     </IonApp>
   );
 }
