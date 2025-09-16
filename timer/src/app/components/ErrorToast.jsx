@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { IonToast } from '@ionic/react';
+import { t } from '../utils/i18n';
 
 let toastQueue = [];
 let showToastFunction = null;
@@ -80,7 +81,7 @@ const ErrorToast = () => {
           onDidDismiss={() => handleToastDismiss(toast.id)}
           buttons={[
             {
-              text: '확인',
+              text: t('confirmButton'),
               role: 'cancel'
             }
           ]}

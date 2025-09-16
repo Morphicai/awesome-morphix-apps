@@ -297,7 +297,7 @@ export default function SettingsTab() {
         <IonContent>
           <Loading 
             isVisible={isLoading} 
-            message={t('loadingSettings') || '설정을 불러오는 중...'} 
+            message={t('loadingSettingsText')} 
           />
         </IonContent>
       </IonPage>
@@ -434,13 +434,13 @@ export default function SettingsTab() {
               <div className={styles.languageInfo}>
                 <p className={styles.languageDescription}>
                   {currentLanguage === 'ko' 
-                    ? '언어를 변경하여 앱을 더 편리하게 사용하세요' 
-                    : '更改语言以更方便地使用应用'}
+                    ? t('changeLanguageDescription') 
+                    : t('changeLanguageDescription')}
                 </p>
                 <div className={styles.currentLanguageDisplay}>
                   <span className={styles.currentLanguageLabel}>{t('currentLanguage')}:</span>
                   <span className={styles.currentLanguageValue}>
-                    {currentLanguage === 'ko' ? '🇰🇷 한국어' : '🇨🇳 中文'}
+                    {currentLanguage === 'ko' ? `🇰🇷 ${t('koreanLanguage')}` : `🇨🇳 ${t('chineseLanguage')}`}
                   </span>
                 </div>
               </div>

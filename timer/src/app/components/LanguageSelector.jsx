@@ -75,7 +75,7 @@ export default function LanguageSelector({ className = '' }) {
                   <div className={styles.optionText}>
                     <div className={styles.optionName}>{language.name}</div>
                     <div className={styles.optionCode}>
-                      {language.code === 'ko' ? '한국어' : '中文'}
+                      {language.code === 'ko' ? t('koreanLanguage') : t('chineseLanguage')}
                     </div>
                   </div>
                   {currentLang === language.code && (

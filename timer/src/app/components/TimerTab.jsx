@@ -226,7 +226,7 @@ export default function TimerTab() {
         <div className={styles.backgroundTimerIndicator}>
           <span className={styles.backgroundIcon}>🌱</span>
           <span className={styles.backgroundText}>
-            {isBreak ? '휴식 중 (백그라운드)' : '집중 중 (백그라운드)'}
+            {isBreak ? t('restingBackground') : t('focusingBackground')}
           </span>
         </div>
       );

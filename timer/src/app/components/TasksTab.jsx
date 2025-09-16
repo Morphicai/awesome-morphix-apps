@@ -3,6 +3,7 @@ import { IonButton, IonIcon, IonInput, IonSelect, IonSelectOption, IonCheckbox, 
 import { add, trash, create, checkmark, close } from 'ionicons/icons';
 import { PageHeader } from '@morphixai/components';
 import { useTaskStore } from '../stores/taskStore';
+import { t } from '../utils/i18n';
 import styles from '../styles/TasksTab.module.css';
 
 export default function TasksTab() {
@@ -159,11 +160,11 @@ export default function TasksTab() {
   if (!isDataReady) {
     return (
       <IonPage>
-        <PageHeader title="나의 할일 花园" />
+        <PageHeader title={t('myTaskGardenTitle')} />
         <IonContent>
           <div className={styles.loadingContainer}>
             <IonSpinner name="crescent" />
-            <p>할일 목록을 불러오는 중...</p>
+            <p>{t('loadingTasksList')}</p>
           </div>
         </IonContent>
       </IonPage>
@@ -175,7 +176,7 @@ export default function TasksTab() {
 
   return (
     <IonPage>
-      <PageHeader title="나의 할일 花园" />
+      <PageHeader title={t('myTaskGardenTitle')} />
       <IonContent>
         <div className={styles.container}>
           {/* 자연 배경 */}
@@ -183,8 +184,8 @@ export default function TasksTab() {
             
             {/* 페이지 제목 */}
             <div className={styles.pageHeader}>
-              <h1 className={styles.pageTitle}>나의 할일 花园</h1>
-              <p className={styles.pageSubtitle}>오늘도 아름다운 작업들을 가꾸어보세요</p>
+              <h1 className={styles.pageTitle}>{t('myTaskGardenTitle')}</h1>
+              <p className={styles.pageSubtitle}>{t('taskGardenSubtitle')}</p>
             </div>
 
             {/* 통계 카드 */}
@@ -192,17 +193,17 @@ export default function TasksTab() {
               <div className={styles.statCard}>
                 <div className={styles.statIcon}>🌱</div>
                 <div className={styles.statNumber}>{stats.total}</div>
-                <div className={styles.statLabel}>전체 작업</div>
+                <div className={styles.statLabel}>{t('totalTasksLabel')}</div>
               </div>
               <div className={styles.statCard}>
                 <div className={styles.statIcon}>🌸</div>
                 <div className={styles.statNumber}>{stats.completed}</div>
-                <div className={styles.statLabel}>완료된 작업</div>
+                <div className={styles.statLabel}>{t('completedTasksLabel')}</div>
               </div>
               <div className={styles.statCard}>
                 <div className={styles.statIcon}>🌿</div>
                 <div className={styles.statNumber}>{stats.pending}</div>
-                <div className={styles.statLabel}>대기 중</div>
+                <div className={styles.statLabel}>{t('pendingTasksLabel')}</div>
               </div>
             </div>
 

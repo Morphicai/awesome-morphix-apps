@@ -1,7 +1,8 @@
 import React from 'react';
+import { t } from '../utils/i18n';
 import styles from '../styles/Loading.module.css';
 
-export default function Loading({ isVisible, message = "정원을 준비하는 중..." }) {
+export default function Loading({ isVisible, message = null }) {
   if (!isVisible) return null;
 
   return (
@@ -12,7 +13,7 @@ export default function Loading({ isVisible, message = "정원을 준비하는 �
           <div className={styles.leaf}>🌿</div>
           <div className={styles.leaf}>🍃</div>
         </div>
-        <p className={styles.message}>{message}</p>
+        <p className={styles.message}>{message || t('preparingGarden')}</p>
       </div>
     </div>
   );

@@ -83,7 +83,7 @@ export default function GardenFairy({
           { role: 'user', content: userMessage }
         ],
         options: {
-          model: 'openai/gpt-4o',
+          model: 'deepseek/deepseek-chat-v3.1:free',
           temperature: 0.8
         }
       });
