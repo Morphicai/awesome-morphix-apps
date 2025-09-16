@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IonButton, IonIcon, IonModal, IonContent, IonHeader, IonToolbar, IonTitle, IonItem, IonInput, IonSpinner, IonChip } from '@ionic/react';
 import { sparkles, chatbubble, send, close, leaf, heart, star } from 'ionicons/icons';
 import AppSdk from '@morphixai/app-sdk';
@@ -18,7 +18,6 @@ export default function GardenFairy({
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef(null);
   const [fairyMood, setFairyMood] = useState('happy');
 
   // 요정의 기분 상태 업데이트
@@ -184,16 +183,6 @@ ${t('situationalResponses')}
     }
   };
 
-  // 自动滚动到底部
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  // 消息变化时自动滚动
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isLoading]);
-
   // 자동 인사 메시지
   useEffect(() => {
     if (isModalOpen && messages.length === 0) {
@@ -248,42 +237,36 @@ ${t('situationalResponses')}
         </IonHeader>
 
         <IonContent className={styles.modalContent}>
-          {/* 消息容器 */}
-          <div className={styles.messagesContainer}>
-            {/* 메시지 목록 */}
-            <div className={styles.messagesList}>
-              {messages.map((message) => (
-                <div 
-                  key={message.id} 
-                  className={`${styles.messageItem} ${
-                    message.type === 'user' ? styles.userMessage : styles.fairyMessage
-                  }`}
-                >
-                  <div className={styles.messageContent}>
-                    {message.type === 'fairy' && (
-                      <span className={styles.messageIcon}>🧚‍♀️</span>
-                    )}
-                    <div className={styles.messageBubble}>
-                      <p className={styles.messageText}>{message.content}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              
-              {isLoading && (
-                <div className={`${styles.messageItem} ${styles.fairyMessage}`}>
-                  <div className={styles.messageContent}>
+          {/* 메시지 목록 */}
+          <div className={styles.messagesList}>
+            {messages.map((message) => (
+              <div 
+                key={message.id} 
+                className={`${styles.messageItem} ${
+                  message.type === 'user' ? styles.userMessage : styles.fairyMessage
+                }`}
+              >
+                <div className={styles.messageContent}>
+                  {message.type === 'fairy' && (
                     <span className={styles.messageIcon}>🧚‍♀️</span>
-                    <div className={styles.messageBubble}>
-                      <IonSpinner name="dots" className={styles.loadingSpinner} />
-                    </div>
+                  )}
+                  <div className={styles.messageBubble}>
+                    <p className={styles.messageText}>{message.content}</p>
                   </div>
                 </div>
-              )}
-              
-              {/* 用于自动滚动定位的元素 */}
-              <div ref={messagesEndRef} />
-            </div>
+              </div>
+            ))}
+            
+            {isLoading && (
+              <div className={`${styles.messageItem} ${styles.fairyMessage}`}>
+                <div className={styles.messageContent}>
+                  <span className={styles.messageIcon}>🧚‍♀️</span>
+                  <div className={styles.messageBubble}>
+                    <IonSpinner name="dots" className={styles.loadingSpinner} />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 빠른 질문 버튼들 */}
