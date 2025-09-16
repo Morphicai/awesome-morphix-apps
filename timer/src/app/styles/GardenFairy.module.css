@@ -64,6 +64,19 @@
   transform: translateY(0);
 }
 
+/* 精灵对话模态框样式 */
+.fairyModal {
+  --height: 100vh;
+  --width: 100vw;
+  --border-radius: 0;
+  --box-shadow: none;
+}
+
+.fairyModal ion-content {
+  --padding-bottom: 0;
+  --offset-bottom: 0;
+}
+
 /* 모달 스타일 */
 .modalHeader {
   --background: linear-gradient(135deg, #7FB069, #4A7C59);
@@ -85,6 +98,18 @@
   --color: white;
 }
 
+/* Header中的精灵切换按钮样式 */
+.headerModelSwitchButton {
+  --color: white;
+  --padding-start: 8px;
+  --padding-end: 8px;
+  margin-right: 8px;
+}
+
+.headerModelSwitchButton:hover {
+  --color: rgba(255, 255, 255, 0.8);
+}
+
 /* 模态框容器 - 使用 flex 布局 */
 .modalContainer {
   display: flex;
@@ -100,7 +125,7 @@
   overflow-x: hidden;
   padding: 16px;
   padding-bottom: 0;
-  max-height: calc(100vh - 200px);
+  /* max-height: calc(100vh-20px); */
 }
 
 .messagesList {
@@ -226,23 +251,17 @@
 /* 输入框容器 - 固定在底部 */
 .inputContainer {
   flex-shrink: 0;
-  padding: 16px;
+  padding: 16px 16px max(8px, env(safe-area-inset-bottom)) 16px;
   background: white;
   border-top: 1px solid rgba(74, 124, 89, 0.1);
-}
-
-.inputRow {
-  display: flex;
-  align-items: center;
-  gap: 4px;
 }
 
 .inputItem {
   --background: #F8FDF8;
   --border-color: rgba(74, 124, 89, 0.3);
   border-radius: 25px;
-  padding: 0 16px 0 0;
-  flex: 1;
+  padding: 0 16px;
+  width: 100%;
 }
 
 .textInput {
@@ -260,29 +279,6 @@
   --color: #4A7C59;
 }
 
-/* 模型切换按钮样式 */
-.modelSwitchButton {
-  --color: #7FB069;
-  --padding-start: 8px;
-  --padding-end: 8px;
-  height: 40px;
-  min-width: 50px;
-  flex-shrink: 0;
-}
-
-.modelSwitchButton:hover {
-  --color: #4A7C59;
-}
-
-.modelIcon {
-  font-size: 18px;
-  margin-right: 4px;
-}
-
-.switchIcon {
-  font-size: 14px;
-  opacity: 0.7;
-}
 
 /* 애니메이션 */
 @keyframes fairyFloat {

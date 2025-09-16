@@ -273,7 +273,11 @@ ${t('situationalResponses')}
       </div>
 
       {/* 대화 모달 */}
-      <IonModal isOpen={isModalOpen} onDidDismiss={() => setIsModalOpen(false)}>
+      <IonModal 
+        isOpen={isModalOpen} 
+        onDidDismiss={() => setIsModalOpen(false)}
+        className={styles.fairyModal}
+      >
         <div className={styles.modalContainer}>
           {/* 头部 */}
           <IonHeader>
@@ -282,6 +286,18 @@ ${t('situationalResponses')}
                 <span className={styles.titleIcon}>{modelConfigs[selectedModel].icon}</span>
                 {modelConfigs[selectedModel].name}
               </IonTitle>
+              
+              {/* 精灵切换按钮 */}
+              <IonButton
+                fill="clear"
+                slot="end"
+                onClick={() => setShowModelSelector(true)}
+                className={styles.headerModelSwitchButton}
+                disabled={isLoading}
+              >
+                <IonIcon icon={swapHorizontal} />
+              </IonButton>
+              
               <IonButton 
                 fill="clear" 
                 slot="end" 
@@ -353,37 +369,24 @@ ${t('situationalResponses')}
 
           {/* 输入框区域 - 固定在底部 */}
           <div className={styles.inputContainer}>
-            <div className={styles.inputRow}>
-              {/* 模型切换按钮 - 放在 IonItem 外面 */}
+            <IonItem className={styles.inputItem}>
+              <IonInput
+                value={inputMessage}
+                placeholder={t('fairyMessagePlaceholder')}
+                onIonInput={(e) => setInputMessage(e.detail.value)}
+                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                disabled={isLoading}
+                className={styles.textInput}
+              />
               <IonButton
                 fill="clear"
-                onClick={() => setShowModelSelector(true)}
-                className={styles.modelSwitchButton}
-                disabled={isLoading}
+                onClick={sendMessage}
+                disabled={!inputMessage.trim() || isLoading}
+                className={styles.sendButton}
               >
-                <span className={styles.modelIcon}>{modelConfigs[selectedModel].icon}</span>
-                <IonIcon icon={swapHorizontal} className={styles.switchIcon} />
+                <IonIcon icon={send} />
               </IonButton>
-              
-              <IonItem className={styles.inputItem}>
-                <IonInput
-                  value={inputMessage}
-                  placeholder={t('fairyMessagePlaceholder')}
-                  onIonInput={(e) => setInputMessage(e.detail.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                  disabled={isLoading}
-                  className={styles.textInput}
-                />
-                <IonButton
-                  fill="clear"
-                  onClick={sendMessage}
-                  disabled={!inputMessage.trim() || isLoading}
-                  className={styles.sendButton}
-                >
-                  <IonIcon icon={send} />
-                </IonButton>
-              </IonItem>
-            </div>
+            </IonItem>
           </div>
         </div>
       </IonModal>
