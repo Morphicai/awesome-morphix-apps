@@ -89,7 +89,7 @@ ${t('situationalResponses')}
           { role: 'user', content: userMessage }
         ],
         options: {
-          model: 'deepseek/deepseek-chat-v3.1:free',
+          model: 'deepseek/deepseek-chat:free',
           temperature: 0.8
         }
       });

@@ -801,9 +801,7 @@ const translations = {
     counseling: "烦恼咨询: 用自然的智慧给予建议",
     focusing: "专注中",
     resting: "休息中",
-    stopped: "已停止",
-    minutes: "分钟",
-    count: "个"
+    stopped: "已停止"
   }
 };
 
