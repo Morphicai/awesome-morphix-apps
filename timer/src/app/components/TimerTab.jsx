@@ -19,7 +19,8 @@ export default function TimerTab() {
     pauseTimer,
     resetTimer,
     tick,
-    restoreTimer
+    restoreTimer,
+    skipBreak
   } = useTimerStore();
 
   const {
@@ -144,6 +145,10 @@ export default function TimerTab() {
 
   const handleReset = async () => {
     await resetTimer();
+  };
+
+  const handleSkipBreak = async () => {
+    await skipBreak();
   };
 
   const handleTaskComplete = async () => {
@@ -370,6 +375,22 @@ export default function TimerTab() {
                 {isRunning ? t('pause') : t('start')}
               </span>
             </IonButton>
+            
+            {/* 只在休息时间显示跳过按钮 */}
+            {isBreak && (
+              <IonButton
+                fill="clear"
+                size="large"
+                onClick={handleSkipBreak}
+                className={styles.skipButton}
+              >
+                <IonIcon 
+                  icon={leaf} 
+                  size="large"
+                />
+                <span className={styles.buttonText}>{t('skipBreak')}</span>
+              </IonButton>
+            )}
             
             <IonButton
               fill="clear"

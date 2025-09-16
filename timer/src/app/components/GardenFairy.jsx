@@ -19,24 +19,25 @@ export default function GardenFairy({
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [fairyMood, setFairyMood] = useState('happy');
-  const [selectedModel, setSelectedModel] = useState('openai/gpt-5-mini');
+  const [selectedModel, setSelectedModel] = useState('openai/gpt-4o');
   const [showModelSelector, setShowModelSelector] = useState(false);
   const messagesEndRef = useRef(null);
 
   // 模型配置映射
   const modelConfigs = {
-    'openai/gpt-5-mini': {
-      name: t('fairyLuna'),
-      personality: t('fairyPersonalityLuna'),
-      icon: '🌙',
-      model: 'openai/gpt-5-mini'
-    },
-    'deepseek/deepseek-chat-v3.1:free': {
+    'google/gemma-3-27b-it:free': {
       name: t('fairyVera'),
       personality: t('fairyPersonalityVera'),
       icon: '🌸',
-      model: 'deepseek/deepseek-chat-v3.1:free'
+      model: 'google/gemma-3-27b-it:free'
     },
+    'openai/gpt-4o': {
+      name: t('fairyLuna'),
+      personality: t('fairyPersonalityLuna'),
+      icon: '🌙',
+      model: 'openai/gpt-4o'
+    },
+    
     'anthropic/claude-sonnet-4': {
       name: t('fairySage'),
       personality: t('fairyPersonalitySage'),

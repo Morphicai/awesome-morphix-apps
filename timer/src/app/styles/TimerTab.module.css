@@ -281,30 +281,37 @@
 .controls {
   display: flex;
   justify-content: center;
-  gap: 24px;
+  align-items: center;
+  gap: 12px;
   margin: 32px 0;
+  padding: 0 16px;
+  flex-wrap: wrap;
 }
 
 .playPauseButton,
-.resetButton {
+.resetButton,
+.skipButton {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(200, 230, 201, 0.4);
   border-radius: 50px;
-  padding: 14px 28px;
+  padding: 12px 20px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   box-shadow: 
     0 8px 32px rgba(200, 230, 201, 0.2),
     0 2px 8px rgba(200, 230, 201, 0.1);
   transition: all 0.3s ease;
   color: #2E7D32;
   font-weight: 600;
+  min-width: 100px;
+  flex: 0 1 auto;
 }
 
 .playPauseButton:hover,
-.resetButton:hover {
+.resetButton:hover,
+.skipButton:hover {
   transform: translateY(-2px);
   box-shadow: 
     0 12px 40px rgba(200, 230, 201, 0.25),
@@ -312,8 +319,23 @@
 }
 
 .buttonText {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
+}
+
+/* 跳过按钮特殊样式 - 蝴蝶休息时间的特色 */
+.skipButton {
+  background: linear-gradient(135deg, rgba(160, 200, 230, 0.15), rgba(255, 255, 255, 0.9));
+  border: 1px solid rgba(160, 200, 230, 0.4);
+  color: #1976D2;
+}
+
+.skipButton:hover {
+  background: linear-gradient(135deg, rgba(160, 200, 230, 0.25), rgba(255, 255, 255, 0.95));
+  border-color: rgba(160, 200, 230, 0.6);
+  box-shadow: 
+    0 12px 40px rgba(160, 200, 230, 0.3),
+    0 4px 12px rgba(160, 200, 230, 0.2);
 }
 
 /* 통계 - 새로운 디자인 */
@@ -554,16 +576,19 @@
   }
   
   .controls {
-    gap: 20px;
+    gap: 8px;
+    padding: 0 12px;
   }
   
   .playPauseButton,
-  .resetButton {
-    padding: 12px 24px;
+  .resetButton,
+  .skipButton {
+    padding: 10px 16px;
+    min-width: 80px;
   }
   
   .buttonText {
-    font-size: 14px;
+    font-size: 12px;
   }
   
   .stats {

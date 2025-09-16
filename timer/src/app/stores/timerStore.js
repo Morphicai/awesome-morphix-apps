@@ -339,6 +339,31 @@ export const useTimerStore = create((set, get) => ({
     }
   },
   
+  skipBreak: async () => {
+    try {
+      const { mode, isRunning } = get();
+      
+      // 只允许在休息时间跳过
+      if (mode !== 'shortBreak' && mode !== 'longBreak') {
+        return;
+      }
+      
+      console.log('Skipping break...');
+      
+      // 停止当前计时器
+      if (isRunning) {
+        await get().pauseTimer();
+      }
+      
+      // 直接完成当前会话，进入下一个阶段
+      await get().completeSession();
+      
+    } catch (error) {
+      console.error('Failed to skip break:', error);
+      await reportError(error, 'SkipBreakError');
+    }
+  },
+  
   updateRemainingTime: (time) => {
     set({ remainingTime: time });
   },
