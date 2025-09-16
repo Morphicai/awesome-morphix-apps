@@ -302,7 +302,7 @@ export default function App() {
   console.log('showLoading', showLoading);
   
   return (
-    <IonApp>
+    <IonApp className="ion-palette-light">
       <Loading 
         isVisible={showLoading} 
         message={t('loadingGarden')} 
