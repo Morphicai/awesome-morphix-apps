@@ -1,0 +1,302 @@
+/* 容器样式 */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+  overflow: hidden;
+}
+
+/* 进度条 */
+.progressBar {
+  height: 4px;
+  background: rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+}
+
+.progress {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  transition: width 0.3s ease;
+}
+
+/* 卡片容器 */
+.cardsContainer {
+  flex: 1;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.cardsContainer::-webkit-scrollbar {
+  display: none;
+}
+
+/* 卡片样式 */
+.card {
+  min-width: 100vw;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  scroll-snap-align: start;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+.cardOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(1px);
+}
+
+.cardContent {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  max-width: 600px;
+  width: 100%;
+  padding: 0 20px;
+}
+
+.cardIcon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.cardTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0 0 1rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  line-height: 1.2;
+}
+
+.cardSubtitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0 0 2rem 0;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.cardText {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0 0 2rem 0;
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.cardMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.author, .source {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.cardActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.linkButton {
+  --color: rgba(255, 255, 255, 0.9);
+  --background: rgba(255, 255, 255, 0.1);
+  --background-hover: rgba(255, 255, 255, 0.2);
+  --border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* AI助手徽章样式 */
+.aiAssistantBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 12px;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.aiAssistantBadge ion-icon {
+  font-size: 14px;
+  color: #fbbf24;
+  filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.4));
+}
+
+/* 导航样式 */
+.navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.navButton {
+  --color: #6b7280;
+  --background: transparent;
+  --background-hover: rgba(107, 114, 128, 0.1);
+  --border-radius: 12px;
+  width: 48px;
+  height: 48px;
+}
+
+.navButton.disabled {
+  --color: #d1d5db;
+  opacity: 0.5;
+}
+
+.indicators {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: #d1d5db;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.indicator.active {
+  background: #3b82f6;
+  transform: scale(1.2);
+}
+
+/* 操作按钮 */
+.actions {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.actionButton {
+  --color: #3b82f6;
+  --background: rgba(59, 130, 246, 0.1);
+  --background-hover: rgba(59, 130, 246, 0.2);
+  --border-radius: 12px;
+  width: 100%;
+  font-weight: 600;
+}
+
+/* 无障碍 */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .container {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  }
+  
+  .navigation, .actions {
+    background: rgba(15, 23, 42, 0.95);
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .navButton {
+    --color: #9ca3af;
+  }
+  
+  .navButton.disabled {
+    --color: #4b5563;
+  }
+  
+  .actionButton {
+    --color: #60a5fa;
+    --background: rgba(96, 165, 250, 0.1);
+    --background-hover: rgba(96, 165, 250, 0.2);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .cardTitle {
+    font-size: 2rem;
+  }
+  
+  .cardSubtitle {
+    font-size: 1.1rem;
+  }
+  
+  .cardText {
+    font-size: 1rem;
+  }
+  
+  .cardIcon {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 20px 15px;
+  }
+  
+  .cardContent {
+    padding: 0 15px;
+  }
+  
+  .cardTitle {
+    font-size: 1.75rem;
+  }
+  
+  .cardSubtitle {
+    font-size: 1rem;
+  }
+  
+  .cardText {
+    font-size: 0.95rem;
+  }
+  
+  .cardIcon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+}
