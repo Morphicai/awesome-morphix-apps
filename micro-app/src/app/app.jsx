@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IonPage, IonContent, IonIcon, IonButton, IonLoading } from '@ionic/react';
 import { PageHeader } from '@morphixai/components';
-import { chevronBack, chevronForward, share, sparkles, linkOutline } from 'ionicons/icons';
+import { 
+  chevronBack, 
+  chevronForward, 
+  share, 
+  sparkles
+} from 'ionicons/icons';
 import { reportError } from '@morphixai/lib';
-import { fetch } from '@morphixai/fetch';
 import styles from './styles/App.module.css';
 
 export default function App() {
@@ -14,27 +18,36 @@ export default function App() {
   const cardsContainerRef = useRef(null);
   const cardRefs = useRef([]);
 
+  // 动态加载 html-to-image 库
   useEffect(() => {
     const loadHtmlToImage = async () => {
       try {
         const lib = await remoteImport('html-to-image');
         setHtmlToImage(lib);
       } catch (error) {
-        await reportError(error, 'JavaScriptError', { component: 'App', action: 'loadHtmlToImage' });
+        await reportError(error, 'JavaScriptError', { 
+          component: 'App', 
+          action: 'loadHtmlToImage' 
+        });
         console.error('加载html-to-image库失败:', error);
       }
     };
+    
     loadHtmlToImage();
   }, []);
 
+  // 检测系统主题
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     setIsDarkMode(mediaQuery.matches);
+    
     const handleChange = (e) => setIsDarkMode(e.matches);
     mediaQuery.addEventListener('change', handleChange);
+    
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
+  // 卡片数据
   const cards = [
     {
       id: 1,
@@ -44,7 +57,6 @@ export default function App() {
       content: '百变AI助手是一款功能强大的人工智能应用，能够帮助您处理各种日常任务，提供智能建议，让您的生活更加便捷高效。',
       author: '百变AI团队',
       source: '官方介绍',
-      link: 'https://morphix.ai/docs/welcome',
       gradient: 'blue'
     },
     {
@@ -55,7 +67,6 @@ export default function App() {
       content: '支持文字对话、图片识别、文档分析等多种交互方式。无论是工作学习还是生活娱乐，都能为您提供专业的AI助手服务。',
       author: '产品团队',
       source: '功能介绍',
-      link: 'https://morphix.ai/docs/features',
       gradient: 'purple'
     },
     {
@@ -66,7 +77,6 @@ export default function App() {
       content: '基于先进的机器学习算法，能够理解您的需求，提供个性化的学习建议和知识解答，帮助您快速获取所需信息。',
       author: '技术团队',
       source: '技术文档',
-      link: 'https://morphix.ai/docs/learning',
       gradient: 'green'
     },
     {
@@ -77,7 +87,6 @@ export default function App() {
       content: '从简单的信息查询到复杂的数据分析，百变AI助手都能准确理解您的指令，并提供高质量的执行结果。',
       author: '用户体验团队',
       source: '使用指南',
-      link: 'https://morphix.ai/docs/tasks',
       gradient: 'orange'
     },
     {
@@ -88,11 +97,11 @@ export default function App() {
       content: '我们致力于持续改进AI算法，定期更新功能特性，确保为用户提供最前沿、最优质的人工智能服务体验。',
       author: '研发团队',
       source: '发展规划',
-      link: 'https://morphix.ai/docs/roadmap',
       gradient: 'rainbow'
     }
   ];
 
+  // 生成渐变色
   const generateGradientColors = (gradientType) => {
     const gradients = {
       blue: ['#3b82f6', '#1e40af'],
@@ -104,16 +113,15 @@ export default function App() {
     return gradients[gradientType] || gradients.blue;
   };
 
+  // 创建带品牌标识的截图元素
   const createScreenshotElement = (card) => {
     const cardElement = cardRefs.current[currentIndex];
     if (!cardElement) return null;
 
+    // 克隆卡片元素
     const clonedCard = cardElement.cloneNode(true);
-    const existingBadge = clonedCard.querySelector('.aiAssistantBadge');
-    if (existingBadge) {
-      existingBadge.remove();
-    }
-
+    
+    // 创建截图容器
     const screenshotContainer = document.createElement('div');
     screenshotContainer.style.cssText = `
       position: fixed;
@@ -126,6 +134,7 @@ export default function App() {
       overflow: hidden;
     `;
 
+    // 设置克隆卡片的样式
     clonedCard.style.cssText = `
       width: 100%;
       height: 100%;
@@ -133,62 +142,44 @@ export default function App() {
       align-items: center;
       justify-content: center;
       position: relative;
-      padding: 60px 40px 80px;
+      padding: 60px 40px 120px;
       box-sizing: border-box;
       background: ${getCardBackground(card.gradient)};
     `;
 
-    const cornerBrand = document.createElement('div');
-    cornerBrand.style.cssText = `
+    // 添加品牌水印
+    const brandWatermark = document.createElement('div');
+    brandWatermark.style.cssText = `
       position: absolute;
-      bottom: 16px;
-      right: 16px;
+      bottom: 20px;
+      right: 30px;
       display: flex;
       align-items: center;
-      gap: 4px;
-      padding: 4px 8px;
-      background: rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(8px);
-      border-radius: 8px;
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 10px;
-      font-weight: 500;
-      z-index: 12;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(139, 92, 246, 0.15);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 20px;
+      color: #6d28d9;
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
     `;
-    cornerBrand.innerHTML = `
-      <span style="font-size: 10px;">✨</span>
-      <span>Made with 百变AI助手</span>
-    `;
-
-    const linkInfo = document.createElement('div');
-    linkInfo.style.cssText = `
-      position: absolute;
-      bottom: 16px;
-      left: 16px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 8px;
-      background: rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(8px);
-      border-radius: 8px;
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 10px;
-      font-weight: 500;
-      z-index: 12;
-    `;
-    linkInfo.innerHTML = `
-      <span style="font-size: 10px;">🔗</span>
-      <span>原文: ${card.link}</span>
+    
+    brandWatermark.innerHTML = `
+      <span style="font-size: 16px; color: #f59e0b; filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.3));">✨</span>
+      <span>由百变AI助手生成</span>
     `;
 
     screenshotContainer.appendChild(clonedCard);
-    screenshotContainer.appendChild(cornerBrand);
-    screenshotContainer.appendChild(linkInfo);
-
+    screenshotContainer.appendChild(brandWatermark);
+    
     return screenshotContainer;
   };
 
+  // 使用 DOM 截图生成分享图片
   const generateShareImage = async (card) => {
     if (!htmlToImage) {
       throw new Error('html-to-image 库未加载完成');
@@ -196,15 +187,22 @@ export default function App() {
 
     try {
       setShowLoading(true);
+      
+      // 创建专用的截图元素
       const screenshotElement = createScreenshotElement(card);
       if (!screenshotElement) {
         throw new Error('无法创建截图元素');
       }
 
+      // 临时添加到页面
       document.body.appendChild(screenshotElement);
+
+      // 等待元素渲染
       await new Promise(resolve => setTimeout(resolve, 100));
 
+      // 使用 html-to-image 截图
       const dataUrl = await htmlToImage.toPng(screenshotElement, {
+        quality: 1.0,
         pixelRatio: 2,
         width: 750,
         height: 1000,
@@ -215,16 +213,23 @@ export default function App() {
         }
       });
 
+      // 清理临时元素
       document.body.removeChild(screenshotElement);
+
       return dataUrl;
     } catch (error) {
-      await reportError(error, 'JavaScriptError', { component: 'App', action: 'generateShareImage', cardId: card.id });
+      await reportError(error, 'JavaScriptError', { 
+        component: 'App', 
+        action: 'generateShareImage',
+        cardId: card.id 
+      });
       throw error;
     } finally {
       setShowLoading(false);
     }
   };
 
+  // 分享功能
   const handleShare = async () => {
     if (!htmlToImage) {
       console.error('html-to-image 库未加载完成');
@@ -234,11 +239,13 @@ export default function App() {
     try {
       const currentCard = cards[currentIndex];
       const imageDataUrl = await generateShareImage(currentCard);
-
+      
+      // 将 base64 转换为 blob
       const response = await fetch(imageDataUrl);
       const blob = await response.blob();
       const file = new File([blob], `百变AI助手-${currentCard.title}.png`, { type: 'image/png' });
-
+      
+      // 检查分享能力
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
           title: `${currentCard.title} - 百变AI助手`,
@@ -246,23 +253,22 @@ export default function App() {
           files: [file]
         });
       } else {
+        // 降级方案：下载图片
         const link = document.createElement('a');
         link.download = `百变AI助手-${currentCard.title}.png`;
         link.href = imageDataUrl;
         link.click();
       }
     } catch (error) {
-      await reportError(error, 'JavaScriptError', { component: 'App', action: 'handleShare' });
+      await reportError(error, 'JavaScriptError', { 
+        component: 'App', 
+        action: 'handleShare' 
+      });
       console.error('分享失败:', error);
     }
   };
 
-  const handleOpenLink = (link) => {
-    if (link) {
-      window.open(link, '_blank', 'noopener,noreferrer');
-    }
-  };
-
+  // 导航功能
   const goToPrevious = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
@@ -292,6 +298,7 @@ export default function App() {
     }
   };
 
+  // 处理滚动事件
   const handleScroll = () => {
     if (cardsContainerRef.current) {
       const scrollLeft = cardsContainerRef.current.scrollLeft;
@@ -304,6 +311,7 @@ export default function App() {
     }
   };
 
+  // 获取卡片背景渐变
   const getCardBackground = (gradient) => {
     const [color1, color2] = generateGradientColors(gradient);
     return `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
@@ -314,13 +322,22 @@ export default function App() {
       <PageHeader title="百变AI助手" />
       <IonContent>
         <div className={styles.container}>
+          {/* 进度条 */}
           <div className={styles.progressBar}>
-            <div className={styles.progress} style={{ width: `${((currentIndex + 1) / cards.length) * 100}%` }} />
+            <div 
+              className={styles.progress} 
+              style={{ width: `${((currentIndex + 1) / cards.length) * 100}%` }}
+            />
           </div>
 
-          <div ref={cardsContainerRef} className={styles.cardsContainer} onScroll={handleScroll}>
+          {/* 卡片容器 */}
+          <div 
+            ref={cardsContainerRef}
+            className={styles.cardsContainer}
+            onScroll={handleScroll}
+          >
             {cards.map((card, index) => (
-              <div
+              <div 
                 key={card.id}
                 ref={el => cardRefs.current[index] = el}
                 className={styles.card}
@@ -333,23 +350,23 @@ export default function App() {
                       {card.icon}
                     </div>
                   )}
-
+                  
                   <h1 className={styles.cardTitle}>
                     {card.title}
                   </h1>
-
+                  
                   {card.subtitle && (
                     <h2 className={styles.cardSubtitle}>
                       {card.subtitle}
                     </h2>
                   )}
-
+                  
                   {card.content && (
                     <p className={styles.cardText}>
                       {card.content}
                     </p>
                   )}
-
+                  
                   {(card.author || card.source) && (
                     <div className={styles.cardMeta}>
                       {card.author && (
@@ -366,21 +383,9 @@ export default function App() {
                   )}
 
                   <div className={styles.cardActions}>
-                    {card.link && (
-                      <IonButton
-                        fill="clear"
-                        size="small"
-                        className={styles.linkButton}
-                        onClick={() => handleOpenLink(card.link)}
-                      >
-                        <IonIcon icon={linkOutline} />
-                        查看原文
-                      </IonButton>
-                    )}
-
                     <div className={styles.aiAssistantBadge}>
                       <IonIcon icon={sparkles} />
-                      Made with 百变AI助手
+                      由百变AI助手生成
                     </div>
                   </div>
                 </div>
@@ -388,6 +393,7 @@ export default function App() {
             ))}
           </div>
 
+          {/* 导航控件 */}
           <div className={styles.navigation}>
             <IonButton
               fill="clear"
@@ -395,7 +401,7 @@ export default function App() {
               onClick={goToPrevious}
               disabled={currentIndex === 0}
             >
-              <IonIcon icon={chevronBack} />
+              <IonIcon size="large" icon={chevronBack} />
               <span className={styles.srOnly}>上一页</span>
             </IonButton>
 
@@ -421,6 +427,7 @@ export default function App() {
             </IonButton>
           </div>
 
+          {/* 操作按钮 */}
           <div className={styles.actions}>
             <IonButton
               fill="clear"
@@ -434,6 +441,7 @@ export default function App() {
           </div>
         </div>
 
+        {/* 加载状态 */}
         <IonLoading
           key="loading"
           isOpen={showLoading}
