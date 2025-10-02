@@ -25,6 +25,21 @@ npm install
 
 ### 2. 开发
 
+**🎯 交互式开发（推荐）**
+
+```bash
+# 显示菜单选择项目
+npm run dev
+```
+
+交互式菜单：
+- 📱 使用 ↑↓ 方向键选择应用
+- ➕ 创建新应用选项
+- ❌ 退出选项
+- 回车确认选择
+
+**其他命令**
+
 ```bash
 # 创建新应用
 npm run create my-app
@@ -32,8 +47,8 @@ npm run create my-app
 # 同步文档
 npm run sync-docs
 
-# 开发所有应用
-npm run dev
+# 开发所有应用（并行）
+npm run dev:all
 
 # 构建所有应用
 npm run build
@@ -52,7 +67,8 @@ npm run build
 
 ```bash
 # ✅ 推荐：使用 npm scripts
-npm run dev              # 开发所有应用
+npm run dev              # 🎯 交互式开发菜单
+npm run dev:all          # 开发所有应用（并行）
 npm run create my-app    # 创建新应用
 npm run sync-docs        # 同步文档
 
@@ -102,7 +118,8 @@ awesome-morphix-apps/
     "pnpm": "^8.0.0"
   },
   "scripts": {
-    "dev": "npx pnpm --filter \"./apps/*\" --parallel dev"
+    "dev": "node tools/cli/dev.js",
+    "dev:all": "npx pnpm --filter \"./apps/*\" --parallel dev"
   }
 }
 ```

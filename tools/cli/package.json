@@ -17,6 +17,9 @@
         "tools"
     ],
     "author": "MorphixAI Community",
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {
+        "prompts": "^2.4.2"
+    }
 }
 

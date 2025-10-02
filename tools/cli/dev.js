@@ -2,14 +2,14 @@
 
 /**
  * MorphixAI Interactive Dev Server
- * 交互式开发服务器 - 选择项目或创建新项目
+ * 交互式开发服务器 - 使用上下键选择项目
  */
 
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
-import readline from 'readline';
+import prompts from 'prompts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,21 +38,6 @@ const log = {
     dim: (msg) => console.log(`${colors.dim}${msg}${colors.reset}`),
 };
 
-// 创建 readline 接口
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-});
-
-// 提示输入
-function prompt(question) {
-    return new Promise((resolve) => {
-        rl.question(`${colors.cyan}?${colors.reset} ${question}: `, (answer) => {
-            resolve(answer.trim());
-        });
-    });
-}
-
 // 获取所有可开发的项目
 async function getAvailableProjects() {
     const entries = await fs.readdir(APPS_DIR, { withFileTypes: true });
@@ -70,11 +55,13 @@ async function getAvailableProjects() {
                 
                 // 检查是否有 dev 脚本
                 if (packageJson.scripts?.dev) {
+                    const description = packageJson.description || '';
                     projects.push({
                         name: entry.name,
                         displayName: packageJson.name || entry.name,
-                        description: packageJson.description || '',
-                        hasDevScript: true,
+                        description: description,
+                        value: entry.name,
+                        title: `${entry.name}${description ? ` - ${description}` : ''}`,
                     });
                 }
             } catch {
@@ -84,22 +71,6 @@ async function getAvailableProjects() {
     }
     
     return projects;
-}
-
-// 显示项目列表
-function displayProjects(projects) {
-    console.log(`\n${colors.bright}📱 可用的应用项目：${colors.reset}\n`);
-    
-    projects.forEach((project, index) => {
-        const number = colors.cyan + (index + 1) + colors.reset;
-        const name = colors.bright + project.name + colors.reset;
-        const desc = project.description ? colors.dim + ` - ${project.description}` + colors.reset : '';
-        console.log(`  ${number}. ${name}${desc}`);
-    });
-    
-    console.log(`\n  ${colors.cyan}n${colors.reset}. ${colors.green}创建新应用${colors.reset}`);
-    console.log(`  ${colors.cyan}a${colors.reset}. ${colors.yellow}运行所有应用${colors.reset}`);
-    console.log(`  ${colors.cyan}q${colors.reset}. ${colors.dim}退出${colors.reset}\n`);
 }
 
 // 运行单个项目
@@ -127,35 +98,6 @@ async function runProject(projectName) {
     }
 }
 
-// 运行所有项目
-async function runAllProjects() {
-    log.title('🚀 启动所有应用（并行模式）');
-    log.warning('这将同时启动所有应用，可能会占用较多系统资源');
-    
-    const confirm = await prompt('确认继续？(y/N)');
-    if (confirm.toLowerCase() !== 'y' && confirm.toLowerCase() !== 'yes') {
-        log.info('已取消');
-        return false;
-    }
-    
-    console.log('\n' + '='.repeat(60));
-    console.log(`${colors.dim}按 Ctrl+C 停止所有开发服务器${colors.reset}`);
-    console.log('='.repeat(60) + '\n');
-    
-    try {
-        execSync('npx pnpm --filter "./apps/*" --parallel dev', {
-            cwd: ROOT_DIR,
-            stdio: 'inherit',
-        });
-    } catch (error) {
-        if (error.signal !== 'SIGINT') {
-            log.error(`启动失败: ${error.message}`);
-        }
-    }
-    
-    return false;
-}
-
 // 创建新应用
 async function createNewApp() {
     console.log(''); // 空行
@@ -177,6 +119,9 @@ async function createNewApp() {
 async function main() {
     log.title('🎯 MorphixAI 交互式开发环境');
     
+    // 配置 prompts 在取消时不退出
+    prompts.override({ cancel: false });
+    
     let shouldContinue = true;
     
     while (shouldContinue) {
@@ -187,8 +132,15 @@ async function main() {
             if (projects.length === 0) {
                 log.warning('没有找到任何可开发的项目');
                 log.info('创建你的第一个应用吧！');
-                const shouldCreate = await prompt('现在创建？(Y/n)');
-                if (shouldCreate.toLowerCase() !== 'n') {
+                
+                const { shouldCreate } = await prompts({
+                    type: 'confirm',
+                    name: 'shouldCreate',
+                    message: '现在创建？',
+                    initial: true,
+                });
+                
+                if (shouldCreate) {
                     await createNewApp();
                     continue;
                 } else {
@@ -196,41 +148,56 @@ async function main() {
                 }
             }
             
-            // 显示项目列表
-            displayProjects(projects);
+            // 准备选项
+            const choices = [
+                ...projects,
+                { 
+                    title: `${colors.green}➕ 创建新应用${colors.reset}`,
+                    value: '__create__',
+                    description: '创建一个新的 MorphixAI 应用'
+                },
+                { 
+                    title: `${colors.dim}❌ 退出${colors.reset}`,
+                    value: '__exit__',
+                    description: '退出开发环境'
+                },
+            ];
             
-            // 获取用户选择
-            const choice = await prompt('请选择一个选项');
+            // 显示选择菜单
+            const response = await prompts({
+                type: 'select',
+                name: 'action',
+                message: '选择要开发的应用',
+                choices: choices,
+                hint: '使用 ↑↓ 键选择，回车确认',
+            });
             
-            if (choice.toLowerCase() === 'q') {
+            // 用户按 Ctrl+C 取消
+            if (!response.action) {
+                log.info('\n再见！👋');
+                break;
+            }
+            
+            // 处理用户选择
+            if (response.action === '__exit__') {
                 log.info('再见！👋');
                 shouldContinue = false;
                 break;
-            } else if (choice.toLowerCase() === 'n') {
+            } else if (response.action === '__create__') {
                 const continueAfterCreate = await createNewApp();
                 if (!continueAfterCreate) {
                     shouldContinue = false;
                 }
                 continue;
-            } else if (choice.toLowerCase() === 'a') {
-                await runAllProjects();
-                continue;
             } else {
-                // 数字选择
-                const index = parseInt(choice) - 1;
-                if (index >= 0 && index < projects.length) {
-                    await runProject(projects[index].name);
-                    // 开发服务器停止后返回菜单
-                    console.log('\n');
-                    continue;
-                } else {
-                    log.error('无效的选择，请重试');
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    continue;
-                }
+                // 运行选中的项目
+                await runProject(response.action);
+                // 开发服务器停止后返回菜单
+                console.log('\n');
+                continue;
             }
         } catch (error) {
-            if (error.message.includes('canceled')) {
+            if (error.message.includes('canceled') || error.message.includes('closed')) {
                 log.info('\n已取消');
                 shouldContinue = false;
             } else {
@@ -239,14 +206,17 @@ async function main() {
             }
         }
     }
-    
-    rl.close();
 }
+
+// 处理进程退出
+process.on('SIGINT', () => {
+    console.log('\n');
+    log.info('再见！👋');
+    process.exit(0);
+});
 
 // 运行
 main().catch((error) => {
     console.error('\n程序异常退出:', error);
-    rl.close();
     process.exit(1);
 });
-
