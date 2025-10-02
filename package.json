@@ -1,0 +1,42 @@
+{
+    "name": "awesome-morphix-apps",
+    "version": "1.0.0",
+    "description": "Awesome MorphixAI Apps Collection - 精选 MorphixAI 应用集合 (pnpm monorepo)",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "postinstall": "echo '✅ 安装完成！使用 npm run dev 开始开发'",
+        "dev": "node tools/cli/dev.js",
+        "dev:all": "npx pnpm --filter \"./apps/*\" --parallel dev",
+        "build": "npx pnpm --filter \"./apps/*\" --parallel build",
+        "create": "node tools/cli/bin/morphix.js create",
+        "sync-docs": "node tools/cli/bin/morphix.js sync",
+        "install-all": "npx pnpm install -r",
+        "build-all": "node tools/cli/bin/morphix.js build",
+        "clean": "npx pnpm --filter \"./apps/*\" --parallel clean && rm -rf node_modules",
+        "test": "npx pnpm --filter \"./apps/*\" --parallel test"
+    },
+    "keywords": [
+        "morphixai",
+        "apps",
+        "collection",
+        "react",
+        "ionic",
+        "monorepo",
+        "pnpm"
+    ],
+    "author": "MorphixAI Community",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:Morphicai/awesome-morphix-apps.git"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "pnpm": "^8.0.0"
+    },
+    "packageManager": "pnpm@8.x",
+    "devDependencies": {
+        "pnpm": "^8.0.0"
+    }
+}
