@@ -1,0 +1,395 @@
+/* 정원 요정 컴포넌트 스타일 */
+
+.fairyButton {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 1000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.fairyButton:hover {
+  transform: scale(1.1);
+}
+
+.fairyIcon {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #7FB069, #4A7C59);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(74, 124, 89, 0.3);
+  animation: fairyFloat 3s ease-in-out infinite;
+}
+
+.fairyEmoji {
+  font-size: 24px;
+  animation: fairySparkle 2s ease-in-out infinite;
+}
+
+.sparkleEffect {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  color: #FFD700;
+  animation: sparkleRotate 2s linear infinite;
+}
+
+.sparkle {
+  font-size: 16px;
+}
+
+.fairyTooltip {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  background: rgba(74, 124, 89, 0.9);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.fairyButton:hover .fairyTooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 精灵对话模态框样式 */
+.fairyModal {
+  --height: 100vh;
+  --width: 100vw;
+  --border-radius: 0;
+  --box-shadow: none;
+}
+
+.fairyModal ion-content {
+  --padding-bottom: 0;
+  --offset-bottom: 0;
+}
+
+/* 모달 스타일 */
+.modalHeader {
+  --background: linear-gradient(135deg, #7FB069, #4A7C59);
+  --color: white;
+}
+
+.modalTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.titleIcon {
+  font-size: 20px;
+}
+
+.closeButton {
+  --color: white;
+}
+
+/* Header中的精灵切换按钮样式 */
+.headerModelSwitchButton {
+  --color: white;
+  --padding-start: 8px;
+  --padding-end: 8px;
+  margin-right: 8px;
+}
+
+.headerModelSwitchButton:hover {
+  --color: rgba(255, 255, 255, 0.8);
+}
+
+/* 模态框容器 - 使用 flex 布局 */
+.modalContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: linear-gradient(to bottom, #F0F8F0, #E8F5E8);
+}
+
+/* 消息列表容器 - 可滚动区域 */
+.messagesContainer {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+  padding-bottom: 0;
+  /* max-height: calc(100vh-20px); */
+}
+
+.messagesList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 100%;
+}
+
+.messageItem {
+  display: flex;
+  width: 100%;
+}
+
+.userMessage {
+  justify-content: flex-end;
+}
+
+.fairyMessage {
+  justify-content: flex-start;
+}
+
+.messageContent {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 85%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.messageIcon {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.messageBubble {
+  padding: 12px 16px;
+  border-radius: 18px;
+  position: relative;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.userMessage .messageBubble {
+  background: linear-gradient(135deg, #4A7C59, #7FB069);
+  color: white;
+  border-bottom-right-radius: 6px;
+}
+
+.fairyMessage .messageBubble {
+  background: white;
+  color: #2E5233;
+  border: 1px solid rgba(74, 124, 89, 0.2);
+  border-bottom-left-radius: 6px;
+  box-shadow: 0 2px 8px rgba(74, 124, 89, 0.1);
+}
+
+.messageText {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  flex: 1;
+}
+
+.loadingSpinner {
+  --color: #7FB069;
+  width: 20px;
+  height: 20px;
+}
+
+/* 长按和复制状态样式 */
+.messageBubble:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+}
+
+.messageBubble.copied {
+  border: 2px solid #4A7C59;
+  box-shadow: 0 0 0 2px rgba(74, 124, 89, 0.2);
+}
+
+.userMessage .messageBubble.copied {
+  border: 2px solid #7FB069;
+  box-shadow: 0 0 0 2px rgba(127, 176, 105, 0.2);
+}
+
+.copiedIcon {
+  color: #4A7C59;
+  font-size: 18px;
+  flex-shrink: 0;
+  animation: checkmarkPulse 0.3s ease;
+}
+
+.userMessage .copiedIcon {
+  color: white;
+}
+
+@keyframes checkmarkPulse {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 빠른 질문 섹션 */
+.quickQuestions {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.8);
+  border-top: 1px solid rgba(74, 124, 89, 0.1);
+}
+
+.quickQuestionsTitle {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4A7C59;
+  text-align: center;
+}
+
+.quickQuestionButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.quickQuestionChip {
+  --background: white;
+  --color: #4A7C59;
+  border: 1px solid rgba(74, 124, 89, 0.3);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.quickQuestionChip:hover {
+  --background: #F0F8F0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 124, 89, 0.2);
+}
+
+.quickQuestionIcon {
+  margin-right: 4px;
+}
+
+.quickQuestionText {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* 输入框容器 - 固定在底部 */
+.inputContainer {
+  flex-shrink: 0;
+  padding: 16px 16px max(8px, env(safe-area-inset-bottom)) 16px;
+  background: white;
+  border-top: 1px solid rgba(74, 124, 89, 0.1);
+}
+
+.inputItem {
+  --background: #F8FDF8;
+  --border-color: rgba(74, 124, 89, 0.3);
+  border-radius: 25px;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.textInput {
+  --color: #2E5233;
+  --placeholder-color: rgba(46, 82, 51, 0.6);
+  font-size: 14px;
+}
+
+.sendButton {
+  --color: #7FB069;
+  margin-left: 8px;
+}
+
+.sendButton:hover {
+  --color: #4A7C59;
+}
+
+
+/* 애니메이션 */
+@keyframes fairyFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes fairySparkle {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes sparkleRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .fairyButton {
+    top: 70px;
+    right: 16px;
+  }
+  
+  .fairyIcon {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .fairyEmoji {
+    font-size: 22px;
+  }
+  
+  .messageContent {
+    max-width: 90%;
+  }
+  
+  .messageBubble {
+    padding: 10px 14px;
+  }
+  
+  .messageText {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  
+  .quickQuestionButtons {
+    gap: 6px;
+  }
+  
+  .quickQuestionText {
+    font-size: 11px;
+  }
+}

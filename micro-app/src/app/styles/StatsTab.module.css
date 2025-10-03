@@ -1,0 +1,512 @@
+.container {
+  padding: 16px;
+  padding-bottom: 100px;
+  min-height: 100vh;
+  background: linear-gradient(
+    180deg,
+    #FFFFFF 0%,      /* 순수한 흰색 */
+    #FAFCFA 25%,     /* 거의 흰색에 가까운 연한 녹색 */
+    #F8FBF8 50%,     /* 매우 밝은 녹색 */
+    #F5F9F5 75%,     /* 연한 녹색 */
+    #F8FBF8 100%     /* 하단 밝은 녹색 */
+  );
+}
+
+/* 할일 페이지와 동일한 카드 디자인 */
+.gardenCard {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 
+    0 4px 16px rgba(200, 230, 201, 0.08),
+    0 1px 4px rgba(200, 230, 201, 0.05);
+  border: 1px solid rgba(200, 230, 201, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.gardenCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #2E7D32, #7FB069, #BED8A3);
+  border-radius: 20px 20px 0 0;
+}
+
+.cardTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2E7D32;
+  margin: 0 0 20px 0;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(46, 125, 50, 0.1);
+}
+
+/* Period Selector - 使用 indicator-color 优化 */
+.periodSelector {
+  background: rgba(200, 230, 201, 0.15);
+  border-radius: 16px;
+  padding: 6px;
+  box-shadow: 
+    0 2px 8px rgba(200, 230, 201, 0.1),
+    inset 0 1px 2px rgba(200, 230, 201, 0.1);
+  border: 1px solid rgba(200, 230, 201, 0.2);
+  
+  /* 使用 Ionic 推荐的 CSS 变量 */
+  --background: rgba(200, 230, 201, 0.15);
+  --border-radius: 16px;
+}
+
+.periodSelector ion-segment-button {
+  /* 基础样式 */
+  --color: #2E7D32;
+  --color-checked: white;
+  --background: transparent;
+  --border-radius: 12px;
+  
+  /* 使用 indicator 相关变量优化选中效果 */
+  --indicator-color: #2E7D32;
+  --indicator-height: 100%;
+  --indicator-box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+  --indicator-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* 文字和布局 */
+  font-weight: 600;
+  font-size: 14px;
+  margin: 2px;
+}
+
+/* Hover和Focus效果 */
+.periodSelector ion-segment-button:hover {
+  --background-hover: rgba(200, 230, 201, 0.2);
+  --background-hover-opacity: 1;
+}
+
+.periodSelector ion-segment-button:focus {
+  --background-focused: rgba(200, 230, 201, 0.15);
+  --background-focused-opacity: 1;
+}
+
+/* Stats Grid - 할일 페이지와 동일한 스타일 */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(200, 230, 201, 0.2);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 
+    0 4px 16px rgba(200, 230, 201, 0.1),
+    0 1px 4px rgba(200, 230, 201, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #2E7D32, #7FB069);
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 24px rgba(200, 230, 201, 0.15),
+    0 2px 8px rgba(200, 230, 201, 0.1);
+}
+
+.statIcon {
+  font-size: 32px;
+  animation: gentle-bounce 3s ease-in-out infinite;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { 
+    transform: translateY(0px);
+  }
+  50% { 
+    transform: translateY(-3px);
+  }
+}
+
+.statContent {
+  text-align: center;
+}
+
+.statNumber {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2E7D32;
+  margin-bottom: 4px;
+  text-shadow: 0 1px 2px rgba(46, 125, 50, 0.1);
+}
+
+.statLabel {
+  font-size: 14px;
+  color: #7FB069;
+  font-weight: 500;
+}
+
+/* Daily Chart - 자연 정원 스타일 */
+.dailyChart {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 140px;
+  margin-top: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(248, 251, 248, 0.8), rgba(245, 249, 245, 0.9));
+  border-radius: 16px;
+  border: 1px solid rgba(200, 230, 201, 0.2);
+  box-shadow: 
+    0 2px 8px rgba(200, 230, 201, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.dayColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  max-width: 50px;
+}
+
+.dayBar {
+  width: 28px;
+  height: 90px;
+  background: rgba(200, 230, 201, 0.3);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 8px;
+  box-shadow: 
+    inset 0 2px 4px rgba(200, 230, 201, 0.2),
+    0 1px 2px rgba(200, 230, 201, 0.1);
+  border: 1px solid rgba(200, 230, 201, 0.2);
+}
+
+.dayBarFill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, #7FB069, #2E7D32);
+  border-radius: 14px;
+  transition: height 0.5s ease;
+  min-height: 4px;
+  box-shadow: 
+    0 2px 8px rgba(46, 125, 50, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.dayLabel {
+  font-size: 12px;
+  color: #7FB069;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.dayValue {
+  font-size: 12px;
+  color: #2E7D32;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Plant Collection - 할일 페이지 스타일 */
+.plantCollection {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.plantStat {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(5px);
+  border-radius: 16px;
+  border: 1px solid rgba(200, 230, 201, 0.2);
+  box-shadow: 
+    0 4px 16px rgba(200, 230, 201, 0.1),
+    0 1px 4px rgba(200, 230, 201, 0.05);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.plantStat::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #2E7D32, #7FB069);
+}
+
+.plantStat:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 6px 20px rgba(200, 230, 201, 0.15),
+    0 2px 8px rgba(200, 230, 201, 0.1);
+}
+
+.plantEmoji {
+  font-size: 32px;
+  flex-shrink: 0;
+  animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+.plantInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.plantName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2E7D32;
+  margin-bottom: 4px;
+}
+
+.plantCount {
+  font-size: 14px;
+  color: #7FB069;
+  font-weight: 500;
+}
+
+.plantProgress {
+  width: 80px;
+  height: 8px;
+  background: rgba(200, 230, 201, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid rgba(200, 230, 201, 0.2);
+}
+
+.plantProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #2E7D32, #7FB069);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  box-shadow: 0 1px 2px rgba(46, 125, 50, 0.2);
+}
+
+/* Achievements - 할일 페이지 스타일 */
+.achievements {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.achievement {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(5px);
+  border-radius: 16px;
+  border: 1px solid rgba(200, 230, 201, 0.2);
+  box-shadow: 
+    0 4px 16px rgba(200, 230, 201, 0.1),
+    0 1px 4px rgba(200, 230, 201, 0.05);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.achievement::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #2E7D32, #7FB069);
+}
+
+.achievement:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 6px 20px rgba(200, 230, 201, 0.15),
+    0 2px 8px rgba(200, 230, 201, 0.1);
+}
+
+.achievementIcon {
+  font-size: 32px;
+  flex-shrink: 0;
+  animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+.achievementText {
+  flex: 1;
+  min-width: 0;
+}
+
+.achievementTitle {
+  font-size: 14px;
+  color: #7FB069;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.achievementValue {
+  font-size: 20px;
+  color: #2E7D32;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(46, 125, 50, 0.1);
+}
+
+/* Empty State - 자연 정원 스타일 */
+.emptyState {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.emptyIcon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  animation: gentle-bounce 3s ease-in-out infinite;
+}
+
+.emptyTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2E7D32;
+  margin: 0 0 12px 0;
+}
+
+.emptyMessage {
+  font-size: 16px;
+  color: #7FB069;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+    padding-bottom: 100px;
+  }
+  
+  .gardenCard {
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  
+  .cardTitle {
+    font-size: 18px;
+  }
+  
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .statCard {
+    padding: 16px;
+  }
+  
+  .statIcon {
+    font-size: 28px;
+  }
+  
+  .statNumber {
+    font-size: 20px;
+  }
+  
+  .statLabel {
+    font-size: 12px;
+  }
+  
+  .dailyChart {
+    height: 120px;
+    padding: 12px;
+  }
+  
+  .dayBar {
+    width: 24px;
+    height: 70px;
+  }
+  
+  .dayLabel {
+    font-size: 11px;
+  }
+  
+  .dayValue {
+    font-size: 11px;
+  }
+  
+  .achievements {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .achievement {
+    padding: 16px;
+  }
+  
+  .achievementIcon {
+    font-size: 28px;
+  }
+  
+  .achievementValue {
+    font-size: 18px;
+  }
+  
+  .plantStat {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .plantEmoji {
+    font-size: 28px;
+  }
+  
+  .plantProgress {
+    width: 60px;
+    height: 6px;
+  }
+  
+  .emptyIcon {
+    font-size: 48px;
+  }
+  
+  .emptyTitle {
+    font-size: 18px;
+  }
+  
+  .emptyMessage {
+    font-size: 14px;
+  }
+}
