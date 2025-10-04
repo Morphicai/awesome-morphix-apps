@@ -41,6 +41,7 @@ For detailed documentation about the framework, visit the [official @morphixai/c
 | Name | Description | Author | Features | Demo | Details |
 |------|-------------|--------|----------|------|---------|
 | ⏰ **timer** | Pomodoro Timer Application - Task management + Pomodoro technique | MorphixAI Team | • Task management system<br>• Pomodoro timer<br>• Data statistics<br>• Multi-language support (EN/CN) | [Live Demo →](https://app-shell.focusbe.com/app/1219e970-e531-4157-bce9-e8f4dcaaf6a6#/) | [View Details →](./apps/timer/README.md) |
+| 📊 **mermaid** | Mermaid Diagram Editor - Create and edit various diagrams | MorphixAI Team | • Multiple diagram types<br>• Version management<br>• Real-time preview<br>• Export capabilities | [Live Demo →](https://app-shell.focusbe.com/app/244975ac-609a-4a12-a02f-88d1512e9b60) | [View Details →](./apps/mamerid/README.md) |
 
 > 📝 **Note**: Demo links use the format `https://app-shell.focusbe.com/app/{remoteId}`
 
@@ -158,6 +159,66 @@ All applications must follow unified development standards:
 - **Cursor AI** - Built-in complete development standards
 - **Claude Code** - Supports natural language programming
 - **VS Code** - Works with Vite plugins
+
+## 💡 Case Study: Mermaid Diagram Editor
+
+The **Mermaid** application demonstrates advanced MorphixAI development patterns and showcases how to build complex applications within the framework constraints.
+
+### 🎯 Project Overview
+
+The Mermaid Diagram Editor is a sophisticated application that allows users to create, edit, and export various types of diagrams using the Mermaid syntax. It demonstrates several advanced concepts:
+
+- **Dynamic Module Loading**: Uses `remoteImport` to load different versions of Mermaid
+- **Service Architecture**: Implements a robust service layer for version management
+- **Caching Strategy**: Intelligent caching of multiple Mermaid versions
+- **Error Handling**: Comprehensive error reporting with `@morphixai/lib`
+
+### 🔧 Key Implementation: MermaidService.js
+
+The core of the application is the `MermaidService` class, which manages multiple versions of the Mermaid library:
+
+```javascript
+class MermaidService {
+    constructor() {
+        this.cache = new Map();     // Version cache
+        this.loading = new Map();   // Loading state management
+    }
+
+    async loadMermaid(version) {
+        // 1. Check cache first
+        if (this.cache.has(version)) {
+            return this.cache.get(version);
+        }
+
+        // 2. Load using remoteImport
+        const mermaidModule = await remoteImport(`mermaid@${version}`);
+        const mermaid = mermaidModule.default || mermaidModule;
+
+        // 3. Initialize and cache
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        this.cache.set(version, mermaid);
+        return mermaid;
+    }
+}
+```
+
+### 🌟 Key Features Demonstrated
+
+1. **Version Management**: Supports multiple Mermaid versions simultaneously
+2. **Performance Optimization**: Intelligent caching and preloading
+3. **Error Resilience**: Comprehensive error handling and reporting
+4. **Resource Management**: Efficient memory usage with cache management
+
+### 🚀 Try It Live
+
+Experience the Mermaid Diagram Editor: [Live Demo →](https://app-shell.focusbe.com/app/244975ac-609a-4a12-a02f-88d1512e9b60)
+
+This case study shows how MorphixAI applications can leverage external libraries while maintaining performance and reliability standards.
 
 ## 📦 Publishing Process
 

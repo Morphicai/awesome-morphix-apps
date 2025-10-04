@@ -41,6 +41,7 @@
 | 名称 | 描述 | 作者 | 功能特性 | 演示 | 详情 |
 |------|------|------|----------|------|------|
 | ⏰ **timer** | 番茄钟应用 - 任务管理 + 番茄工作法 | MorphixAI Team | • 任务管理系统<br>• 番茄钟计时器<br>• 数据统计分析<br>• 多语言支持（中/英） | [在线演示 →](https://app-shell.focusbe.com/app/1219e970-e531-4157-bce9-e8f4dcaaf6a6#/) | [查看详情 →](./apps/timer/README.md) |
+| 📊 **mermaid** | Mermaid 图表编辑器 - 创建和编辑各种图表 | MorphixAI Team | • 多种图表类型<br>• 版本管理<br>• 实时预览<br>• 导出功能 | [在线演示 →](https://app-shell.focusbe.com/app/244975ac-609a-4a12-a02f-88d1512e9b60) | [查看详情 →](./apps/mamerid/README.md) |
 
 > 📝 **注意**: 演示链接使用格式 `https://app-shell.focusbe.com/app/{remoteId}`
 
