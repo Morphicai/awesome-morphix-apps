@@ -1,0 +1,27 @@
+{
+  "version": "1.0.0",
+  "source": "local",
+  "lastUpdated": "2025-10-04T11:14:34.983Z",
+  "editors": {
+    "docs": {
+      "enabled": true,
+      "version": "1.0.0",
+      "path": "docs"
+    },
+    "readme": {
+      "enabled": true,
+      "version": "1.0.0",
+      "path": ""
+    },
+    "cursor": {
+      "enabled": true,
+      "version": "1.0.0",
+      "path": ""
+    },
+    "claude": {
+      "enabled": true,
+      "version": "1.0.0",
+      "path": ""
+    }
+  }
+}
