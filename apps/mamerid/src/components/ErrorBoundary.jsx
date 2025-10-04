@@ -1,7 +1,8 @@
 import React from 'react';
-import { IonButton, IonIcon } from '@ionic/react';
-import { refreshOutline, alertCircleOutline } from 'ionicons/icons';
+import { IonButton, IonIcon, IonSpinner } from '@ionic/react';
+import { refreshOutline, alertCircleOutline, sparklesOutline } from 'ionicons/icons';
 import { reportError } from '@morphixai/lib';
+import AIService from '../services/AIService';
 import styles from '../styles/ErrorBoundary.module.css';
 
 /**
@@ -15,7 +16,9 @@ export default class ErrorBoundary extends React.Component {
             hasError: false,
             error: null,
             errorInfo: null,
-            errorCount: 0
+            errorCount: 0,
+            isFixing: false,
+            fixResult: null
         };
     }
 
@@ -48,12 +51,53 @@ export default class ErrorBoundary extends React.Component {
         this.setState({
             hasError: false,
             error: null,
-            errorInfo: null
+            errorInfo: null,
+            fixResult: null
         });
 
         // 如果提供了重置回调，执行它
         if (this.props.onReset) {
             this.props.onReset();
+        }
+    };
+
+    handleAIFix = async () => {
+        this.setState({ isFixing: true, fixResult: null });
+
+        try {
+            // 获取当前代码和错误信息
+            const errorMessage = this.state.error?.message || '未知错误';
+            
+            // 调用 onAIFix 回调获取当前代码
+            if (this.props.onAIFix) {
+                const result = await this.props.onAIFix(errorMessage);
+                this.setState({ 
+                    fixResult: result,
+                    isFixing: false
+                });
+
+                // 如果修复成功，自动重置错误状态
+                if (result.success) {
+                    setTimeout(() => {
+                        this.handleReset();
+                    }, 1500);
+                }
+            } else {
+                this.setState({
+                    fixResult: { success: false, explanation: '未提供AI修复功能' },
+                    isFixing: false
+                });
+            }
+        } catch (error) {
+            console.error('AI修复失败:', error);
+            await reportError(error, 'JavaScriptError', {
+                component: 'ErrorBoundary',
+                action: 'handleAIFix'
+            });
+            this.setState({
+                fixResult: { success: false, explanation: '修复失败：' + error.message },
+                isFixing: false
+            });
         }
     };
 
@@ -81,11 +125,39 @@ export default class ErrorBoundary extends React.Component {
                             </div>
                         )}
 
+                        {/* AI修复结果 */}
+                        {this.state.fixResult && (
+                            <div className={this.state.fixResult.success ? styles.fixSuccess : styles.fixError}>
+                                <p>{this.state.fixResult.explanation}</p>
+                            </div>
+                        )}
+
                         <div className={styles.errorActions}>
+                            {this.props.onAIFix && (
+                                <IonButton 
+                                    onClick={this.handleAIFix}
+                                    fill="solid"
+                                    color="secondary"
+                                    disabled={this.state.isFixing}
+                                >
+                                    {this.state.isFixing ? (
+                                        <>
+                                            <IonSpinner name="crescent" />
+                                            <span style={{ marginLeft: '8px' }}>修复中...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <IonIcon slot="start" icon={sparklesOutline} />
+                                            AI修复
+                                        </>
+                                    )}
+                                </IonButton>
+                            )}
                             <IonButton 
                                 onClick={this.handleReset}
                                 fill="solid"
                                 color="primary"
+                                disabled={this.state.isFixing}
                             >
                                 <IonIcon slot="start" icon={refreshOutline} />
                                 重新加载

@@ -76,6 +76,16 @@
     --box-shadow: 0 1px 4px rgba(102, 126, 234, 0.2);
 }
 
+/* 工具栏小按钮 */
+.toolbarSmallButton {
+    min-width: 36px !important;
+    min-height: 36px !important;
+}
+
+.toolbarSmallButton ion-icon {
+    font-size: 20px !important;
+}
+
 .toolbarRight {
     display: flex;
     gap: 8px;
@@ -107,6 +117,7 @@
     display: flex;
     flex-direction: column;
     width: 50%;
+    padding: 16px;
     background: rgba(255, 255, 255, 0.98);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     backdrop-filter: blur(20px) saturate(180%);
@@ -128,6 +139,7 @@
     display: flex;
     flex-direction: column;
     width: 50%;
+    padding: 16px;
     background: rgba(255, 255, 255, 0.98);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     backdrop-filter: blur(20px) saturate(180%);
@@ -145,11 +157,11 @@
     transform: translateY(-2px);
 }
 
-/* 预览头部 - 版本选择器 */
+/* 预览头部 - 版本选择器（左上角） */
 .previewHeader {
     position: absolute;
     top: 12px;
-    right: 12px;
+    left: 12px;
     z-index: 10;
     animation: fadeInDown 0.5s ease-out;
 }
@@ -166,17 +178,17 @@
 }
 
 .versionSelect {
-    min-width: 150px;
-    min-height: 44px;
-    font-size: 14px;
+    min-width: 100px;
+    min-height: 32px;
+    font-size: 11px;
     font-weight: 600;
-    --padding-start: 16px;
-    --padding-end: 16px;
+    --padding-start: 10px;
+    --padding-end: 10px;
     --background: rgba(102, 126, 234, 0.1);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     backdrop-filter: blur(20px) saturate(180%);
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2),
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(102, 126, 234, 0.18),
                 0 0 0 1px rgba(102, 126, 234, 0.1) inset;
     color: #667eea;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -184,9 +196,37 @@
 
 .versionSelect:hover {
     --background: rgba(102, 126, 234, 0.15);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3),
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.25),
                 0 0 0 1px rgba(102, 126, 234, 0.2) inset;
     transform: translateY(-2px);
+}
+
+/* 全屏按钮（预览区域右上角 - 方形） */
+.fullscreenButton {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    width: 32px;
+    height: 32px;
+    --padding-start: 0;
+    --padding-end: 0;
+    --border-radius: 6px;
+    --background: rgba(255, 255, 255, 0.95);
+    --box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    margin: 0;
+    animation: fadeInDown 0.5s ease-out;
+}
+
+.fullscreenButton:hover {
+    --background: rgba(255, 255, 255, 1);
+    --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.fullscreenButton ion-icon {
+    font-size: 18px;
+    color: #667eea;
 }
 
 /* 代码编辑器 */
@@ -216,21 +256,10 @@
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace !important;
 }
 
-/* 仅移动端显示 */
-.mobileOnly {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .mobileOnly {
-        display: block;
-    }
-}
-
 /* 预览内容区域 */
 .previewContent {
     flex: 1;
-    overflow: auto;
+    overflow: hidden;
     padding: 56px 24px 24px;
     display: flex;
     justify-content: center;
@@ -239,6 +268,7 @@
                 rgba(255, 255, 255, 0.9) 0%, 
                 rgba(248, 249, 252, 0.9) 100%);
     position: relative;
+    touch-action: none; /* 禁用默认触摸行为以支持自定义手势 */
 }
 
 .previewContent::before {
@@ -249,6 +279,58 @@
         radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
         radial-gradient(circle at 80% 70%, rgba(118, 75, 162, 0.05) 0%, transparent 50%);
     pointer-events: none;
+}
+
+/* 缩放控制 */
+.zoomControls {
+    position: absolute;
+    bottom: calc(90px + env(safe-area-inset-bottom));
+    left: 16px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.zoomControls ion-button {
+    --padding-start: 6px;
+    --padding-end: 6px;
+    min-width: 28px;
+    min-height: 28px;
+    margin: 0;
+}
+
+.zoomControls ion-icon {
+    font-size: 16px;
+}
+
+.zoomLevel {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    min-width: 40px;
+    text-align: center;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /* 预览操作按钮 */
@@ -378,7 +460,7 @@
 }
 
 .errorMessage pre {
-    margin: 0;
+    margin: 0 0 16px 0;
     padding: 12px;
     background: white;
     border-radius: 4px;
@@ -386,6 +468,75 @@
     font-size: 12px;
     white-space: pre-wrap;
     word-wrap: break-word;
+}
+
+/* AI修复按钮（编辑器右上角） */
+.editorAIFixButton {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    --border-radius: 10px;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    --box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+    animation: fadeInScale 0.4s ease-out;
+}
+
+.editorAIFixButton:hover {
+    --box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    transform: translateY(-2px);
+}
+
+.editorAIFixButton ion-icon {
+    font-size: 16px;
+}
+
+/* AI悬浮按钮 */
+.aiFab {
+    position: fixed;
+    bottom: calc(100px + env(safe-area-inset-bottom));
+    right: 24px;
+    z-index: 1000;
+    width: 64px;
+    height: 64px;
+    --border-radius: 50%;
+    --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --background-hover: linear-gradient(135deg, #5568d3 0%, #65408d 100%);
+    --box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    --padding-start: 0;
+    --padding-end: 0;
+    margin: 0;
+    animation: fadeInScale 0.5s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.aiFab:hover {
+    --box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+    transform: translateY(-4px) scale(1.05);
+}
+
+.aiFab:active {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.aiFab ion-icon {
+    font-size: 32px;
+    color: white;
 }
 
 /* 移动端响应式布局 - 上下布局 */
@@ -399,6 +550,7 @@
     .editorPanel {
         width: 100%;
         height: 40%;
+        padding: 12px;
         border-radius: 16px;
     }
 
@@ -409,6 +561,7 @@
     .previewPanel {
         width: 100%;
         height: 60%;
+        padding: 12px;
         border-radius: 16px;
     }
 
@@ -441,6 +594,27 @@
         font-size: 22px;
     }
 
+    .toolbarSmallButton {
+        min-width: 32px !important;
+        min-height: 32px !important;
+    }
+
+    .toolbarSmallButton ion-icon {
+        font-size: 18px !important;
+    }
+
+    .editorAIFixButton {
+        top: 8px;
+        right: 8px;
+        font-size: 12px;
+        --padding-start: 14px;
+        --padding-end: 14px;
+    }
+
+    .editorAIFixButton ion-icon {
+        font-size: 14px;
+    }
+
     .codeEditor {
         font-size: 12px;
         line-height: 1.4;
@@ -457,13 +631,24 @@
 
     .previewHeader {
         top: 8px;
-        right: 8px;
+        left: 8px;
     }
 
     .versionSelect {
-        min-width: 130px;
-        min-height: 40px;
-        font-size: 13px;
+        min-width: 90px;
+        min-height: 30px;
+        font-size: 10px;
+    }
+
+    .fullscreenButton {
+        top: 8px;
+        right: 8px;
+        width: 30px;
+        height: 30px;
+    }
+
+    .fullscreenButton ion-icon {
+        font-size: 16px;
     }
 
     .previewActions {
@@ -481,10 +666,49 @@
     .previewActions ion-button ion-icon {
         font-size: 18px;
     }
+
+    .zoomControls {
+        bottom: calc(80px + env(safe-area-inset-bottom));
+        left: 12px;
+        padding: 5px 8px;
+        gap: 4px;
+    }
+
+    .zoomControls ion-button {
+        --padding-start: 5px;
+        --padding-end: 5px;
+        min-width: 26px;
+        min-height: 26px;
+    }
+
+    .zoomControls ion-icon {
+        font-size: 14px;
+    }
+
+    .zoomLevel {
+        font-size: 11px;
+        min-width: 36px;
+    }
+
+    .aiFab {
+        width: 56px;
+        height: 56px;
+        bottom: calc(90px + env(safe-area-inset-bottom));
+        right: 16px;
+    }
+
+    .aiFab ion-icon {
+        font-size: 28px;
+    }
 }
 
 /* 小屏幕优化 */
 @media (max-width: 480px) {
+    .editorPanel,
+    .previewPanel {
+        padding: 10px;
+    }
+
     .toolbar {
         padding: 8px 10px;
         min-height: 52px;
@@ -507,6 +731,27 @@
         font-size: 20px;
     }
 
+    .toolbarSmallButton {
+        min-width: 30px !important;
+        min-height: 30px !important;
+    }
+
+    .toolbarSmallButton ion-icon {
+        font-size: 16px !important;
+    }
+
+    .editorAIFixButton {
+        top: 6px;
+        right: 6px;
+        font-size: 11px;
+        --padding-start: 12px;
+        --padding-end: 12px;
+    }
+
+    .editorAIFixButton ion-icon {
+        font-size: 13px;
+    }
+
     .codeEditor {
         font-size: 11px;
         line-height: 1.3;
@@ -523,13 +768,24 @@
 
     .previewHeader {
         top: 6px;
-        right: 6px;
+        left: 6px;
     }
 
     .versionSelect {
-        min-width: 120px;
-        min-height: 36px;
-        font-size: 12px;
+        min-width: 85px;
+        min-height: 28px;
+        font-size: 10px;
+    }
+
+    .fullscreenButton {
+        top: 6px;
+        right: 6px;
+        width: 28px;
+        height: 28px;
+    }
+
+    .fullscreenButton ion-icon {
+        font-size: 14px;
     }
 
     .previewActions {
@@ -611,6 +867,7 @@
         backdrop-filter: blur(20px) saturate(180%);
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
                     0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        padding: 16px;
     }
 
     .editorPanel:hover,
@@ -667,6 +924,18 @@
         --background: rgba(102, 126, 234, 0.25);
     }
 
+    .fullscreenButton {
+        --background: rgba(26, 32, 44, 0.95);
+    }
+
+    .fullscreenButton:hover {
+        --background: rgba(45, 55, 72, 0.95);
+    }
+
+    .fullscreenButton ion-icon {
+        color: #a5b4fc;
+    }
+
     .previewActions ion-button {
         --background: rgba(45, 55, 72, 0.6);
     }
@@ -680,6 +949,25 @@
         -webkit-backdrop-filter: blur(20px) saturate(180%);
         backdrop-filter: blur(20px) saturate(180%);
         border-top-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .zoomControls {
+        background: rgba(26, 32, 44, 0.95);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .zoomLevel {
+        color: #e2e8f0;
+    }
+
+    .aiFab {
+        --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --background-hover: linear-gradient(135deg, #5568d3 0%, #65408d 100%);
+        --box-shadow: 0 8px 24px rgba(102, 126, 234, 0.5);
+    }
+
+    .aiFab:hover {
+        --box-shadow: 0 12px 32px rgba(102, 126, 234, 0.6);
     }
 
     .loadingMessage {
