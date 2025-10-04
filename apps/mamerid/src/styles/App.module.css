@@ -1,8 +1,725 @@
-/* 主应用样式 */
-
 .content {
-  --padding: 0;
-  background: #ffffff;
-  min-height: 100vh;
-  color: #1f2937;
+    --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --padding-top: 0;
+    --padding-bottom: 0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+}
+
+.fullscreen .editorPanel {
+    display: none;
+}
+
+.fullscreen .previewPanel {
+    width: 100%;
+    height: 100%;
+}
+
+/* 工具栏 */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    gap: 12px;
+    flex-wrap: wrap;
+    min-height: 56px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+    position: relative;
+    z-index: 10;
+}
+
+.toolbarLeft {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex: 1;
+    min-width: 200px;
+}
+
+.toolbarLeft ion-button,
+.toolbarRight ion-button {
+    --border-radius: 16px;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    min-width: 48px;
+    min-height: 48px;
+    --box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 24px;
+}
+
+.toolbarLeft ion-button ion-icon,
+.toolbarRight ion-button ion-icon {
+    font-size: 24px;
+}
+
+.toolbarLeft ion-button:hover,
+.toolbarRight ion-button:hover {
+    --box-shadow: 0 4px 16px rgba(102, 126, 234, 0.25);
+    transform: translateY(-1px);
+}
+
+.toolbarLeft ion-button:active,
+.toolbarRight ion-button:active {
+    transform: translateY(0);
+    --box-shadow: 0 1px 4px rgba(102, 126, 234, 0.2);
+}
+
+.toolbarRight {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.select {
+    min-width: 110px;
+    max-width: 160px;
+    font-size: 13px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+}
+
+/* 主要内容区域 - PC端左右布局 */
+.mainContent {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    gap: 16px;
+    padding: 16px;
+    margin: 0 auto;
+    max-width: 1600px;
+    width: 100%;
+}
+
+/* 编辑器面板 */
+.editorPanel {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    background: rgba(255, 255, 255, 0.98);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
+                0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.editorPanel:hover {
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.16),
+                0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+    transform: translateY(-2px);
+}
+
+/* 预览面板 */
+.previewPanel {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    background: rgba(255, 255, 255, 0.98);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
+                0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.previewPanel:hover {
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.16),
+                0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+    transform: translateY(-2px);
+}
+
+/* 预览头部 - 版本选择器 */
+.previewHeader {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    animation: fadeInDown 0.5s ease-out;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.versionSelect {
+    min-width: 150px;
+    min-height: 44px;
+    font-size: 14px;
+    font-weight: 600;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --background: rgba(102, 126, 234, 0.1);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2),
+                0 0 0 1px rgba(102, 126, 234, 0.1) inset;
+    color: #667eea;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.versionSelect:hover {
+    --background: rgba(102, 126, 234, 0.15);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3),
+                0 0 0 1px rgba(102, 126, 234, 0.2) inset;
+    transform: translateY(-2px);
+}
+
+/* 代码编辑器 */
+.codeEditor {
+    flex: 1;
+    font-family: 'SF Mono', 'Monaco', 'Menlo', 'Consolas', 'Ubuntu Mono', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 20px;
+    --background: rgba(248, 249, 252, 0.6);
+    --color: #2d3748;
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --padding-top: 20px;
+    --padding-bottom: 20px;
+    border: none;
+    resize: none;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+.codeEditor:focus {
+    --background: rgba(248, 249, 252, 0.9);
+}
+
+.codeEditor textarea {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace !important;
+}
+
+/* 仅移动端显示 */
+.mobileOnly {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobileOnly {
+        display: block;
+    }
+}
+
+/* 预览内容区域 */
+.previewContent {
+    flex: 1;
+    overflow: auto;
+    padding: 56px 24px 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.9) 0%, 
+                rgba(248, 249, 252, 0.9) 100%);
+    position: relative;
+}
+
+.previewContent::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(118, 75, 162, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* 预览操作按钮 */
+.previewActions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(248, 249, 252, 0.95);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.previewActions ion-button {
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --border-radius: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    min-height: 48px;
+    --box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.previewActions ion-button ion-icon {
+    font-size: 20px;
+    margin-right: 2px;
+}
+
+.previewActions ion-button:hover {
+    --box-shadow: 0 4px 16px rgba(102, 126, 234, 0.25);
+    transform: translateY(-2px);
+}
+
+.previewActions ion-button:active {
+    transform: translateY(0);
+    --box-shadow: 0 1px 4px rgba(102, 126, 234, 0.2);
+}
+
+.mermaidContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    padding: 20px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.mermaidContainer svg {
+    max-width: 100%;
+    height: auto;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+    transition: transform 0.3s ease;
+}
+
+.mermaidContainer svg:hover {
+    transform: scale(1.02);
+}
+
+/* 加载消息 */
+.loadingMessage {
+    padding: 24px 32px;
+    background: linear-gradient(135deg, 
+                rgba(102, 126, 234, 0.1) 0%, 
+                rgba(118, 75, 162, 0.1) 100%);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 16px;
+    color: #667eea;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* 错误消息 */
+.errorMessage {
+    padding: 24px 32px;
+    background: linear-gradient(135deg, 
+                rgba(239, 83, 80, 0.1) 0%, 
+                rgba(244, 143, 177, 0.1) 100%);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(239, 83, 80, 0.2);
+    border-radius: 16px;
+    color: #d32f2f;
+    max-width: 100%;
+    word-wrap: break-word;
+    box-shadow: 0 4px 16px rgba(239, 83, 80, 0.15);
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.errorMessage p {
+    margin: 0 0 8px 0;
+    font-weight: 600;
+}
+
+.errorMessage pre {
+    margin: 0;
+    padding: 12px;
+    background: white;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 12px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* 移动端响应式布局 - 上下布局 */
+@media (max-width: 768px) {
+    .mainContent {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .editorPanel {
+        width: 100%;
+        height: 40%;
+        border-radius: 16px;
+    }
+
+    .editorPanel:hover {
+        transform: none;
+    }
+
+    .previewPanel {
+        width: 100%;
+        height: 60%;
+        border-radius: 16px;
+    }
+
+    .previewPanel:hover {
+        transform: none;
+    }
+
+    .toolbar {
+        padding: 10px 12px;
+        min-height: 56px;
+    }
+
+    .toolbarLeft {
+        gap: 8px;
+    }
+
+    .toolbarRight {
+        gap: 8px;
+    }
+
+    .toolbarLeft ion-button,
+    .toolbarRight ion-button {
+        min-width: 44px;
+        min-height: 44px;
+        font-size: 22px;
+    }
+
+    .toolbarLeft ion-button ion-icon,
+    .toolbarRight ion-button ion-icon {
+        font-size: 22px;
+    }
+
+    .codeEditor {
+        font-size: 12px;
+        line-height: 1.4;
+        padding: 10px;
+        --padding-start: 10px;
+        --padding-end: 10px;
+        --padding-top: 10px;
+        --padding-bottom: 10px;
+    }
+
+    .previewContent {
+        padding: 48px 12px 12px;
+    }
+
+    .previewHeader {
+        top: 8px;
+        right: 8px;
+    }
+
+    .versionSelect {
+        min-width: 130px;
+        min-height: 40px;
+        font-size: 13px;
+    }
+
+    .previewActions {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .previewActions ion-button {
+        --padding-start: 16px;
+        --padding-end: 16px;
+        font-size: 13px;
+        min-height: 44px;
+    }
+
+    .previewActions ion-button ion-icon {
+        font-size: 18px;
+    }
+}
+
+/* 小屏幕优化 */
+@media (max-width: 480px) {
+    .toolbar {
+        padding: 8px 10px;
+        min-height: 52px;
+    }
+
+    .toolbarLeft,
+    .toolbarRight {
+        gap: 6px;
+    }
+
+    .toolbarLeft ion-button,
+    .toolbarRight ion-button {
+        min-width: 40px;
+        min-height: 40px;
+        font-size: 20px;
+    }
+
+    .toolbarLeft ion-button ion-icon,
+    .toolbarRight ion-button ion-icon {
+        font-size: 20px;
+    }
+
+    .codeEditor {
+        font-size: 11px;
+        line-height: 1.3;
+        padding: 8px;
+        --padding-start: 8px;
+        --padding-end: 8px;
+        --padding-top: 8px;
+        --padding-bottom: 8px;
+    }
+
+    .previewContent {
+        padding: 44px 10px 10px;
+    }
+
+    .previewHeader {
+        top: 6px;
+        right: 6px;
+    }
+
+    .versionSelect {
+        min-width: 120px;
+        min-height: 36px;
+        font-size: 12px;
+    }
+
+    .previewActions {
+        padding: 8px 10px;
+        gap: 6px;
+    }
+
+    .previewActions ion-button {
+        --padding-start: 14px;
+        --padding-end: 14px;
+        font-size: 12px;
+        min-height: 40px;
+    }
+
+    .previewActions ion-button ion-icon {
+        font-size: 16px;
+    }
+
+    .errorMessage,
+    .loadingMessage {
+        padding: 10px;
+        font-size: 11px;
+    }
+}
+
+/* 滚动条样式优化 - 现代化设计 */
+.codeEditor::-webkit-scrollbar,
+.previewContent::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.codeEditor::-webkit-scrollbar-track,
+.previewContent::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 10px;
+}
+
+.codeEditor::-webkit-scrollbar-thumb,
+.previewContent::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, 
+                rgba(102, 126, 234, 0.3) 0%, 
+                rgba(118, 75, 162, 0.3) 100%);
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+.codeEditor::-webkit-scrollbar-thumb:hover,
+.previewContent::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, 
+                rgba(102, 126, 234, 0.5) 0%, 
+                rgba(118, 75, 162, 0.5) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.7);
+}
+
+/* 深色主题支持 - 增强版 */
+@media (prefers-color-scheme: dark) {
+    .content {
+        --background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    }
+
+    .container {
+        background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    }
+
+    .toolbar {
+        background: rgba(26, 32, 44, 0.95);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        backdrop-filter: blur(20px) saturate(180%);
+        border-bottom-color: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .editorPanel,
+    .previewPanel {
+        background: rgba(26, 32, 44, 0.95);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        backdrop-filter: blur(20px) saturate(180%);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    }
+
+    .editorPanel:hover,
+    .previewPanel:hover {
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5),
+                    0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+    }
+
+    .codeEditor {
+        --background: rgba(45, 55, 72, 0.4);
+        --color: #e2e8f0;
+    }
+
+    .codeEditor:focus {
+        --background: rgba(45, 55, 72, 0.6);
+    }
+
+    .previewContent {
+        background: linear-gradient(135deg, 
+                    rgba(26, 32, 44, 0.9) 0%, 
+                    rgba(45, 55, 72, 0.9) 100%);
+    }
+
+    .previewContent::before {
+        background: 
+            radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(118, 75, 162, 0.08) 0%, transparent 50%);
+    }
+
+    .mermaidContainer svg {
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) 
+                brightness(1.1) 
+                contrast(1.05);
+    }
+
+    .toolbarLeft ion-button,
+    .toolbarRight ion-button {
+        --background: rgba(45, 55, 72, 0.6);
+    }
+
+    .toolbarLeft ion-button:hover,
+    .toolbarRight ion-button:hover {
+        --background: rgba(45, 55, 72, 0.8);
+    }
+
+    .versionSelect {
+        --background: rgba(102, 126, 234, 0.2);
+        color: #a5b4fc;
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3),
+                    0 0 0 1px rgba(102, 126, 234, 0.3) inset;
+    }
+
+    .versionSelect:hover {
+        --background: rgba(102, 126, 234, 0.25);
+    }
+
+    .previewActions ion-button {
+        --background: rgba(45, 55, 72, 0.6);
+    }
+
+    .previewActions ion-button:hover {
+        --background: rgba(45, 55, 72, 0.8);
+    }
+
+    .previewActions {
+        background: rgba(26, 32, 44, 0.95);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        backdrop-filter: blur(20px) saturate(180%);
+        border-top-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .loadingMessage {
+        background: linear-gradient(135deg, 
+                    rgba(102, 126, 234, 0.15) 0%, 
+                    rgba(118, 75, 162, 0.15) 100%);
+        border-color: rgba(102, 126, 234, 0.3);
+        color: #a5b4fc;
+    }
+
+    .errorMessage {
+        background: linear-gradient(135deg, 
+                    rgba(239, 83, 80, 0.15) 0%, 
+                    rgba(244, 143, 177, 0.15) 100%);
+        border-color: rgba(239, 83, 80, 0.3);
+        color: #fc8181;
+    }
+
+    .errorMessage pre {
+        background: rgba(26, 32, 44, 0.6);
+        color: #e2e8f0;
+    }
+
+    .codeEditor::-webkit-scrollbar-track,
+    .previewContent::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .codeEditor::-webkit-scrollbar-thumb,
+    .previewContent::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, 
+                    rgba(102, 126, 234, 0.4) 0%, 
+                    rgba(118, 75, 162, 0.4) 100%);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .codeEditor::-webkit-scrollbar-thumb:hover,
+    .previewContent::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, 
+                    rgba(102, 126, 234, 0.6) 0%, 
+                    rgba(118, 75, 162, 0.6) 100%);
+    }
 }
