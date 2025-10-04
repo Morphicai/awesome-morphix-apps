@@ -1,0 +1,230 @@
+.errorContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    padding: 32px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.errorContent {
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    padding: 32px;
+    background: linear-gradient(135deg, 
+                rgba(239, 83, 80, 0.05) 0%, 
+                rgba(244, 143, 177, 0.05) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    border: 1px solid rgba(239, 83, 80, 0.2);
+    box-shadow: 0 8px 32px rgba(239, 83, 80, 0.15);
+}
+
+.errorIcon {
+    font-size: 64px;
+    color: #ef5350;
+    margin-bottom: 20px;
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(-10px) rotate(-5deg); }
+    75% { transform: translateX(10px) rotate(5deg); }
+}
+
+.errorTitle {
+    margin: 0 0 12px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #d32f2f;
+    background: linear-gradient(135deg, #ef5350 0%, #e91e63 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.errorMessage {
+    margin: 0 0 20px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #666;
+}
+
+.errorWarning {
+    padding: 16px;
+    margin-bottom: 20px;
+    background: rgba(255, 152, 0, 0.1);
+    border: 1px solid rgba(255, 152, 0, 0.3);
+    border-radius: 12px;
+}
+
+.errorWarning p {
+    margin: 4px 0;
+    font-size: 13px;
+    color: #f57c00;
+}
+
+.errorActions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.errorActions ion-button {
+    --border-radius: 16px;
+    --padding-start: 24px;
+    --padding-end: 24px;
+    min-height: 48px;
+    font-weight: 600;
+    --box-shadow: 0 4px 16px rgba(239, 83, 80, 0.25);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.errorActions ion-button:hover {
+    --box-shadow: 0 6px 20px rgba(239, 83, 80, 0.35);
+    transform: translateY(-2px);
+}
+
+.errorActions ion-button:active {
+    transform: translateY(0);
+}
+
+.errorDetails {
+    margin-top: 24px;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+}
+
+.errorDetails summary {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.errorDetails summary:hover {
+    color: #333;
+}
+
+.errorStack,
+.errorComponentStack {
+    margin: 8px 0;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    font-size: 11px;
+    line-height: 1.4;
+    color: #d32f2f;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.errorComponentStack {
+    color: #f57c00;
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+    .errorContainer {
+        padding: 20px;
+        min-height: 250px;
+    }
+
+    .errorContent {
+        padding: 24px;
+    }
+
+    .errorIcon {
+        font-size: 48px;
+    }
+
+    .errorTitle {
+        font-size: 20px;
+    }
+
+    .errorMessage {
+        font-size: 13px;
+    }
+
+    .errorActions ion-button {
+        min-height: 44px;
+        --padding-start: 20px;
+        --padding-end: 20px;
+    }
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+    .errorContent {
+        background: linear-gradient(135deg, 
+                    rgba(239, 83, 80, 0.1) 0%, 
+                    rgba(244, 143, 177, 0.1) 100%);
+        border-color: rgba(239, 83, 80, 0.3);
+    }
+
+    .errorTitle {
+        color: #fc8181;
+        background: linear-gradient(135deg, #fc8181 0%, #f48fb1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .errorMessage {
+        color: #cbd5e0;
+    }
+
+    .errorWarning {
+        background: rgba(255, 152, 0, 0.15);
+        border-color: rgba(255, 152, 0, 0.4);
+    }
+
+    .errorWarning p {
+        color: #ffb74d;
+    }
+
+    .errorDetails {
+        background: rgba(26, 32, 44, 0.5);
+    }
+
+    .errorDetails summary {
+        color: #cbd5e0;
+    }
+
+    .errorDetails summary:hover {
+        color: #e2e8f0;
+    }
+
+    .errorStack,
+    .errorComponentStack {
+        background: rgba(0, 0, 0, 0.3);
+        color: #fc8181;
+    }
+
+    .errorComponentStack {
+        color: #ffb74d;
+    }
+}
+

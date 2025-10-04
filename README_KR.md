@@ -41,6 +41,7 @@
 | 이름 | 설명 | 작성자 | 기능 | 데모 | 세부사항 |
 |------|------|--------|------|------|----------|
 | ⏰ **timer** | 포모도로 타이머 애플리케이션 - 작업 관리 + 포모도로 기법 | MorphixAI Team | • 작업 관리 시스템<br>• 포모도로 타이머<br>• 데이터 통계<br>• 다국어 지원 (EN/CN) | [라이브 데모 →](https://app-shell.focusbe.com/app/1219e970-e531-4157-bce9-e8f4dcaaf6a6#/) | [세부사항 보기 →](./apps/timer/README.md) |
+| 📊 **mermaid** | Mermaid 다이어그램 편집기 - 다양한 다이어그램 생성 및 편집 | MorphixAI Team | • 다양한 다이어그램 유형<br>• 버전 관리<br>• 실시간 미리보기<br>• 내보내기 기능 | [라이브 데모 →](https://app-shell.focusbe.com/app/244975ac-609a-4a12-a02f-88d1512e9b60) | [세부사항 보기 →](./apps/mamerid/README.md) |
 
 > 📝 **참고**: 데모 링크는 `https://app-shell.focusbe.com/app/{remoteId}` 형식을 사용합니다
 
