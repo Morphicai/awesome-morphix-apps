@@ -1,328 +1,285 @@
 # 🌟 Awesome MorphixAI Apps
 
-> 精选 MorphixAI 应用集合 - 快速开发、自动发布、完美体验
+> Curated collection of MorphixAI applications - Fast development, unified management
 
 <div align="center">
 
 [![GitHub](https://img.shields.io/badge/GitHub-MorphixAI-blue?logo=github)](https://github.com/Morphicai/awesome-morphix-apps)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-[中文文档](README_CN.md) | [日本語](README_JA.md)
+[![Twitter](https://img.shields.io/badge/Twitter-MorphixAI-1DA1F2?logo=twitter&logoColor=white)](https://x.com/MorphixAI)
+[![Discord](https://img.shields.io/badge/Discord-Community-7289DA?logo=discord&logoColor=white)](https://discord.gg/HTknmpUM)
+[![Reddit](https://img.shields.io/badge/Reddit-r/MorphixAI-FF4500?logo=reddit&logoColor=white)](https://www.reddit.com/r/MorphixAI/)
+
+[中文](README_CN.md) | [한국어](README_KR.md) | [日本語](README_JA.md)
 
 </div>
 
-## 📖 项目简介
+## 📖 Project Overview
 
-这是一个 **MorphixAI 应用集合的管理项目**，用于统一管理和发布多个高质量的 MorphixAI 应用。
+This is a **MorphixAI applications collection management project** for unified management of multiple high-quality MorphixAI applications.
 
-### ✨ 核心特性
+### ✨ Core Features
 
-- 🚀 **快速创建** - 一键创建新应用项目
-- 📚 **文档同步** - 自动同步最新开发文档到各子项目
-- 🔄 **自动发布** - Git 推送后自动构建和发布
-- 🎯 **统一管理** - 集中管理所有应用的版本和依赖
-- 🛠️ **开发工具** - 完整的 CLI 工具链支持
+- 🚀 **Quick Creation** - One-click creation of new application projects
+- 🎯 **Unified Management** - Centralized management of all applications and dependencies
+- 🛠️ **Development Tools** - Complete CLI toolchain support
 
-## 📁 项目结构
+### 🔗 Relationship with @morphixai/code
 
-> 🎯 基于 pnpm monorepo 架构，统一管理所有应用和工具
+This project uses [@morphixai/code](https://github.com/Morphicai/morphixai-code) as the underlying framework for creating MorphixAI applications. The `@morphixai/code` package provides:
+
+- Application templates and scaffolding
+- Development environment setup
+- Build and deployment tools
+- MorphixAI platform integration
+
+For detailed documentation about the framework, visit the [official @morphixai/code repository](https://github.com/Morphicai/morphixai-code).
+
+## 📚 Available Applications
+
+| Name | Description | Author | Features | Demo | Details |
+|------|-------------|--------|----------|------|---------|
+| ⏰ **timer** | Pomodoro Timer Application - Task management + Pomodoro technique | MorphixAI Team | • Task management system<br>• Pomodoro timer<br>• Data statistics<br>• Multi-language support (EN/CN) | [Live Demo →](https://app-shell.focusbe.com/app/1219e970-e531-4157-bce9-e8f4dcaaf6a6#/) | [View Details →](./apps/timer/README.md) |
+
+> 📝 **Note**: Demo links use the format `https://app-shell.focusbe.com/app/{remoteId}`
+
+## 📁 Project Structure
+
+> 🎯 Based on pnpm monorepo architecture for unified management of all applications and tools
 
 ```
 awesome-morphix-apps/
-├── apps/                  # 📱 所有应用
-│   ├── template/          # 📦 模板项目（开发框架）
-│   │   ├── src/app/       # 业务代码开发区域
-│   │   ├── src/_dev/      # 开发环境外壳
-│   │   └── docs/          # 项目文档
-│   │
-│   └── timer/             # ⏰ 番茄钟应用
-│       ├── src/app/       # 任务管理 + 番茄钟功能
-│       └── ...
+├── apps/                  # 📱 All applications
+│   └── timer/             # ⏰ Pomodoro Timer application
+│       ├── src/app/       # Task management + Pomodoro functionality
+│       ├── src/_dev/      # Development environment shell
+│       └── docs/          # Project documentation
 │
-├── tools/                 # 🛠️ 开发工具
-│   └── cli/               # CLI 工具包
+├── tools/                 # 🛠️ Development tools
+│   └── cli/               # CLI toolkit
 │       ├── bin/
-│       │   └── morphix.js # 统一 CLI 入口
-│       ├── create-app.js  # 创建新应用
-│       ├── sync-docs.js   # 同步文档
-│       └── ...
+│       │   └── morphix.js # Unified CLI entry point
+│       ├── create-app.js  # Create new applications
+│       ├── sync-docs.js   # Sync documentation
+│       └── dev.js         # Development server
 │
-├── docs/                  # 📚 共享文档库
-│   ├── CONTRIBUTING.md    # 贡献指南
-│   ├── QUICK_START.md     # 快速开始
-│   └── .shared/           # 共享资源
+├── docs/                  # 📚 Shared documentation
+│   ├── CONTRIBUTING.md    # Contributing guide
+│   └── QUICK_START.md     # Quick start guide
 │
-├── pnpm-workspace.yaml    # pnpm workspace 配置
-├── package.json           # 根项目配置
-└── README.md              # 本文件
+├── pnpm-workspace.yaml    # pnpm workspace configuration
+├── package.json           # Root project configuration
+└── README.md              # This file
 ```
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 环境要求
+### Requirements
 
-- **Node.js** 18+ (推荐 LTS 版本)
+- **Node.js** 18+ (LTS version recommended)
 - **Git**
-- 支持的操作系统：macOS, Windows, Linux
+- Supported OS: macOS, Windows, Linux
 
-> 💡 **无需全局安装 pnpm**  
-> 项目已内置 pnpm，使用 `npx pnpm` 或 `npm` 命令即可
+> 💡 **No need to install pnpm globally**  
+> The project includes pnpm, use `pnpm` commands directly
 
-### 安装依赖
+### Installation
 
 ```bash
-# 克隆仓库
+# Clone repository
 git clone git@github.com:Morphicai/awesome-morphix-apps.git
 cd awesome-morphix-apps
 
-# 安装所有依赖（包括所有应用和 pnpm）
-npm install
-
-# 或使用快捷命令
-npm run install-all
+# Install all dependencies (including all applications and pnpm)
+pnpm install
 ```
 
-## 🛠️ 项目管理
+## 🛠️ Project Management
 
-### 创建新应用
+### Creating New Applications
 
-使用 CLI 工具快速创建新的 MorphixAI 应用：
+Use CLI tools to quickly create new MorphixAI applications:
 
 ```bash
-# 交互式创建
+# Interactive creation
 npm run create
 
-# 或直接指定应用名称
+# Or specify application name directly
 npm run create my-awesome-app
-
-# 或使用完整命令
-node tools/cli/bin/morphix.js create my-awesome-app
 ```
 
-创建过程会：
-1. ✅ 使用 `npx @morphixai/code create` 创建应用
-2. ✅ 确保应用创建在 `apps/` 目录下
-3. ✅ 自动生成项目结构和配置
-4. ✅ 自动安装依赖
-5. ✅ 初始化开发环境
+The creation process will:
+1. ✅ Use `npx @morphixai/code create` to create the application
+2. ✅ Ensure application is created in the `apps/` directory
+3. ✅ Automatically generate project structure and configuration
+4. ✅ Automatically install dependencies
+5. ✅ Initialize development environment
 
-### 文档同步
+### Developing Applications
 
-将最新的开发文档同步到所有子项目：
+**Method 1: Interactive Development (Recommended)**
 
-```bash
-# 同步所有子项目的文档
-npm run sync-docs
-
-# 同步特定项目的文档
-npm run sync-docs timer
-```
-
-同步内容包括：
-- 📄 CLAUDE.md - AI 开发规范
-- 📄 DEVELOPER.md - 开发者文档
-- 📁 docs/ - 完整文档目录
-
-### 开发应用
-
-**方式一：交互式开发（推荐）**
-
-在根目录运行，会显示菜单让你选择：
+Run in root directory, displays menu for selection:
 
 ```bash
 npm run dev
 ```
 
-交互式菜单支持：
-- 📱 使用 ↑↓ 方向键选择应用
-- ➕ 创建新应用
-- ❌ 退出
+Interactive menu supports:
+- 📱 Use ↑↓ arrow keys to select applications
+- ➕ Create new applications
+- ❌ Exit
 
-**方式二：直接进入子项目**
+**Method 2: Direct Project Entry**
 
 ```bash
 cd apps/timer
-npm install
+pnpm install
 npm run dev
 ```
 
-**方式三：运行所有应用（并行）**
+Browser will automatically open `http://localhost:8812`
 
-```bash
-npm run dev:all
+## 🎯 Development Guidelines
 
-# 或使用 pnpm 过滤器
-npx pnpm --filter timer dev
-```
+All applications must follow unified development standards:
 
-浏览器会自动打开 `http://localhost:8812`
+### Core Constraints
 
-## 📚 已有应用
+- ✅ **Development Area**: Only develop within the `src/app/` directory
+- ❌ **Prohibited Modifications**: Cannot modify `src/_dev/`, configuration files, and build scripts
+- 📦 **Tech Stack**: React 19 + Ionic React 8.6.2
+- 🎨 **Styling**: Must use CSS Modules
+- 🔒 **Entry Point**: `src/app/app.jsx`
 
-### 🖼️ template
-**标准模板项目** - 用于创建新应用的基础模板
+### Recommended Tools
 
-- React 19 + Ionic 8.6.2
-- Vite 5 开发服务器
-- 完整的开发文档和规范
-- HostClient SDK 集成
+- **Cursor AI** - Built-in complete development standards
+- **Claude Code** - Supports natural language programming
+- **VS Code** - Works with Vite plugins
 
-[查看详情 →](./apps/template/README.md)
+## 📦 Publishing Process
 
----
-
-### ⏰ timer
-**番茄钟应用** - 任务管理 + 番茄工作法
-
-- 任务管理系统
-- 番茄钟计时器
-- 数据统计分析
-- 多语言支持（中/英）
-
-[查看详情 →](./apps/timer/README.md) | [在线体验 →](https://app-shell.focusbe.com/app-runner/timer-app)
-
----
-
-## 🎯 开发规范
-
-所有应用必须遵循统一的开发规范：
-
-### 核心约束
-
-- ✅ **开发区域**：只能在 `src/app/` 目录内开发
-- ❌ **禁止修改**：不能修改 `src/_dev/`、配置文件和构建脚本
-- 📦 **技术栈**：React 19 + Ionic React 8.6.2
-- 🎨 **样式**：必须使用 CSS Modules
-- 🔒 **入口文件**：`src/app/app.jsx`
-
-### 推荐工具
-
-- **Cursor AI** - 内置完整的开发规范
-- **Claude Code** - 支持自然语言编程
-- **VS Code** - 配合 Vite 插件
-
-详细规范请查看：[开发规范文档](./docs/standards/development-guidelines.md)
-
-## 📦 发布流程
-
-### 开发环境测试
+### Development Environment Testing
 
 ```bash
 cd your-app
 npm run dev
 ```
 
-### 发布到 MorphixAI 平台
+### Publishing to MorphixAI Platform
 
-1. **方式一：自动发布**（推荐）
-   ```bash
-   git add .
-   git commit -m "feat: 添加新功能"
-   git push origin main
-   ```
-   GitHub Actions 会自动发布
+1. **Method 1: Manual Publishing**
+   - Click "Upload Application" in the development environment control panel
+   - Fill in application information and submit for review
 
-2. **方式二：手动发布**
-   - 在开发环境的控制面板点击"上传应用"
-   - 填写应用信息并提交审核
+2. **Method 2: Official Marketplace**
+   - Send email to `contact@baibian.app`
+   - Provide application information and usage instructions
 
-3. **方式三：官方市场**
-   - 发送邮件到 `contact@baibian.app`
-   - 提供应用信息和使用说明
+## 🔧 CLI Commands
 
-## 🔧 CLI 命令
+### Monorepo Commands
 
-### Monorepo 命令
-
-> 💡 使用 `npm` 命令运行，项目会自动使用内置的 pnpm
+> 💡 Use `npm` for running scripts, `pnpm` for installation
 
 ```bash
-# 🎯 交互式开发（推荐）
-npm run dev              # 显示菜单选择项目
+# 🎯 Interactive development (Recommended)
+npm run dev              # Display menu to select project
 
-# 创建新应用
+# Create new application
 npm run create [name]
 
-# 同步文档
+# Sync documentation
 npm run sync-docs [app]
 
-# 安装所有依赖
-npm install
-npm run install-all
+# Install all dependencies
+pnpm install
 
-# 开发所有应用（并行）
-npm run dev:all
-
-# 清理所有 node_modules
+# Clean all node_modules
 npm run clean
 ```
 
-### 子项目命令
+### Sub-project Commands
 
 ```bash
-# 🎯 推荐：使用交互式命令
-npm run dev                       # 选择要开发的项目
+# 🎯 Recommended: Use interactive command
+npm run dev                        # Select project to develop
 
-# 在根目录使用 pnpm 过滤器
-npx pnpm --filter timer dev       # 开发特定应用
+# Use pnpm filters in root directory
+pnpm --filter timer dev            # Develop specific application
 
-# 或进入子项目
+# Or enter sub-project
 cd apps/timer
-npm install                       # 安装依赖
-npm run dev                       # 启动开发服务器
-npm run generate-id               # 生成项目 ID
+pnpm install                       # Install dependencies
+npm run dev                        # Start development server
+npm run generate-id                # Generate project ID
 ```
 
-## 🤝 贡献指南
+## 🤝 Contributing Guide
 
-欢迎贡献新的应用或改进现有应用！
+Welcome to contribute new applications or improve existing ones!
 
-### 贡献流程
+### Contribution Process
 
-1. Fork 本仓库
-2. 创建新应用或改进现有应用
+1. Fork this repository
+2. Create a new branch for your feature
    ```bash
-   npm run create-app my-app
-   cd my-app
-   # 进行开发...
+   git checkout -b feature/my-new-app
    ```
-3. 提交代码
+3. Create new application or improve existing ones
+   ```bash
+   npm run create my-app
+   cd apps/my-app
+   # Start development...
+   ```
+4. Commit your changes
    ```bash
    git add .
-   git commit -m "feat(my-app): 添加新应用"
-   git push origin main
+   git commit -m "feat(my-app): add new application"
    ```
-4. 创建 Pull Request
+5. Push to your branch
+   ```bash
+   git push origin feature/my-new-app
+   ```
+6. Create a Pull Request from your branch to the main branch
 
-### 应用质量要求
+### Application Quality Requirements
 
-- ✅ 代码符合开发规范
-- ✅ 提供完整的文档
-- ✅ 在开发环境测试通过
-- ✅ 遵循 MorphixAI 平台约束
-- ✅ 具有实用价值
+- ✅ Code follows development standards
+- ✅ Provides complete documentation
+- ✅ Passes testing in development environment
+- ✅ Follows MorphixAI platform constraints
+- ✅ Has practical value
 
-## 📖 相关资源
+## 📖 Related Resources
 
-### 官方文档
-- [MorphixAI 官网](https://baibian.app/)
-- [应用开发规范](https://app-shell.focusbe.com/docs/app-development-specification.md)
-- [App SDK API](https://app-shell.focusbe.com/docs/app-sdk-api.md)
-- [应用市场](https://app-shell.focusbe.com/app-market)
+### Official Documentation
+- [MorphixAI Official Website](https://baibian.app/)
+- [@morphixai/code Framework](https://github.com/Morphicai/morphixai-code)
+- [Application Marketplace](https://app-shell.focusbe.com/app-market)
 
-### 技术文档
-- [React 官方文档](https://react.dev/)
+### Technical Documentation
+- [React Official Documentation](https://react.dev/)
 - [Ionic React](https://ionicframework.com/docs/react)
-- [Vite 文档](https://vitejs.dev/)
+- [Vite Documentation](https://vitejs.dev/)
 
-### 社区
-- GitHub Issues - 问题反馈
-- GitHub Discussions - 技术讨论
+### Community
+- GitHub Issues - Bug reports and feedback
+- GitHub Discussions - Technical discussions
 - Email: contact@baibian.app
 
-## 📄 许可证
+### Social Media
+- [Twitter/X](https://x.com/MorphixAI) - Latest updates and announcements
+- [Discord](https://discord.gg/HTknmpUM) - Community chat and support
+- [Reddit](https://www.reddit.com/r/MorphixAI/) - Community discussions
+- [小红书 (Xiaohongshu)](https://www.xiaohongshu.com/user/profile/585f9bb150c4b429edd4224e) - Chinese community
+- [抖音 (Douyin)](https://v.douyin.com/qr4TImD9qZ0/) - Video content and tutorials
 
-本项目采用 [MIT License](LICENSE) 开源协议。
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
@@ -330,7 +287,7 @@ npm run generate-id               # 生成项目 ID
 
 **Made with ❤️ by MorphixAI Community**
 
-[⬆ 回到顶部](#-awesome-morphixai-apps)
+[⬆ Back to Top](#-awesome-morphixai-apps)
 
 </div>
 
