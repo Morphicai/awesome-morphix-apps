@@ -30,5 +30,4 @@ temp/
 *.tmp
 
 # Project specific
-**/src/_dev/app-files.js
-**/src/_dev/project-config.json
+**/_dev/app-files.js
