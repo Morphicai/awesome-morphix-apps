@@ -100,10 +100,11 @@ node tools/cli/bin/morphix.js create my-awesome-app
 ```
 
 创建过程会：
-1. ✅ 从模板复制完整项目结构
-2. ✅ 生成唯一的项目 ID
-3. ✅ 初始化 Git 和依赖
-4. ✅ 同步最新文档
+1. ✅ 优先使用 `@morphixai/code` 创建应用
+2. ✅ 如果不可用，则从模板复制完整项目结构
+3. ✅ 生成唯一的项目 ID
+4. ✅ 初始化 Git 和依赖
+5. ✅ 同步最新文档
 
 ### 文档同步
 
@@ -211,12 +212,6 @@ cd your-app
 npm run dev
 ```
 
-### 构建生产版本
-
-```bash
-npm run build
-```
-
 ### 发布到 MorphixAI 平台
 
 1. **方式一：自动发布**（推荐）
@@ -225,7 +220,7 @@ npm run build
    git commit -m "feat: 添加新功能"
    git push origin main
    ```
-   GitHub Actions 会自动构建和发布
+   GitHub Actions 会自动发布
 
 2. **方式二：手动发布**
    - 在开发环境的控制面板点击"上传应用"
@@ -255,10 +250,6 @@ npm run sync-docs [app]
 npm install
 npm run install-all
 
-# 构建所有应用
-npm run build
-npm run build-all
-
 # 开发所有应用（并行）
 npm run dev:all
 
@@ -274,13 +265,11 @@ npm run dev                       # 选择要开发的项目
 
 # 在根目录使用 pnpm 过滤器
 npx pnpm --filter timer dev       # 开发特定应用
-npx pnpm --filter timer build     # 构建特定应用
 
 # 或进入子项目
 cd apps/timer
 npm install                       # 安装依赖
 npm run dev                       # 启动开发服务器
-npm run build                     # 构建生产版本
 npm run generate-id               # 生成项目 ID
 ```
 

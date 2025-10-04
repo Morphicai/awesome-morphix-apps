@@ -32,7 +32,6 @@ ${colors.bright}Commands:${colors.reset}
   ${colors.green}create [name]${colors.reset}     Create a new MorphixAI application
   ${colors.green}sync [app]${colors.reset}        Sync documentation to apps
   ${colors.green}install${colors.reset}           Install dependencies for all apps
-  ${colors.green}build${colors.reset}             Build all applications
   ${colors.green}help${colors.reset}              Show this help message
 
 ${colors.bright}Examples:${colors.reset}
@@ -41,7 +40,6 @@ ${colors.bright}Examples:${colors.reset}
   morphix sync                Sync docs to all apps
   morphix sync timer          Sync docs to "timer" app only
   morphix install             Install all dependencies
-  morphix build               Build all apps
 
 ${colors.bright}Options:${colors.reset}
   -h, --help                  Show help
@@ -71,9 +69,6 @@ switch (command) {
         break;
     case 'install':
         import('../install-all.js');
-        break;
-    case 'build':
-        import('../build-all.js');
         break;
     case 'help':
     case '--help':

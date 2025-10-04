@@ -19,7 +19,8 @@
     "author": "MorphixAI Community",
     "license": "MIT",
     "dependencies": {
-        "prompts": "^2.4.2"
+        "prompts": "^2.4.2",
+        "@morphixai/code": "latest"
     }
 }
 

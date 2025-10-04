@@ -16,6 +16,14 @@ import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
 import readline from 'readline';
 
+// Import @morphixai/code for app creation
+let morphixCode;
+try {
+    morphixCode = await import('@morphixai/code');
+} catch (error) {
+    console.log('⚠️  @morphixai/code not found, falling back to template copying');
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.join(__dirname, '../..');  // monorepo root
@@ -159,6 +167,33 @@ async function initializeGit(appDir) {
     }
 }
 
+// 使用 @morphixai/code 创建应用
+async function createAppWithMorphixCode(appName, appDisplayName, appDescription, appDir) {
+    if (!morphixCode) {
+        return false;
+    }
+    
+    try {
+        log.info('使用 @morphixai/code 创建应用...');
+        
+        // 根据 @morphixai/code 的 API 创建应用
+        // 注意：这里的 API 调用可能需要根据实际的 @morphixai/code 文档进行调整
+        await morphixCode.createApp({
+            name: appName,
+            displayName: appDisplayName,
+            description: appDescription,
+            outputDir: appDir,
+            template: 'react-ionic' // 假设这是支持的模板类型
+        });
+        
+        log.success('使用 @morphixai/code 创建应用成功');
+        return true;
+    } catch (error) {
+        log.warning('@morphixai/code 创建失败，回退到模板复制: ' + error.message);
+        return false;
+    }
+}
+
 // 安装依赖
 async function installDependencies(appDir) {
     log.info('正在安装依赖...');
@@ -232,14 +267,19 @@ async function main() {
     const appDir = path.join(APPS_DIR, appName);
     
     try {
-        // 1. 复制模板
-        log.info('复制模板文件...');
-        await copyDirectory(TEMPLATE_DIR, appDir, ['node_modules', '.git', 'dist']);
-        log.success('模板文件复制完成');
+        // 1. 尝试使用 @morphixai/code 创建应用
+        const morphixSuccess = await createAppWithMorphixCode(appName, appDisplayName, appDescription, appDir);
         
-        // 2. 更新项目配置
-        log.info('更新项目配置...');
-        await updateProjectConfig(appDir, appName, appDisplayName);
+        if (!morphixSuccess) {
+            // 回退到模板复制方式
+            log.info('复制模板文件...');
+            await copyDirectory(TEMPLATE_DIR, appDir, ['node_modules', '.git', 'dist']);
+            log.success('模板文件复制完成');
+            
+            // 2. 更新项目配置
+            log.info('更新项目配置...');
+            await updateProjectConfig(appDir, appName, appDisplayName);
+        }
         
         // 3. 初始化 Git
         log.info('初始化 Git 仓库...');
