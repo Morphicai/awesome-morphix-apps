@@ -16,19 +16,12 @@ import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
 import readline from 'readline';
 
-// Import @morphixai/code for app creation
-let morphixCode;
-try {
-    morphixCode = await import('@morphixai/code');
-} catch (error) {
-    console.log('⚠️  @morphixai/code not found, falling back to template copying');
-}
+// 不再需要导入 @morphixai/code，直接使用 npx 命令
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.join(__dirname, '../..');  // monorepo root
 const APPS_DIR = path.join(ROOT_DIR, 'apps');
-const TEMPLATE_DIR = path.join(APPS_DIR, 'template');
 
 // 颜色输出
 const colors = {
@@ -95,131 +88,47 @@ async function checkDirectoryExists(appName) {
     }
 }
 
-// 复制目录（递归）
-async function copyDirectory(src, dest, excludeDirs = []) {
-    await fs.mkdir(dest, { recursive: true });
-    
-    const entries = await fs.readdir(src, { withFileTypes: true });
-    
-    for (const entry of entries) {
-        const srcPath = path.join(src, entry.name);
-        const destPath = path.join(dest, entry.name);
-        
-        // 跳过排除的目录
-        if (excludeDirs.includes(entry.name)) {
-            continue;
-        }
-        
-        if (entry.isDirectory()) {
-            await copyDirectory(srcPath, destPath, excludeDirs);
-        } else {
-            await fs.copyFile(srcPath, destPath);
-        }
-    }
-}
+// 注意：不再需要模板复制、项目配置更新等函数
+// @morphixai/code create 命令会处理所有这些步骤
 
-// 生成唯一的项目 ID
-function generateProjectId() {
-    return `app-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-}
-
-// 更新项目配置
-async function updateProjectConfig(appDir, appName, appDisplayName) {
-    // 更新 package.json
-    const packageJsonPath = path.join(appDir, 'package.json');
-    const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
-    
-    packageJson.name = appName;
-    packageJson.description = `${appDisplayName} - A MorphixAI Application`;
-    packageJson.version = '0.1.0';
-    
-    await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 4), 'utf-8');
-    log.success('更新 package.json');
-    
-    // 生成项目 ID
-    const projectConfigPath = path.join(appDir, 'src/_dev/project-config.json');
-    const projectId = generateProjectId();
-    const projectConfig = {
-        projectId: projectId,
-        name: appDisplayName,
-        createdAt: new Date().toISOString(),
-    };
-    
-    await fs.writeFile(projectConfigPath, JSON.stringify(projectConfig, null, 4), 'utf-8');
-    log.success(`生成项目 ID: ${projectId}`);
-    
-    // 更新 README.md
-    const readmePath = path.join(appDir, 'README.md');
-    let readme = await fs.readFile(readmePath, 'utf-8');
-    readme = readme.replace(/MorphixAI Code/g, appDisplayName);
-    readme = readme.replace(/morphixai-code/g, appName);
-    await fs.writeFile(readmePath, readme, 'utf-8');
-    log.success('更新 README.md');
-}
-
-// 初始化 Git
-async function initializeGit(appDir) {
-    try {
-        execSync('git init', { cwd: appDir, stdio: 'ignore' });
-        log.success('初始化 Git 仓库');
-    } catch (error) {
-        log.warning('Git 初始化失败（可能已存在）');
-    }
-}
-
-// 使用 @morphixai/code 创建应用
+// 使用 npx @morphixai/code create 创建应用
 async function createAppWithMorphixCode(appName, appDisplayName, appDescription, appDir) {
-    if (!morphixCode) {
-        return false;
-    }
-    
     try {
-        log.info('使用 @morphixai/code 创建应用...');
+        log.info('使用 npx @morphixai/code create 创建应用...');
         
-        // 根据 @morphixai/code 的 API 创建应用
-        // 注意：这里的 API 调用可能需要根据实际的 @morphixai/code 文档进行调整
-        await morphixCode.createApp({
-            name: appName,
-            displayName: appDisplayName,
-            description: appDescription,
-            outputDir: appDir,
-            template: 'react-ionic' // 假设这是支持的模板类型
+        // 确保 apps 目录存在
+        await fs.mkdir(APPS_DIR, { recursive: true });
+        
+        // 构建 npx @morphixai/code create 命令
+        const createCommand = `npx @morphixai/code create ${appName}`;
+        
+        log.info(`执行命令: ${createCommand}`);
+        log.info(`工作目录: ${APPS_DIR}`);
+        
+        // 在 apps 目录下执行命令，确保应用创建在 apps/ 目录下
+        execSync(createCommand, { 
+            cwd: APPS_DIR, 
+            stdio: 'inherit',
+            env: { ...process.env }
         });
         
         log.success('使用 @morphixai/code 创建应用成功');
         return true;
     } catch (error) {
-        log.warning('@morphixai/code 创建失败，回退到模板复制: ' + error.message);
+        log.error('@morphixai/code 创建失败: ' + error.message);
+        log.info('请确保 @morphixai/code 包可用，或检查网络连接');
         return false;
     }
 }
 
-// 安装依赖
-async function installDependencies(appDir) {
-    log.info('正在安装依赖...');
-    try {
-        execSync('npx pnpm install', { cwd: appDir, stdio: 'inherit' });
-        log.success('依赖安装完成');
-        return true;
-    } catch (error) {
-        log.error('依赖安装失败');
-        log.warning('你可以稍后手动运行: cd ' + path.basename(appDir) + ' && npx pnpm install');
-        return false;
-    }
-}
+// 注意：不再需要手动安装依赖
+// @morphixai/code create 命令会自动处理依赖安装
 
 // 主函数
 async function main() {
     log.title('🚀 MorphixAI App Creator');
     
-    // 检查模板目录
-    try {
-        await fs.access(TEMPLATE_DIR);
-    } catch {
-        log.error('模板目录不存在: apps/template/');
-        log.info('请确保 apps/template 模板项目存在');
-        process.exit(1);
-    }
+    // 不再需要检查模板目录，因为使用 @morphixai/code create
     
     // 获取应用名称
     let appName = process.argv[2];
@@ -267,38 +176,36 @@ async function main() {
     const appDir = path.join(APPS_DIR, appName);
     
     try {
-        // 1. 尝试使用 @morphixai/code 创建应用
+        // 使用 npx @morphixai/code create 创建应用
         const morphixSuccess = await createAppWithMorphixCode(appName, appDisplayName, appDescription, appDir);
         
         if (!morphixSuccess) {
-            // 回退到模板复制方式
-            log.info('复制模板文件...');
-            await copyDirectory(TEMPLATE_DIR, appDir, ['node_modules', '.git', 'dist']);
-            log.success('模板文件复制完成');
+            log.error('应用创建失败');
+            process.exit(1);
+        }
+        
+        // 验证应用是否成功创建在 apps/ 目录下
+        const createdAppDir = path.join(APPS_DIR, appName);
+        try {
+            await fs.access(createdAppDir);
             
-            // 2. 更新项目配置
-            log.info('更新项目配置...');
-            await updateProjectConfig(appDir, appName, appDisplayName);
+            // 进一步验证是否是一个有效的应用目录
+            const packageJsonPath = path.join(createdAppDir, 'package.json');
+            await fs.access(packageJsonPath);
+            
+            log.success(`✅ 应用已成功创建在: ${createdAppDir}`);
+            log.info(`📁 应用目录: apps/${appName}/`);
+        } catch {
+            log.error('❌ 应用目录未找到或创建失败');
+            log.error(`预期位置: ${createdAppDir}`);
+            process.exit(1);
         }
         
-        // 3. 初始化 Git
-        log.info('初始化 Git 仓库...');
-        await initializeGit(appDir);
-        
-        // 4. 询问是否安装依赖
-        const shouldInstall = await prompt('是否立即安装依赖？(Y/n)');
-        if (shouldInstall.toLowerCase() !== 'n' && shouldInstall.toLowerCase() !== 'no') {
-            await installDependencies(appDir);
-        }
-        
-        // 5. 完成提示
+        // 完成提示
         console.log('\n' + '='.repeat(50));
         log.title('🎉 应用创建成功！');
         console.log('\n下一步：\n');
         log.info(`cd apps/${appName}`);
-        if (shouldInstall.toLowerCase() === 'n' || shouldInstall.toLowerCase() === 'no') {
-            log.info('npx pnpm install');
-        }
         log.info('npm run dev');
         console.log('\n' + '='.repeat(50) + '\n');
         

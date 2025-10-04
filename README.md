@@ -100,11 +100,11 @@ node tools/cli/bin/morphix.js create my-awesome-app
 ```
 
 创建过程会：
-1. ✅ 优先使用 `@morphixai/code` 创建应用
-2. ✅ 如果不可用，则从模板复制完整项目结构
-3. ✅ 生成唯一的项目 ID
-4. ✅ 初始化 Git 和依赖
-5. ✅ 同步最新文档
+1. ✅ 使用 `npx @morphixai/code create` 创建应用
+2. ✅ 确保应用创建在 `apps/` 目录下
+3. ✅ 自动生成项目结构和配置
+4. ✅ 自动安装依赖
+5. ✅ 初始化开发环境
 
 ### 文档同步
 
