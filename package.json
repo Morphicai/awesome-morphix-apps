@@ -10,7 +10,6 @@
         "dev:all": "npx pnpm --filter \"./apps/*\" --parallel dev",
         "create": "node tools/cli/bin/morphix.js create",
         "sync-docs": "node tools/cli/bin/morphix.js sync",
-        "install-all": "npx pnpm install -r",
         "clean": "npx pnpm --filter \"./apps/*\" --parallel clean && rm -rf node_modules"
     },
     "keywords": [
