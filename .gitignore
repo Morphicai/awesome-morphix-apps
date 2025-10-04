@@ -1,1 +1,34 @@
+# Dependencies
 node_modules/
+package-lock.json
+
+# Build outputs
+dist/
+build/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Project specific
+**/src/_dev/app-files.js
+**/src/_dev/project-config.json

@@ -1,0 +1,25 @@
+{
+    "name": "@awesome-morphix/cli",
+    "version": "1.0.0",
+    "description": "CLI tools for managing MorphixAI applications",
+    "type": "module",
+    "bin": {
+        "morphix": "./bin/morphix.js",
+        "morphix-create": "./create-app.js",
+        "morphix-sync": "./sync-docs.js"
+    },
+    "scripts": {
+        "test": "echo \"No tests specified\" && exit 0"
+    },
+    "keywords": [
+        "morphixai",
+        "cli",
+        "tools"
+    ],
+    "author": "MorphixAI Community",
+    "license": "MIT",
+    "dependencies": {
+        "prompts": "^2.4.2"
+    }
+}
+

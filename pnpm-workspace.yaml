@@ -1,0 +1,14 @@
+# pnpm workspace configuration
+# https://pnpm.io/workspaces
+
+packages:
+  # 所有应用
+  - 'apps/*'
+  
+  # CLI 工具
+  - 'tools/*'
+  
+  # 排除 node_modules 和 dist
+  - '!**/node_modules/**'
+  - '!**/dist/**'
+
