@@ -37,5 +37,5 @@ ehthumbs.db
 Thumbs.db
 
 # MorphixAI specific
-project-config.json
+
 src/_dev/app-files.js
