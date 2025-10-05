@@ -1,0 +1,186 @@
+.page {
+    padding: 12px;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-height: 100vh;
+    background: #f8f9fa;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+.mentorSection {
+    margin-bottom: 20px;
+}
+
+.sectionTitle {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.sectionSubtitle {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.mentorCard {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    border: 1px solid #f0f0f0;
+}
+
+.mentorCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.mentorCard.selected {
+    border: 2px solid #007AFF;
+    background: #f0f8ff;
+}
+
+.mentorCard.recommended {
+    border: 2px solid #FF6B35;
+}
+
+.mentorIcon {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.mentorName {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.mentorPhilosophy {
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+}
+
+.badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #FF6B35;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.mentorGallery {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 10px 0;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+}
+
+.mentorGallery::-webkit-scrollbar {
+    height: 6px;
+}
+
+.mentorGallery::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.mentorGallery::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.mentorGallery::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+.mentorGallery .mentorCard {
+    text-align: center;
+    padding: 15px;
+    min-width: 140px;
+    flex-shrink: 0;
+}
+
+.footer {
+    margin-top: 32px;
+    padding: 0 16px;
+}
+
+.confirmBtn {
+    width: 100%;
+    background: linear-gradient(135deg, #007AFF, #0056CC);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.confirmBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,122,255,0.3);
+}
+
+.loading {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.loadingText {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.loadingProgressBar {
+    width: 100%;
+    height: 4px;
+    background: #f0f0f0;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.loadingProgress {
+    height: 100%;
+    background: linear-gradient(90deg, #007AFF, #34C759);
+    transition: width 0.3s ease;
+}
+
+.loadingMessage {
+    font-size: 14px;
+    color: #999;
+    margin-top: 10px;
+}
