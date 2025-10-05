@@ -8,7 +8,7 @@ import { MENTORS } from '../../constants/mentors';
 import styles from '../../styles/MentorHallPage.module.css';
 
 export default function MentorHallPage() {
-  const { currentQuestion, setSelectedMentorId: setGlobalSelectedMentorId } = useAppContext();
+  const { currentQuestion, currentIdea, setSelectedMentorId: setGlobalSelectedMentorId } = useAppContext();
   const history = useHistory();
   const [loading, setLoading] = useState(true);
   const [recommendedMentorId, setRecommendedMentorId] = useState('visionary');
@@ -28,37 +28,37 @@ export default function MentorHallPage() {
     }
 
     setLoading(true);
-
-    // 模拟加载进度
-    const messages = [
-      { text: "正在分析您的问题核心，链接全球大师智慧网络...", progress: 25 },
-      { text: "智慧网络已响应，正在筛选最契合的灵魂导师...", progress: 50 },
-      { text: "匹配算法启动，正在计算契合度...", progress: 75 },
-      { text: "天命导师锁定！正在建立专属链接...", progress: 100 }
-    ];
-
-    let index = 0;
-    const interval = setInterval(() => {
-      if (index < messages.length) {
-        setProgress(messages[index].progress);
-        setMessage(messages[index].text);
-        index++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 1000);
+    setProgress(10);
+    setMessage('正在分析您的问题核心，链接AI智慧网络...');
 
     try {
-      // 调用AI服务推荐导师
-      const mentorId = await AIService.recommendMentor(currentQuestion);
+      // 阶段1: 开始分析
+      setTimeout(() => {
+        setProgress(30);
+        setMessage('AI正在深入理解您的问题本质...');
+      }, 300);
 
-      clearInterval(interval);
-      setRecommendedMentorId(mentorId);
-      setLocalSelectedMentorId(mentorId);
-      setLoading(false);
+      // 阶段2: 调用AI服务推荐导师（传入商业想法作为上下文）
+      const mentorId = await AIService.recommendMentor(currentQuestion, currentIdea);
+
+      // 阶段3: AI返回后
+      setProgress(80);
+      setMessage('正在计算导师匹配度...');
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // 阶段4: 完成
+      setProgress(100);
+      setMessage('天命导师锁定！正在建立专属链接...');
+      
+      setTimeout(() => {
+        setRecommendedMentorId(mentorId);
+        setLocalSelectedMentorId(mentorId);
+        setLoading(false);
+      }, 300);
+
     } catch (error) {
       console.error('导师推荐失败:', error);
-      clearInterval(interval);
       setRecommendedMentorId('visionary');
       setLocalSelectedMentorId('visionary');
       setLoading(false);

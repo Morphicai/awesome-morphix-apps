@@ -1,5 +1,6 @@
 import AppSdk from '@morphixai/app-sdk';
 import { reportError } from '@morphixai/lib';
+import { MENTORS } from '../constants/mentors';
 
 /**
  * AI服务封装
@@ -171,33 +172,179 @@ export class AIService {
   }
 
   /**
-   * 推荐导师
+   * 推荐导师（AI智能推荐）
    */
-  static async recommendMentor(question) {
+  static async recommendMentor(question, idea = '') {
     try {
-      // 根据问题内容智能推荐导师
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log('🤖 使用 AI 智能推荐导师...');
+      console.log('- 问题:', question);
+      console.log('- 商业想法:', idea);
+
+      // 构建导师信息列表
+      const mentorList = Object.values(MENTORS).map(mentor => ({
+        id: mentor.id,
+        name: mentor.name,
+        description: mentor.description,
+        philosophy: mentor.philosophy
+      }));
+
+      // 使用 AI 进行智能分析和推荐
+      const response = await AppSdk.AI.chat({
+        messages: [
+          {
+            role: "system",
+            content: `你是一位专业的"导师匹配专家"，负责为用户的商业问题推荐最合适的导师。
+
+可选的导师列表：
+${mentorList.map((m, idx) => `${idx + 1}. ${m.name} (${m.id})
+   专长: ${m.description}
+   理念: ${m.philosophy}`).join('\n\n')}
+
+你的任务是：
+1. 深入理解用户问题的本质和核心关注点
+2. 分析问题所属的领域（产品愿景、用户增长、财务分析、数据科学、执行落地、战略规划等）
+3. 综合考虑商业想法的背景（如果提供）
+4. 为每位导师计算匹配度评分（0-100）
+5. 推荐最匹配的导师，并给出清晰的理由
+
+请以JSON格式返回推荐结果：
+{
+  "recommended_mentor_id": "导师ID（必须从上述列表中选择）",
+  "confidence": 95,
+  "reasoning": "推荐理由（2-3句话，说明为什么这位导师最适合）",
+  "question_analysis": {
+    "core_concern": "问题的核心关注点",
+    "domain": "所属领域",
+    "complexity": "问题复杂度（简单/中等/复杂）"
+  },
+  "all_scores": {
+    "visionary": 85,
+    "hacker": 70,
+    "cfo": 95,
+    "scientist": 60,
+    "doer": 75,
+    "strategist": 80
+  },
+  "alternatives": [
+    {
+      "mentor_id": "备选导师ID",
+      "score": 85,
+      "reason": "也很合适的原因"
+    }
+  ]
+}
+
+注意：
+- recommended_mentor_id 必须是 visionary, hacker, cfo, scientist, doer, strategist 之一
+- confidence 表示推荐的置信度（0-100）
+- all_scores 显示所有导师的匹配度评分
+- alternatives 列出2-3个备选方案`
+          },
+          {
+            role: "user",
+            content: `请为以下问题推荐最合适的导师：
+
+**问题**: ${question}
+
+${idea ? `**商业想法背景**: ${idea}` : ''}
+
+请分析问题的核心关注点，并推荐最匹配的导师。`
+          }
+        ],
+        options: {
+          model: "openai/gpt-4o",
+          temperature: 0.3,  // 较低的温度以获得更稳定的推荐
+          maxTokens: 1000
+        }
+      });
+
+      console.log('✅ AI 推荐响应:', response);
+
+      // 解析 AI 返回的 JSON
+      const responseText = response.content;
+      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
       
-      if (question.includes('财务') || question.includes('成本') || question.includes('盈利') || question.includes('投资')) {
-        return 'cfo';
-      } else if (question.includes('增长') || question.includes('用户') || question.includes('营销') || question.includes('获客')) {
-        return 'hacker';
-      } else if (question.includes('数据') || question.includes('分析') || question.includes('实验') || question.includes('测试')) {
-        return 'scientist';
-      } else if (question.includes('执行') || question.includes('落地') || question.includes('实施') || question.includes('行动')) {
-        return 'doer';
-      } else if (question.includes('战略') || question.includes('规划') || question.includes('布局') || question.includes('长期')) {
-        return 'strategist';
+      if (jsonMatch) {
+        const recommendation = JSON.parse(jsonMatch[0]);
+        
+        // 验证推荐的导师ID是否有效
+        const recommendedId = recommendation.recommended_mentor_id;
+        if (!MENTORS[recommendedId]) {
+          console.warn('⚠️ AI 返回了无效的导师ID，使用默认推荐');
+          return 'visionary';
+        }
+
+        console.log('✅ 推荐导师:', recommendedId);
+        console.log('- 置信度:', recommendation.confidence);
+        console.log('- 理由:', recommendation.reasoning);
+        console.log('- 核心关注:', recommendation.question_analysis?.core_concern);
+        console.log('- 所有评分:', recommendation.all_scores);
+
+        // 返回推荐的导师ID（保持向后兼容）
+        return recommendedId;
+
       } else {
-        return 'visionary';
+        console.warn('⚠️ AI 返回格式不正确，使用降级方案');
+        throw new Error('AI返回格式不正确');
       }
+
     } catch (error) {
+      console.error('❌ AI导师推荐失败:', error);
       await reportError(error, 'JavaScriptError', {
         component: 'AIService',
-        action: 'recommendMentor'
+        action: 'recommendMentor',
+        question: question
       });
-      return 'visionary';
+      
+      // 降级方案：使用简化的关键词匹配
+      console.log('🔄 使用降级方案（关键词匹配）');
+      return this.fallbackRecommendMentor(question);
     }
+  }
+
+  /**
+   * 降级方案：简单的关键词匹配推荐
+   */
+  static fallbackRecommendMentor(question) {
+    const lowerQuestion = question.toLowerCase();
+    
+    // 财务相关
+    if (lowerQuestion.includes('财务') || lowerQuestion.includes('成本') || 
+        lowerQuestion.includes('盈利') || lowerQuestion.includes('投资') ||
+        lowerQuestion.includes('资金') || lowerQuestion.includes('融资')) {
+      return 'cfo';
+    }
+    
+    // 增长相关
+    if (lowerQuestion.includes('增长') || lowerQuestion.includes('用户') || 
+        lowerQuestion.includes('营销') || lowerQuestion.includes('获客') ||
+        lowerQuestion.includes('推广') || lowerQuestion.includes('流量')) {
+      return 'hacker';
+    }
+    
+    // 数据相关
+    if (lowerQuestion.includes('数据') || lowerQuestion.includes('分析') || 
+        lowerQuestion.includes('实验') || lowerQuestion.includes('测试') ||
+        lowerQuestion.includes('指标') || lowerQuestion.includes('统计')) {
+      return 'scientist';
+    }
+    
+    // 执行相关
+    if (lowerQuestion.includes('执行') || lowerQuestion.includes('落地') || 
+        lowerQuestion.includes('实施') || lowerQuestion.includes('行动') ||
+        lowerQuestion.includes('操作') || lowerQuestion.includes('实现')) {
+      return 'doer';
+    }
+    
+    // 战略相关
+    if (lowerQuestion.includes('战略') || lowerQuestion.includes('规划') || 
+        lowerQuestion.includes('布局') || lowerQuestion.includes('长期') ||
+        lowerQuestion.includes('定位') || lowerQuestion.includes('方向')) {
+      return 'strategist';
+    }
+    
+    // 默认推荐远见创始人
+    return 'visionary';
   }
 
   /**

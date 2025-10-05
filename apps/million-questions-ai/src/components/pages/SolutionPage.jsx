@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { IonPage, IonContent } from '@ionic/react';
 import { PageHeader } from '@morphixai/components';
@@ -6,6 +6,8 @@ import { useAppContext } from '../../contexts/AppContext';
 import { AIService } from '../../services/AIService';
 import { ShareService } from '../../services/ShareService';
 import { MENTORS } from '../../constants/mentors';
+import ShareTemplate from '../ShareTemplate';
+import ShareImageModal from '../modals/ShareImageModal';
 import styles from '../../styles/SolutionPage.module.css';
 
 export default function SolutionPage() {
@@ -15,6 +17,10 @@ export default function SolutionPage() {
   const [solution, setSolution] = useState(null);
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState('正在分析问题核心...');
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareImageUrl, setShareImageUrl] = useState(null);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const shareTemplateRef = useRef(null);
 
   useEffect(() => {
     generateSolution();
@@ -67,13 +73,35 @@ export default function SolutionPage() {
 
   const shareSolution = async () => {
     try {
-      await ShareService.generateShareImage('solution', {
-        question: currentQuestion
-      });
-      alert('分享长图已生成并下载到您的设备！\n\n您可以：\n1. 在相册中找到图片\n2. 分享到微信、朋友圈等社交平台\n3. 保存到云端或发送给朋友');
+      setIsGeneratingImage(true);
+      setShowShareModal(true);
+      setShareImageUrl(null);
+
+      // 等待一小段时间确保模板 DOM 已渲染
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      if (!shareTemplateRef.current) {
+        throw new Error('分享模板未找到');
+      }
+
+      // 使用 snapDOM 生成图片
+      const imageUrl = await ShareService.generateImageFromDOM(
+        shareTemplateRef.current,
+        {
+          type: 'png',
+          quality: 1,
+          backgroundColor: 'transparent',
+          scale: 2
+        }
+      );
+
+      setShareImageUrl(imageUrl);
+      setIsGeneratingImage(false);
     } catch (error) {
       console.error('生成分享图失败:', error);
       alert('生成分享图失败，请稍后重试');
+      setShowShareModal(false);
+      setIsGeneratingImage(false);
     }
   };
 
@@ -120,13 +148,39 @@ export default function SolutionPage() {
               </div>
 
               <div className={styles.footer}>
-                <button className={styles.shareButton} onClick={shareSolution}>
-                  生成分享长图
+                <button 
+                  className={styles.shareButton} 
+                  onClick={shareSolution}
+                  disabled={isGeneratingImage}
+                >
+                  {isGeneratingImage ? '生成中...' : '生成分享长图'}
                 </button>
               </div>
             </>
           )}
         </div>
+
+        {/* 隐藏的分享模板，用于生成图片 */}
+        <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
+          <div ref={shareTemplateRef}>
+            <ShareTemplate
+              type="solution"
+              data={{
+                question: currentQuestion,
+                mentorName: mentorInfo?.name || '导师',
+                sections: solution?.sections || []
+              }}
+            />
+          </div>
+        </div>
+
+        {/* 分享图片预览模态框 */}
+        <ShareImageModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          imageUrl={shareImageUrl}
+          fileName={`百万问AI_行动蓝图_${Date.now()}.png`}
+        />
       </IonContent>
     </IonPage>
   );

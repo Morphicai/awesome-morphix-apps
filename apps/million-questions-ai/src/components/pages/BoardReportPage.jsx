@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { IonPage, IonContent } from '@ionic/react';
 import { PageHeader } from '@morphixai/components';
 import { useAppContext } from '../../contexts/AppContext';
 import { AIService } from '../../services/AIService';
 import { ShareService } from '../../services/ShareService';
+import ShareTemplate from '../ShareTemplate';
+import ShareImageModal from '../modals/ShareImageModal';
 import styles from '../../styles/BoardReportPage.module.css';
 
 export default function BoardReportPage() {
@@ -14,6 +16,10 @@ export default function BoardReportPage() {
   const [report, setReport] = useState(null);
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState('正在召集董事会...');
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareImageUrl, setShareImageUrl] = useState(null);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const shareTemplateRef = useRef(null);
 
   useEffect(() => {
     if (boardSelection && currentIdea) {
@@ -75,16 +81,80 @@ export default function BoardReportPage() {
 
   const shareReport = async () => {
     try {
-      await ShareService.generateShareImage('report', {
+      setIsGeneratingImage(true);
+      setShowShareModal(true);
+      setShareImageUrl(null);
+
+      // 等待一小段时间确保模板 DOM 已渲染
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      if (!shareTemplateRef.current) {
+        throw new Error('分享模板未找到');
+      }
+
+      // 准备分享数据
+      const shareData = {
         idea: currentIdea,
         navigator: boardSelection?.navigator?.name || '未选择',
         members: boardSelection?.members?.map(m => m.name).join('、') || '未选择',
-        report: report
-      });
-      alert('分享长图已生成并下载到您的设备！');
+        sections: []
+      };
+
+      // 构建分享内容的 sections
+      if (report) {
+        // 领航人分析报告
+        const navigatorSection = {
+          title: '领航人分析报告',
+          items: [
+            `领航人：${boardSelection.navigator.name}`,
+            report.navigator_analysis.introduction,
+            ...report.navigator_analysis.key_points.map(p => `${p.aspect}：${p.analysis}`)
+          ]
+        };
+
+        // 董事会成员意见
+        const membersSection = {
+          title: '董事会成员意见',
+          items: [
+            `参与成员：${boardSelection.members.map(m => m.name).join('、')}`,
+            ...report.members_opinions.flatMap(op => 
+              [`${op.member} - ${op.perspective}`, ...op.opinions]
+            )
+          ]
+        };
+
+        // 董事会决议
+        const resolutionsSection = {
+          title: '董事会决议',
+          items: [
+            report.board_resolutions.preamble,
+            ...report.board_resolutions.resolutions.map((r, i) => 
+              `${i + 1}. ${r.category}：${r.decision}`
+            )
+          ]
+        };
+
+        shareData.sections = [navigatorSection, membersSection, resolutionsSection];
+      }
+
+      // 使用 snapDOM 生成图片
+      const imageUrl = await ShareService.generateImageFromDOM(
+        shareTemplateRef.current,
+        {
+          type: 'png',
+          quality: 1,
+          backgroundColor: 'transparent',
+          scale: 2
+        }
+      );
+
+      setShareImageUrl(imageUrl);
+      setIsGeneratingImage(false);
     } catch (error) {
       console.error('生成分享图失败:', error);
       alert('生成分享图失败，请稍后重试');
+      setShowShareModal(false);
+      setIsGeneratingImage(false);
     }
   };
 
@@ -184,13 +254,69 @@ export default function BoardReportPage() {
                 <button className={styles.actionBtn} onClick={goToGoldenQuestions}>
                   生成黄金提问清单
                 </button>
-                <button className={styles.shareButton} onClick={shareReport}>
-                  分享报告
+                <button 
+                  className={styles.shareButton} 
+                  onClick={shareReport}
+                  disabled={isGeneratingImage}
+                >
+                  {isGeneratingImage ? '生成中...' : '生成分享长图'}
                 </button>
               </div>
             </>
           ) : null}
         </div>
+
+        {/* 隐藏的分享模板，用于生成图片 */}
+        {report && (
+          <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
+            <div ref={shareTemplateRef}>
+              <ShareTemplate
+                type="board"
+                data={{
+                  idea: currentIdea,
+                  navigator: boardSelection?.navigator?.name || '未选择',
+                  members: boardSelection?.members?.map(m => m.name).join('、') || '未选择',
+                  sections: [
+                    {
+                      title: '领航人分析报告',
+                      items: [
+                        `领航人：${boardSelection.navigator.name}`,
+                        report.navigator_analysis.introduction,
+                        ...report.navigator_analysis.key_points.map(p => `${p.aspect}：${p.analysis}`)
+                      ]
+                    },
+                    {
+                      title: '董事会成员意见',
+                      items: [
+                        `参与成员：${boardSelection.members.map(m => m.name).join('、')}`,
+                        ...report.members_opinions.flatMap(op => 
+                          [`${op.member} - ${op.perspective}`, ...op.opinions]
+                        )
+                      ]
+                    },
+                    {
+                      title: '董事会决议',
+                      items: [
+                        report.board_resolutions.preamble,
+                        ...report.board_resolutions.resolutions.map((r, i) => 
+                          `${i + 1}. ${r.category}：${r.decision}`
+                        )
+                      ]
+                    }
+                  ]
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 分享图片预览模态框 */}
+        <ShareImageModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          imageUrl={shareImageUrl}
+          fileName={`百万问AI_董事会报告_${Date.now()}.png`}
+        />
       </IonContent>
     </IonPage>
   );

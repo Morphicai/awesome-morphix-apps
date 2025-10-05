@@ -1,9 +1,76 @@
 import { reportError } from '@morphixai/lib';
 
 /**
- * 分享服务 - 生成Canvas分享图
+ * 分享服务 - 生成分享图
  */
 export class ShareService {
+  /**
+   * 使用 snapDOM 生成高质量分享图
+   * @param {HTMLElement} element - 要转换为图片的 DOM 元素
+   * @param {Object} options - 配置选项
+   * @returns {Promise<string>} - 返回图片的 Data URL
+   */
+  static async generateImageFromDOM(element, options = {}) {
+    try {
+      const {
+        type = 'png',
+        quality = 1,
+        backgroundColor = '#ffffff',
+        scale = 2 // 提高清晰度
+      } = options;
+
+      // 使用 remoteImport 动态加载 snapdom
+      const snapDOMModule = await remoteImport('@zumer/snapdom');
+      const snapDOM = snapDOMModule.default ?? snapDOMModule.snapdom;
+      
+      console.log('✅ snapDOM 对象:', snapDOM);
+      console.log('✅ snapDOM 可用方法:', Object.keys(snapDOM));
+      
+      // snapDOM 通常提供 toCanvas 方法，然后我们从 canvas 获取 dataURL
+      const canvas = await snapDOM.toCanvas(element, {
+        backgroundColor,
+        scale
+      });
+      
+      console.log('✅ Canvas 对象:', canvas);
+      
+      // 从 canvas 转换为 Data URL
+      const imageUrl = canvas.toDataURL(`image/${type}`, quality);
+      
+      console.log('✅ 图片 URL 类型:', typeof imageUrl);
+      console.log('✅ 图片 URL 开头:', imageUrl.substring(0, 50));
+
+      return imageUrl;
+    } catch (error) {
+      await reportError(error, 'JavaScriptError', {
+        component: 'ShareService',
+        action: 'generateImageFromDOM'
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * 下载图片到本地
+   * @param {string} dataUrl - 图片的 Data URL
+   * @param {string} fileName - 文件名
+   */
+  static downloadImage(dataUrl, fileName) {
+    try {
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = fileName || `百万问AI_分享图_${Date.now()}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      reportError(error, 'JavaScriptError', {
+        component: 'ShareService',
+        action: 'downloadImage'
+      });
+      throw error;
+    }
+  }
   /**
    * 生成分享图片
    */
