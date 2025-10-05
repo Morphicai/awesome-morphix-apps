@@ -38,10 +38,11 @@
 
 ## 📚 利用可能なアプリケーション
 
-| 名前 | 説明 | 作成者 | 機能 | デモ | 詳細 |
-|------|------|--------|------|------|------|
-| ⏰ **timer** | ポモドーロタイマーアプリケーション - タスク管理 + ポモドーロテクニック | MorphixAI Team | • タスク管理システム<br>• ポモドーロタイマー<br>• データ統計<br>• 多言語サポート (EN/CN) | [ライブデモ →](https://app-shell.focusbe.com/app/1219e970-e531-4157-bce9-e8f4dcaaf6a6#/) | [詳細を見る →](./apps/timer/README.md) |
-| 📊 **mermaid** | Mermaid ダイアグラムエディター - 様々なダイアグラムの作成と編集 | MorphixAI Team | • 複数のダイアグラムタイプ<br>• バージョン管理<br>• リアルタイムプレビュー<br>• エクスポート機能 | [ライブデモ →](https://app-shell.focusbe.com/app/244975ac-609a-4a12-a02f-88d1512e9b60) | [詳細を見る →](./apps/mamerid/README.md) |
+| 名前 | 説明 | 作成者 | 機能 | スクリーンショット | デモ | 詳細 |
+|------|------|--------|------|-------------------|------|------|
+| ⏰ **timer** | ポモドーロタイマーアプリケーション - タスク管理 + ポモドーロテクニック | MorphixAI Team | • タスク管理システム<br>• ポモドーロタイマー<br>• データ統計<br>• 多言語サポート (EN/CN) | ![timer](./apps/timer/screenshot/1.jpg) | [ライブデモ →](https://app-shell.focusbe.com/app/1219e970-e531-4157-bce9-e8f4dcaaf6a6#/) | [詳細を見る →](./apps/timer/README.md) |
+| 📊 **mermaid** | Mermaid ダイアグラムエディター - 様々なダイアグラムの作成と編集 | MorphixAI Team | • 複数のダイアグラムタイプ<br>• バージョン管理<br>• リアルタイムプレビュー<br>• エクスポート機能 | ![mermaid](./apps/mamerid/screenshot/1.jpg) | [ライブデモ →](https://app-shell.focusbe.com/app/244975ac-609a-4a12-a02f-88d1512e9b60) | [詳細を見る →](./apps/mamerid/README.md) |
+| 🤔 **Million Questions AI** | AI搭載ビジネスアイデア分析および意思決定支援ツール | MorphixAI Team | • ゴールデン質問リスト生成<br>• AIメンター推薦<br>• アクションブループリント<br>• バーチャル取締役会<br>• ソーシャルメディア共有 | ![million-questions-ai](./apps/million-questions-ai/screenshot/1.png) | [ライブデモ →](https://app-shell.focusbe.com/app/百万问ai-287d31ea-74d9-4cb4-9c48-37857d099358#/) | [詳細を見る →](./apps/million-questions-ai/README.md) |
 
 > 📝 **注意**: デモリンクは `https://app-shell.focusbe.com/app/{remoteId}` の形式を使用します
 

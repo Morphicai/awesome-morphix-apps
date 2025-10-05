@@ -1,0 +1,37 @@
+{
+  "name": "million-questions-ai",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A MorphixAI application",
+  "type": "module",
+  "main": "app.jsx",
+  "scripts": {
+    "dev": "morphixai dev",
+    "build": "morphixai build",
+    "prompts:check": "morphixai prompts check",
+    "prompts:update": "morphixai prompts update"
+  },
+  "keywords": [
+    "morphixai",
+    "react",
+    "ionic",
+    "mobile"
+  ],
+  "author": "MorphixAI Developer",
+  "license": "MIT",
+  "devDependencies": {
+    "@morphixai/code": "^1.1.6"
+  },
+  "morphixai": {
+    "version": "1.0.0",
+    "id": "ca5f1dbd-14f4-4be9-a117-9bc85f36e92b",
+    "entry": "app.jsx",
+    "framework": "react-ionic",
+    "features": [
+      "css-modules",
+      "ionicons",
+      "morphixai-components"
+    ],
+    "minAppRunnerVersion": "1.0.0"
+  }
+}

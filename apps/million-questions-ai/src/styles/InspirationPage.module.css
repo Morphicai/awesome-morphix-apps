@@ -1,0 +1,121 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: 15vh 40px 40px;
+    text-align: center;
+    background: radial-gradient(circle at center, #001e4d 0%, #000c1a 100%);
+    color: white;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.title {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 16px;
+    margin-bottom: 32px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.ideaInput {
+    width: 100%;
+    height: 120px;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    box-sizing: border-box;
+    text-align: left;
+    line-height: 1.6;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    margin-bottom: 32px;
+    resize: vertical;
+    min-height: 120px;
+}
+
+.ideaInput:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
+    outline: none;
+}
+
+.ideaInput::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 300;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 30px;
+    width: 100%;
+    justify-content: center;
+}
+
+.secondaryButton {
+    width: 48%;
+    font-weight: bold;
+    border: none;
+    border-radius: 28px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 15px;
+    padding: 14px 0;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.7);
+    color: #007aff;
+    border: 1px solid #d1e3ff;
+}
+
+.secondaryButton:hover {
+    background-color: #eaf2ff;
+}
+
+.primaryButton {
+    width: 48%;
+    font-weight: bold;
+    border: none;
+    border-radius: 28px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 15px;
+    padding: 14px 0;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    background: linear-gradient(45deg, #0d2a4c, #005bea);
+    animation: pulse 2.5s infinite ease-in-out;
+}
+
+.primaryButton:hover {
+    animation: none;
+    background: linear-gradient(45deg, #081a30, #004ab3);
+    box-shadow: none;
+}
+
+.primaryButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    animation: none;
+}

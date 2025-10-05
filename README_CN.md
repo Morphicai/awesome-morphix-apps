@@ -38,10 +38,11 @@
 
 ## 📚 可用应用
 
-| 名称 | 描述 | 作者 | 功能特性 | 演示 | 详情 |
-|------|------|------|----------|------|------|
-| ⏰ **timer** | 番茄钟应用 - 任务管理 + 番茄工作法 | MorphixAI Team | • 任务管理系统<br>• 番茄钟计时器<br>• 数据统计分析<br>• 多语言支持（中/英） | [在线演示 →](https://app-shell.focusbe.com/app/1219e970-e531-4157-bce9-e8f4dcaaf6a6#/) | [查看详情 →](./apps/timer/README.md) |
-| 📊 **mermaid** | Mermaid 图表编辑器 - 创建和编辑各种图表 | MorphixAI Team | • 多种图表类型<br>• 版本管理<br>• 实时预览<br>• 导出功能 | [在线演示 →](https://app-shell.focusbe.com/app/244975ac-609a-4a12-a02f-88d1512e9b60) | [查看详情 →](./apps/mamerid/README.md) |
+| 名称 | 描述 | 作者 | 功能特性 | 截图 | 演示 | 详情 |
+|------|------|------|----------|------|------|------|
+| ⏰ **timer** | 番茄钟应用 - 任务管理 + 番茄工作法 | MorphixAI Team | • 任务管理系统<br>• 番茄钟计时器<br>• 数据统计分析<br>• 多语言支持（中/英） | ![timer](./apps/timer/screenshot/1.jpg) | [在线演示 →](https://app-shell.focusbe.com/app/1219e970-e531-4157-bce9-e8f4dcaaf6a6#/) | [查看详情 →](./apps/timer/README.md) |
+| 📊 **mermaid** | Mermaid 图表编辑器 - 创建和编辑各种图表 | MorphixAI Team | • 多种图表类型<br>• 版本管理<br>• 实时预览<br>• 导出功能 | ![mermaid](./apps/mamerid/screenshot/1.jpg) | [在线演示 →](https://app-shell.focusbe.com/app/244975ac-609a-4a12-a02f-88d1512e9b60) | [查看详情 →](./apps/mamerid/README.md) |
+| 🤔 **百万问AI** | 基于人工智能的商业想法分析和决策支持工具 | MorphixAI Team | • 黄金提问清单生成<br>• AI大师推荐<br>• 行动蓝图<br>• 虚拟董事会<br>• 分享到社交媒体 | ![百万问AI](./apps/million-questions-ai/screenshot/1.png) | [在线演示 →](https://app-shell.focusbe.com/app/百万问ai-287d31ea-74d9-4cb4-9c48-37857d099358#/) | [查看详情 →](./apps/million-questions-ai/README.md) |
 
 > 📝 **注意**: 演示链接使用格式 `https://app-shell.focusbe.com/app/{remoteId}`
 

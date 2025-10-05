@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { IonPage, IonContent, IonButton, IonSelect, IonSelectOption, IonIcon } from '@ionic/react';
-import { downloadOutline, expandOutline, contractOutline, addOutline, removeOutline, locateOutline } from 'ionicons/icons';
+import { IonPage, IonContent, IonButton, IonSelect, IonSelectOption, IonIcon, IonActionSheet } from '@ionic/react';
+import { downloadOutline, expandOutline, contractOutline, addOutline, removeOutline, locateOutline, documentOutline, imageOutline } from 'ionicons/icons';
 import { reportError } from '@morphixai/lib';
 import MermaidService from '../services/MermaidService';
 import styles from '../styles/EmbedView.module.css';
@@ -30,6 +30,7 @@ function EmbedView() {
     const [scale, setScale] = useState(1);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [showDownloadOptions, setShowDownloadOptions] = useState(false);
 
     const previewRef = useRef(null);
     const isPanning = useRef(false);
@@ -132,8 +133,13 @@ function EmbedView() {
         await loadMermaid(newVersion);
     };
 
-    // 下载 SVG
-    const handleDownload = async () => {
+    // 显示下载选项
+    const handleDownload = () => {
+        setShowDownloadOptions(true);
+    };
+
+    // 下载为 SVG
+    const downloadAsSVG = async () => {
         try {
             const svgElement = previewRef.current?.querySelector('svg');
             if (!svgElement) return;
@@ -149,7 +155,121 @@ function EmbedView() {
         } catch (error) {
             await reportError(error, 'JavaScriptError', {
                 component: 'EmbedView',
-                action: 'handleDownload'
+                action: 'downloadAsSVG'
+            });
+        }
+    };
+
+    // 下载为 PNG
+    const downloadAsPNG = async () => {
+        try {
+            const svgElement = previewRef.current?.querySelector('svg');
+            if (!svgElement) return;
+
+            const clonedSvg = svgElement.cloneNode(true);
+            const bbox = svgElement.getBBox();
+            const width = Math.ceil(bbox.width) || 800;
+            const height = Math.ceil(bbox.height) || 600;
+            
+            clonedSvg.setAttribute('width', width);
+            clonedSvg.setAttribute('height', height);
+            clonedSvg.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${width} ${height}`);
+
+            const svgData = new XMLSerializer().serializeToString(clonedSvg);
+            const svgDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData);
+
+            const canvas = document.createElement('canvas');
+            const scale = 2;
+            canvas.width = width * scale;
+            canvas.height = height * scale;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.scale(scale, scale);
+
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, width, height);
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = `mermaid-diagram-${Date.now()}.png`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(url);
+                    }
+                }, 'image/png');
+            };
+            
+            img.src = svgDataUrl;
+        } catch (error) {
+            console.error('PNG 下载错误:', error);
+            await reportError(error, 'JavaScriptError', {
+                component: 'EmbedView',
+                action: 'downloadAsPNG'
+            });
+        }
+    };
+
+    // 下载为 JPG
+    const downloadAsJPG = async () => {
+        try {
+            const svgElement = previewRef.current?.querySelector('svg');
+            if (!svgElement) return;
+
+            const clonedSvg = svgElement.cloneNode(true);
+            const bbox = svgElement.getBBox();
+            const width = Math.ceil(bbox.width) || 800;
+            const height = Math.ceil(bbox.height) || 600;
+            
+            clonedSvg.setAttribute('width', width);
+            clonedSvg.setAttribute('height', height);
+            clonedSvg.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${width} ${height}`);
+
+            const svgData = new XMLSerializer().serializeToString(clonedSvg);
+            const svgDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData);
+
+            const canvas = document.createElement('canvas');
+            const scale = 2;
+            canvas.width = width * scale;
+            canvas.height = height * scale;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.scale(scale, scale);
+
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, width, height);
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = `mermaid-diagram-${Date.now()}.jpg`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(url);
+                    }
+                }, 'image/jpeg', 0.95);
+            };
+            
+            img.src = svgDataUrl;
+        } catch (error) {
+            console.error('JPG 下载错误:', error);
+            await reportError(error, 'JavaScriptError', {
+                component: 'EmbedView',
+                action: 'downloadAsJPG'
             });
         }
     };
@@ -325,10 +445,38 @@ function EmbedView() {
                         <div className={styles.previewActions}>
                             <IonButton fill="clear" size="small" onClick={handleDownload} disabled={isLoading || !mermaidInstance}>
                                 <IonIcon slot="start" icon={downloadOutline} />
-                                下载 SVG
+                                下载图表
                             </IonButton>
                         </div>
                     </div>
+
+                    {/* 下载格式选择 */}
+                    <IonActionSheet
+                        isOpen={showDownloadOptions}
+                        onDidDismiss={() => setShowDownloadOptions(false)}
+                        header="选择下载格式"
+                        buttons={[
+                            {
+                                text: 'SVG 矢量图',
+                                icon: documentOutline,
+                                handler: downloadAsSVG
+                            },
+                            {
+                                text: 'PNG 图片',
+                                icon: imageOutline,
+                                handler: downloadAsPNG
+                            },
+                            {
+                                text: 'JPG 图片',
+                                icon: imageOutline,
+                                handler: downloadAsJPG
+                            },
+                            {
+                                text: '取消',
+                                role: 'cancel'
+                            }
+                        ]}
+                    />
                 </div>
             </IonContent>
         </IonPage>
