@@ -1,34 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { IonPage, IonContent } from '@ionic/react';
 import { PageHeader } from '@morphixai/components';
+import { useAppContext } from '../../contexts/AppContext';
 import styles from '../../styles/InspirationPage.module.css';
 
-export default function InspirationPage({ onIdeaChange }) {
+export default function InspirationPage() {
   const history = useHistory();
-  const [idea, setIdea] = useState('');
+  const { currentIdea, setCurrentIdea } = useAppContext();
+
+  // 确保组件更新时同步最新的 idea 值
+  useEffect(() => {
+    console.log('📝 当前想法:', currentIdea);
+  }, [currentIdea]);
 
   const handleInputChange = (e) => {
     const value = e.target.value;
-    setIdea(value);
-    if (onIdeaChange) {
-      onIdeaChange(value);
-    }
+    console.log('✍️ 输入变更:', value);
+    setCurrentIdea(value);
   };
 
   const generateQuestionList = () => {
-    if (!idea.trim()) {
+    console.log('🔍 检查当前想法:', currentIdea);
+    if (!currentIdea || !currentIdea.trim()) {
       alert('请输入你的问题或想法');
       return;
     }
+    console.log('✅ 想法已输入，跳转到问题清单页');
     history.push('/questions');
   };
 
   const conveneBoardMeeting = () => {
-    if (!idea.trim()) {
+    console.log('🔍 检查当前想法:', currentIdea);
+    if (!currentIdea || !currentIdea.trim()) {
       alert('请输入你的问题或想法');
       return;
     }
+    console.log('✅ 想法已输入，跳转到董事会选择');
     history.push('/board-selection');
   };
 
@@ -46,7 +54,7 @@ export default function InspirationPage({ onIdeaChange }) {
             <textarea
               className={styles.ideaInput}
               placeholder="例如：如何为新一代创造一个现象级的学习产品？"
-              value={idea}
+              value={currentIdea}
               onChange={handleInputChange}
             />
 
@@ -60,7 +68,7 @@ export default function InspirationPage({ onIdeaChange }) {
               <button
                 className={styles.primaryButton}
                 onClick={conveneBoardMeeting}
-                disabled={!idea.trim()}
+                disabled={!currentIdea || !currentIdea.trim()}
               >
                 召开虚拟董事会
               </button>

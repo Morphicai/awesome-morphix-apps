@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { IonPage, IonContent } from '@ionic/react';
 import { PageHeader } from '@morphixai/components';
+import { useAppContext } from '../../contexts/AppContext';
 import { AIService } from '../../services/AIService';
 import { ShareService } from '../../services/ShareService';
 import { MENTORS } from '../../constants/mentors';
 import styles from '../../styles/SolutionPage.module.css';
 
-export default function SolutionPage({ currentQuestion, selectedMentorId, currentIdea }) {
+export default function SolutionPage() {
+  const { currentQuestion, selectedMentorId, currentIdea } = useAppContext();
   const history = useHistory();
   const [loading, setLoading] = useState(true);
   const [solution, setSolution] = useState(null);
@@ -26,35 +28,38 @@ export default function SolutionPage({ currentQuestion, selectedMentorId, curren
     }
 
     setLoading(true);
-
-    // 模拟加载进度
-    const messages = [
-      { text: "正在分析问题核心...", progress: 20 },
-      { text: "调用AI导师智慧...", progress: 50 },
-      { text: "生成个性化方案...", progress: 80 },
-      { text: "即将完成...", progress: 100 }
-    ];
-
-    let index = 0;
-    const interval = setInterval(() => {
-      if (index < messages.length) {
-        setProgress(messages[index].progress);
-        setMessage(messages[index].text);
-        index++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 800);
+    setProgress(10);
+    setMessage('正在分析问题核心...');
 
     try {
+      // 开始阶段
+      setTimeout(() => {
+        if (loading) {
+          setProgress(30);
+          setMessage('调用AI导师智慧...');
+        }
+      }, 500);
+
+      // 实际调用AI
       const result = await AIService.generateSolution(currentQuestion, selectedMentorId, currentIdea);
 
-      clearInterval(interval);
-      setSolution(result);
-      setLoading(false);
+      // AI返回后
+      setProgress(80);
+      setMessage('生成个性化方案...');
+      
+      // 短暂延迟以显示最后的进度
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setProgress(100);
+      setMessage('完成！');
+      
+      // 设置结果
+      setTimeout(() => {
+        setSolution(result);
+        setLoading(false);
+      }, 300);
     } catch (error) {
       console.error('生成解决方案失败:', error);
-      clearInterval(interval);
       setLoading(false);
       alert('生成失败，请稍后重试');
     }

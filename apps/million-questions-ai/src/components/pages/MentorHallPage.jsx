@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { IonPage, IonContent } from '@ionic/react';
 import { PageHeader } from '@morphixai/components';
+import { useAppContext } from '../../contexts/AppContext';
 import { AIService } from '../../services/AIService';
 import { MENTORS } from '../../constants/mentors';
 import styles from '../../styles/MentorHallPage.module.css';
 
-export default function MentorHallPage({ currentQuestion, onMentorSelect }) {
+export default function MentorHallPage() {
+  const { currentQuestion, setSelectedMentorId: setGlobalSelectedMentorId } = useAppContext();
   const history = useHistory();
   const [loading, setLoading] = useState(true);
   const [recommendedMentorId, setRecommendedMentorId] = useState('visionary');
-  const [selectedMentorId, setSelectedMentorId] = useState(null);
+  const [localSelectedMentorId, setLocalSelectedMentorId] = useState(null);
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState('正在分析您的问题核心...');
 
@@ -52,29 +54,29 @@ export default function MentorHallPage({ currentQuestion, onMentorSelect }) {
 
       clearInterval(interval);
       setRecommendedMentorId(mentorId);
-      setSelectedMentorId(mentorId);
+      setLocalSelectedMentorId(mentorId);
       setLoading(false);
     } catch (error) {
       console.error('导师推荐失败:', error);
       clearInterval(interval);
       setRecommendedMentorId('visionary');
-      setSelectedMentorId('visionary');
+      setLocalSelectedMentorId('visionary');
       setLoading(false);
     }
   };
 
   const selectMentor = (mentorId) => {
-    setSelectedMentorId(mentorId);
+    console.log('✅ 点击选择导师:', mentorId);
+    setLocalSelectedMentorId(mentorId);
   };
 
   const confirmMentorSelection = () => {
-    if (!selectedMentorId) {
+    if (!localSelectedMentorId) {
       alert('请先选择一位导师');
       return;
     }
-    if (onMentorSelect) {
-      onMentorSelect(selectedMentorId);
-    }
+    console.log('✅ 确认选择导师:', localSelectedMentorId);
+    setGlobalSelectedMentorId(localSelectedMentorId);
     history.push('/solution');
   };
 
@@ -112,7 +114,7 @@ export default function MentorHallPage({ currentQuestion, onMentorSelect }) {
                 <div className={styles.sectionSubtitle}>根据您的问题，我们认为这位导师最匹配</div>
 
                 <div 
-                  className={`${styles.mentorCard} ${styles.recommended} ${selectedMentorId === recommendedMentorId ? styles.selected : ''}`}
+                  className={`${styles.mentorCard} ${styles.recommended} ${localSelectedMentorId === recommendedMentorId ? styles.selected : ''}`}
                   onClick={() => selectMentor(recommendedMentorId)}
                 >
                   <div className={styles.mentorIcon}>{recommendedMentor.icon}</div>
@@ -132,7 +134,7 @@ export default function MentorHallPage({ currentQuestion, onMentorSelect }) {
                   {otherMentors.map(mentor => (
                     <div
                       key={mentor.id}
-                      className={`${styles.mentorCard} ${selectedMentorId === mentor.id ? styles.selected : ''}`}
+                      className={`${styles.mentorCard} ${localSelectedMentorId === mentor.id ? styles.selected : ''}`}
                       onClick={() => selectMentor(mentor.id)}
                     >
                       <div className={styles.mentorIcon}>{mentor.icon}</div>
