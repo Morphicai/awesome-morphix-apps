@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../styles/ShareTemplate.module.css';
 
 /**
@@ -11,6 +11,59 @@ export default function ShareTemplate({ type, data }) {
     return <BoardShareTemplate data={data} />;
   }
   return null;
+}
+
+/**
+ * 二维码组件
+ */
+function QRCodeImage() {
+  const [qrCodeUrl, setQrCodeUrl] = useState(null);
+
+  useEffect(() => {
+    generateQRCode();
+  }, []);
+
+  const generateQRCode = async () => {
+    try {
+      // 使用 remoteImport 加载 qrcode 库
+      const QRCode = await remoteImport('qrcode');
+      
+      // 获取当前页面URL，去掉hash部分
+      const currentUrl = window.location.href.split('#')[0];
+      
+      console.log('🔗 生成二维码的URL:', currentUrl);
+      
+      // 生成二维码 Data URL
+      const qrDataUrl = await QRCode.toDataURL(currentUrl, {
+        width: 80,
+        margin: 1,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+      
+      setQrCodeUrl(qrDataUrl);
+    } catch (error) {
+      console.error('❌ 二维码生成失败:', error);
+    }
+  };
+
+  if (!qrCodeUrl) {
+    return (
+      <div className={styles.qrPlaceholder}>
+        生成中...
+      </div>
+    );
+  }
+
+  return (
+    <img 
+      src={qrCodeUrl} 
+      alt="扫码体验" 
+      className={styles.qrCode}
+    />
+  );
 }
 
 /**
@@ -53,7 +106,7 @@ function SolutionShareTemplate({ data }) {
 
       <div className={styles.footer}>
         <div className={styles.footerText}>百万问AI - 让智慧触手可及</div>
-        <div className={styles.qrPlaceholder}>扫码体验</div>
+        <QRCodeImage />
       </div>
     </div>
   );
@@ -109,7 +162,7 @@ function BoardShareTemplate({ data }) {
 
       <div className={styles.footer}>
         <div className={styles.footerText}>百万问AI - 让智慧触手可及</div>
-        <div className={styles.qrPlaceholder}>扫码体验</div>
+        <QRCodeImage />
       </div>
     </div>
   );

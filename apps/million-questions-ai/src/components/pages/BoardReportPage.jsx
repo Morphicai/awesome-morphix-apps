@@ -85,8 +85,8 @@ export default function BoardReportPage() {
       setShowShareModal(true);
       setShareImageUrl(null);
 
-      // 等待一小段时间确保模板 DOM 已渲染
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // 等待模板 DOM 和二维码都渲染完成（二维码需要异步加载）
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       if (!shareTemplateRef.current) {
         throw new Error('分享模板未找到');
