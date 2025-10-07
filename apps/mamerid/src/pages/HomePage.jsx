@@ -11,15 +11,15 @@ import ErrorBoundary from '../components/ErrorBoundary';
 import AIGenerateModal from '../components/AIGenerateModal';
 import styles from '../styles/App.module.css';
 
-// 默认代码（当代码为空时使用）
+// Default code (used when code is empty)
 const DEFAULT_CODE = `graph TD
-    A[开始] --> B{判断条件}
-    B -->|是| C[执行操作 A]
-    B -->|否| D[执行操作 B]
-    C --> E[结束]
+    A[Start] --> B{Condition}
+    B -->|Yes| C[Execute Operation A]
+    B -->|No| D[Execute Operation B]
+    C --> E[End]
     D --> E`;
 
-// Mermaid 版本列表
+// Mermaid version list
 const MERMAID_VERSIONS = [
     { version: '11.4.1', label: 'v11.4.1 (Latest)' },
     { version: '11.0.0', label: 'v11.0.0' },
@@ -28,7 +28,7 @@ const MERMAID_VERSIONS = [
 ];
 
 /**
- * Mermaid 图表预览器主页
+ * Mermaid Diagram Previewer Home Page
  */
 export default function HomePage() {
     const [code, setCode] = useState('');
@@ -50,21 +50,21 @@ export default function HomePage() {
     const isPanning = useRef(false);
     const lastPosition = useRef({ x: 0, y: 0 });
 
-    // 加载 Mermaid 实例（使用 MermaidService）
+    // Load Mermaid instance (using MermaidService)
     const loadMermaid = async (version) => {
         try {
             setIsLoading(true);
             setRenderError(null);
             
-            // 使用服务加载（会自动缓存）
+            // Load using service (automatically cached)
             const mermaid = await MermaidService.loadMermaid(version);
             
             setMermaidInstance(mermaid);
             setIsLoading(false);
             
-            // 显示缓存状态
+            // Display cache status
             const stats = MermaidService.getCacheStats();
-            console.log('Mermaid 缓存状态:', stats);
+            console.log('Mermaid cache status:', stats);
             
             return mermaid;
         } catch (error) {
@@ -79,21 +79,21 @@ export default function HomePage() {
         }
     };
 
-    // 从 URL 获取编码的代码参数
+    // Get encoded code from URL
     const getCodeFromURL = () => {
         try {
-            // 获取 hash 后的参数
+            // Get parameters after hash
             const hash = window.location.hash;
-            // 匹配 #/?code=xxx 或 #/code=xxx 或 #?code=xxx
+            // Match #/?code=xxx or #/code=xxx or #?code=xxx
             const match = hash.match(/[?&]code=([^&]*)/);
             
             if (match && match[1]) {
-                // 直接解码（原生支持中文和所有 Unicode 字符）
+                // Direct decode (native support for Chinese and all Unicode characters)
                 const decodedCode = decodeURIComponent(match[1]);
                 return decodedCode;
             }
         } catch (error) {
-            console.error('解析 URL 参数失败:', error);
+            console.error('Failed to parse URL parameters:', error);
             reportError(error, 'JavaScriptError', {
                 component: 'HomePage',
                 action: 'getCodeFromURL'
@@ -102,33 +102,33 @@ export default function HomePage() {
         return null;
     };
 
-    // 初始化
+    // Initialize
     useEffect(() => {
         const init = async () => {
-            // 先尝试从 URL 获取代码
+            // Try to get code from URL first
             const urlCode = getCodeFromURL();
             
             if (urlCode) {
-                // 如果 URL 有代码，使用 URL 的代码
+                // If URL has code, use URL code
                 setCode(urlCode);
             } else {
-                // 否则加载保存的数据（包括版本）
+                // Otherwise load saved data (including version)
                 await loadSavedData();
             }
             
-            // 使用保存的版本或默认版本
+            // Use saved version or default version
             const savedVersion = localStorage.getItem('mermaid_version');
             const versionToLoad = savedVersion || currentVersion;
             await loadMermaid(versionToLoad);
             
-            // 可选：预加载其他常用版本（后台加载，不阻塞）
+            // Optional: Preload other common versions (background loading, non-blocking)
             const otherVersions = MERMAID_VERSIONS
                 .filter(v => v.version !== versionToLoad)
-                .slice(0, 2) // 只预加载前两个其他版本
+                .slice(0, 2) // Only preload first two other versions
                 .map(v => v.version);
             
             if (otherVersions.length > 0) {
-                // 延迟预加载，不影响当前版本的使用
+                // Delayed preload, doesn't affect current version usage
                 setTimeout(() => {
                     MermaidService.preloadVersions(otherVersions);
                 }, 2000);
@@ -137,18 +137,18 @@ export default function HomePage() {
         init();
     }, []);
 
-    // 加载保存的数据
+    // Load saved data
     const loadSavedData = async () => {
         try {
             const savedCode = localStorage.getItem('mermaid_code');
             const savedVersion = localStorage.getItem('mermaid_version');
             
-            // 如果没有保存的代码，使用默认代码
+            // If no saved code, use default code
             const codeToUse = savedCode || DEFAULT_CODE;
             setCode(codeToUse);
             if (savedVersion) setCurrentVersion(savedVersion);
             
-            // 返回保存的数据
+            // Return saved data
             return {
                 code: savedCode,
                 version: savedVersion
@@ -162,17 +162,17 @@ export default function HomePage() {
         }
     };
 
-    // 保存数据（并保存到历史记录）
+    // Save data (and save to history)
     const saveData = async () => {
         try {
             const codeToSave = code.trim() || DEFAULT_CODE;
             localStorage.setItem('mermaid_code', codeToSave);
             localStorage.setItem('mermaid_version', currentVersion);
             
-            // 保存到历史记录
+            // Save to history
             HistoryService.saveToHistory(codeToSave, currentVersion);
             
-            showToastMessage('已保存');
+            showToastMessage('Saved');
         } catch (error) {
             await reportError(error, 'JavaScriptError', {
                 component: 'HomePage',
@@ -181,7 +181,7 @@ export default function HomePage() {
         }
     };
 
-    // 渲染 Mermaid 图表
+    // Render Mermaid diagram
     const renderDiagram = async () => {
         const codeToRender = code.trim() || DEFAULT_CODE;
         
@@ -194,23 +194,23 @@ export default function HomePage() {
             setShowAIFix(false);
             const renderId = `mermaid-${renderIdRef.current++}`;
             
-            // 清空预览区域
+            // Clear preview area
             previewRef.current.innerHTML = '';
             
-            // 创建临时容器
+            // Create temporary container
             const container = document.createElement('div');
             container.id = renderId;
             container.innerHTML = codeToRender;
             previewRef.current.appendChild(container);
 
-            // 渲染图表
+            // Render diagram
             await mermaidInstance.run({
                 nodes: [container]
             });
 
         } catch (error) {
-            setRenderError(error.message || '渲染失败');
-            setShowAIFix(true); // 显示AI修复按钮
+            setRenderError(error.message || 'Render failed');
+            setShowAIFix(true); // Show AI fix button
             await reportError(error, 'JavaScriptError', {
                 component: 'HomePage',
                 action: 'renderDiagram'
@@ -218,7 +218,7 @@ export default function HomePage() {
         }
     };
 
-    // 当代码或 mermaid 实例变化时自动渲染
+    // Auto render when code or mermaid instance changes
     useEffect(() => {
         if (mermaidInstance) {
             const timer = setTimeout(() => {
@@ -228,53 +228,53 @@ export default function HomePage() {
         }
     }, [code, mermaidInstance]);
 
-    // 当版本变化时重新加载 Mermaid
+    // Reload Mermaid when version changes
     const handleVersionChange = async (version) => {
         setCurrentVersion(version);
         await loadMermaid(version);
-        // 自动保存版本选择
+        // Auto save version selection
         try {
             localStorage.setItem('mermaid_version', version);
         } catch (error) {
-            console.warn('保存版本失败:', error);
+            console.warn('Failed to save version:', error);
         }
     };
 
-    // 选择历史记录
+    // Select history record
     const handleSelectHistory = (historyItem) => {
         setCode(historyItem.code);
         setCurrentVersion(historyItem.version);
-        // 切换版本
+        // Switch version
         if (historyItem.version !== currentVersion) {
             handleVersionChange(historyItem.version);
         }
     };
 
-    // 复制代码
+    // Copy code
     const handleCopy = async () => {
         try {
             await navigator.clipboard.writeText(code);
-            showToastMessage('代码已复制');
+            showToastMessage('Code copied');
         } catch (error) {
             await reportError(error, 'JavaScriptError', {
                 component: 'HomePage',
                 action: 'handleCopy'
             });
-            showToastMessage('复制失败');
+            showToastMessage('Copy failed');
         }
     };
 
-    // 显示下载选项
+    // Show download options
     const handleDownload = () => {
         setShowDownloadOptions(true);
     };
 
-    // 下载为 SVG
+    // Download as SVG
     const downloadAsSVG = async () => {
         try {
             const svgElement = previewRef.current?.querySelector('svg');
             if (!svgElement) {
-                showToastMessage('没有可下载的图表');
+                showToastMessage('No diagram to download');
                 return;
             }
 
@@ -286,57 +286,57 @@ export default function HomePage() {
             link.download = `mermaid-diagram-${Date.now()}.svg`;
             link.click();
             URL.revokeObjectURL(url);
-            showToastMessage('✅ SVG 已下载');
+            showToastMessage('✅ SVG downloaded');
         } catch (error) {
             await reportError(error, 'JavaScriptError', {
                 component: 'HomePage',
                 action: 'downloadAsSVG'
             });
-            showToastMessage('下载失败');
+            showToastMessage('Download failed');
         }
     };
 
-    // 下载为 PNG
+    // Download as PNG
     const downloadAsPNG = async () => {
         try {
             const svgElement = previewRef.current?.querySelector('svg');
             if (!svgElement) {
-                showToastMessage('没有可下载的图表');
+                showToastMessage('No diagram to download');
                 return;
             }
 
-            showToastMessage('正在生成 PNG...');
+            showToastMessage('Generating PNG...');
 
-            // 克隆 SVG
+            // Clone SVG
             const clonedSvg = svgElement.cloneNode(true);
             
-            // 获取 SVG 尺寸
+            // Get SVG dimensions
             const bbox = svgElement.getBBox();
             const width = Math.ceil(bbox.width) || 800;
             const height = Math.ceil(bbox.height) || 600;
             
-            // 设置 SVG 属性
+            // Set SVG attributes
             clonedSvg.setAttribute('width', width);
             clonedSvg.setAttribute('height', height);
             clonedSvg.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${width} ${height}`);
 
-            // 序列化 SVG
+            // Serialize SVG
             const svgData = new XMLSerializer().serializeToString(clonedSvg);
             const svgDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData);
 
-            // 创建 canvas
+            // Create canvas
             const canvas = document.createElement('canvas');
-            const scale = 2; // 2x 分辨率
+            const scale = 2; // 2x resolution
             canvas.width = width * scale;
             canvas.height = height * scale;
             const ctx = canvas.getContext('2d');
 
-            // 设置白色背景
+            // Set white background
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.scale(scale, scale);
 
-            // 加载并绘制图片
+            // Load and draw image
             const img = new Image();
             img.crossOrigin = 'anonymous';
             
@@ -344,7 +344,7 @@ export default function HomePage() {
                 try {
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    // 转换为 PNG 并下载
+                    // Convert to PNG and download
                     canvas.toBlob((blob) => {
                         if (blob) {
                             const url = URL.createObjectURL(blob);
@@ -355,74 +355,74 @@ export default function HomePage() {
                             link.click();
                             document.body.removeChild(link);
                             URL.revokeObjectURL(url);
-                            showToastMessage('✅ PNG 已下载');
+                            showToastMessage('✅ PNG downloaded');
                         } else {
-                            showToastMessage('PNG 生成失败');
+                            showToastMessage('PNG generation failed');
                         }
                     }, 'image/png');
                 } catch (err) {
-                    console.error('Canvas 绘制失败:', err);
-                    showToastMessage('PNG 转换失败');
+                    console.error('Canvas drawing failed:', err);
+                    showToastMessage('PNG conversion failed');
                 }
             };
             
             img.onerror = (err) => {
-                console.error('图片加载失败:', err);
-                showToastMessage('PNG 转换失败，请重试');
+                console.error('Image loading failed:', err);
+                showToastMessage('PNG conversion failed, please retry');
             };
             
             img.src = svgDataUrl;
         } catch (error) {
-            console.error('PNG 下载错误:', error);
+            console.error('PNG download error:', error);
             await reportError(error, 'JavaScriptError', {
                 component: 'HomePage',
                 action: 'downloadAsPNG'
             });
-            showToastMessage('下载失败');
+            showToastMessage('Download failed');
         }
     };
 
-    // 下载为 JPG
+    // Download as JPG
     const downloadAsJPG = async () => {
         try {
             const svgElement = previewRef.current?.querySelector('svg');
             if (!svgElement) {
-                showToastMessage('没有可下载的图表');
+                showToastMessage('No diagram to download');
                 return;
             }
 
-            showToastMessage('正在生成 JPG...');
+            showToastMessage('Generating JPG...');
 
-            // 克隆 SVG
+            // Clone SVG
             const clonedSvg = svgElement.cloneNode(true);
             
-            // 获取 SVG 尺寸
+            // Get SVG dimensions
             const bbox = svgElement.getBBox();
             const width = Math.ceil(bbox.width) || 800;
             const height = Math.ceil(bbox.height) || 600;
             
-            // 设置 SVG 属性
+            // Set SVG attributes
             clonedSvg.setAttribute('width', width);
             clonedSvg.setAttribute('height', height);
             clonedSvg.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${width} ${height}`);
 
-            // 序列化 SVG
+            // Serialize SVG
             const svgData = new XMLSerializer().serializeToString(clonedSvg);
             const svgDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData);
 
-            // 创建 canvas
+            // Create canvas
             const canvas = document.createElement('canvas');
-            const scale = 2; // 2x 分辨率
+            const scale = 2; // 2x resolution
             canvas.width = width * scale;
             canvas.height = height * scale;
             const ctx = canvas.getContext('2d');
 
-            // 设置白色背景（JPG 不支持透明）
+            // Set white background (JPG doesn't support transparency)
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.scale(scale, scale);
 
-            // 加载并绘制图片
+            // Load and draw image
             const img = new Image();
             img.crossOrigin = 'anonymous';
             
@@ -430,7 +430,7 @@ export default function HomePage() {
                 try {
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    // 转换为 JPG 并下载
+                    // Convert to JPG and download
                     canvas.toBlob((blob) => {
                         if (blob) {
                             const url = URL.createObjectURL(blob);
@@ -441,43 +441,43 @@ export default function HomePage() {
                             link.click();
                             document.body.removeChild(link);
                             URL.revokeObjectURL(url);
-                            showToastMessage('✅ JPG 已下载');
+                            showToastMessage('✅ JPG downloaded');
                         } else {
-                            showToastMessage('JPG 生成失败');
+                            showToastMessage('JPG generation failed');
                         }
                     }, 'image/jpeg', 0.95);
                 } catch (err) {
-                    console.error('Canvas 绘制失败:', err);
-                    showToastMessage('JPG 转换失败');
+                    console.error('Canvas drawing failed:', err);
+                    showToastMessage('JPG conversion failed');
                 }
             };
             
             img.onerror = (err) => {
-                console.error('图片加载失败:', err);
-                showToastMessage('JPG 转换失败，请重试');
+                console.error('Image loading failed:', err);
+                showToastMessage('JPG conversion failed, please retry');
             };
             
             img.src = svgDataUrl;
         } catch (error) {
-            console.error('JPG 下载错误:', error);
+            console.error('JPG download error:', error);
             await reportError(error, 'JavaScriptError', {
                 component: 'HomePage',
                 action: 'downloadAsJPG'
             });
-            showToastMessage('下载失败');
+            showToastMessage('Download failed');
         }
     };
 
-    // 生成分享链接（指向 embed 页面）
+    // Generate share link (pointing to embed page)
     const generateShareLink = () => {
         try {
             const codeToShare = code.trim() || DEFAULT_CODE;
-            // 直接使用 encodeURIComponent（简单可靠，原生支持中文）
+            // Direct use of encodeURIComponent (simple and reliable, native support for Chinese)
             const baseUrl = window.location.origin + window.location.pathname;
             const shareUrl = `${baseUrl}#/embed?code=${encodeURIComponent(codeToShare)}`;
             return shareUrl;
         } catch (error) {
-            console.error('生成分享链接失败:', error);
+            console.error('Failed to generate share link:', error);
             reportError(error, 'JavaScriptError', {
                 component: 'HomePage',
                 action: 'generateShareLink'
@@ -486,32 +486,32 @@ export default function HomePage() {
         }
     };
 
-    // 复制分享链接
+    // Copy share link
     const handleCopyShareLink = async () => {
         try {
             const shareUrl = generateShareLink();
             if (!shareUrl) {
-                showToastMessage('生成分享链接失败');
+                showToastMessage('Failed to generate share link');
                 return;
             }
             
             await navigator.clipboard.writeText(shareUrl);
-            showToastMessage('✨ 分享链接已复制到剪贴板');
+            showToastMessage('✨ Share link copied to clipboard');
         } catch (error) {
             await reportError(error, 'JavaScriptError', {
                 component: 'HomePage',
                 action: 'handleCopyShareLink'
             });
-            showToastMessage('复制失败');
+            showToastMessage('Copy failed');
         }
     };
 
-    // 切换全屏
+    // Toggle fullscreen
     const toggleFullscreen = () => {
         setIsFullscreen(!isFullscreen);
     };
 
-    // 缩放功能
+    // Zoom functionality
     const handleZoomIn = () => {
         setScale(prev => Math.min(prev + 0.25, 3));
     };
@@ -525,7 +525,7 @@ export default function HomePage() {
         setPosition({ x: 0, y: 0 });
     };
 
-    // 鼠标滚轮缩放
+    // Mouse wheel zoom
     const handleWheel = (e) => {
         if (e.ctrlKey || e.metaKey) {
             e.preventDefault();
@@ -534,9 +534,9 @@ export default function HomePage() {
         }
     };
 
-    // 拖拽平移
+    // Drag pan
     const handleMouseDown = (e) => {
-        if (e.button === 0) { // 左键
+        if (e.button === 0) { // Left button
             isPanning.current = true;
             lastPosition.current = { x: e.clientX - position.x, y: e.clientY - position.y };
             e.currentTarget.style.cursor = 'grabbing';
@@ -557,13 +557,13 @@ export default function HomePage() {
         e.currentTarget.style.cursor = 'grab';
     };
 
-    // 触摸事件处理（移动端双指缩放）
+    // Touch event handling (mobile pinch zoom)
     const touchStartDistance = useRef(0);
     const touchStartScale = useRef(1);
 
     const handleTouchStart = (e) => {
         if (e.touches.length === 2) {
-            // 双指缩放
+            // Pinch zoom
             const touch1 = e.touches[0];
             const touch2 = e.touches[1];
             const distance = Math.hypot(
@@ -590,56 +590,56 @@ export default function HomePage() {
         }
     };
 
-    // AI修复功能
+    // AI fix functionality
     const handleAIFixClick = async () => {
         try {
             setShowAIFix(false);
-            showToastMessage('AI 修复中...');
+            showToastMessage('AI fixing...');
             
-            const result = await AIService.fixMermaidCode(code, renderError || '未知错误');
+            const result = await AIService.fixMermaidCode(code, renderError || 'Unknown error');
             
             if (result.success && result.fixedCode) {
-                // 更新代码
+                // Update code
                 setCode(result.fixedCode);
-                // 保存到历史
+                // Save to history
                 await HistoryService.saveToHistory(result.fixedCode, currentVersion);
-                // 显示成功提示
-                showToastMessage('✨ AI修复成功！');
+                // Show success message
+                showToastMessage('✨ AI fix successful!');
             } else {
-                showToastMessage(result.explanation || 'AI修复失败');
-                setShowAIFix(true); // 失败后继续显示修复按钮
+                showToastMessage(result.explanation || 'AI fix failed');
+                setShowAIFix(true); // Continue showing fix button after failure
             }
         } catch (error) {
             await reportError(error, 'JavaScriptError', {
                 component: 'HomePage',
                 action: 'handleAIFixClick'
             });
-            showToastMessage('修复失败：' + error.message);
+            showToastMessage('Fix failed: ' + error.message);
             setShowAIFix(true);
         }
     };
 
-    // AI生成流程图
+    // AI generate flowchart
     const handleAIGenerate = async (description) => {
         try {
             const result = await AIService.generateMermaidFromDescription(description);
             
             if (result.success && result.code) {
-                // 更新代码
+                // Update code
                 setCode(result.code);
-                // 保存到历史
+                // Save to history
                 await HistoryService.saveToHistory(result.code, currentVersion);
-                // 显示成功提示
-                showToastMessage('✨ AI 生成成功！');
+                // Show success message
+                showToastMessage('✨ AI generation successful!');
             } else {
-                showToastMessage(result.explanation || 'AI 生成失败');
+                showToastMessage(result.explanation || 'AI generation failed');
             }
         } catch (error) {
             await reportError(error, 'JavaScriptError', {
                 component: 'HomePage',
                 action: 'handleAIGenerate'
             });
-            showToastMessage('生成失败：' + error.message);
+            showToastMessage('Generation failed: ' + error.message);
         }
     };
 
@@ -650,13 +650,13 @@ export default function HomePage() {
 
     return (
         <IonPage>
-            <PageHeader title="Mermaid 预览器" />
+            <PageHeader title="Mermaid Previewer" />
             <IonContent className={styles.content}>
                 <div className={`${styles.container} ${isFullscreen ? styles.fullscreen : ''}`}>
-                    {/* 工具栏 */}
+                    {/* Toolbar */}
                     <div className={styles.toolbar}>
                         <div className={styles.toolbarLeft}>
-                            {/* 空白占位 */}
+                            {/* Empty placeholder */}
                         </div>
 
                         <div className={styles.toolbarRight}>
@@ -669,12 +669,12 @@ export default function HomePage() {
                         </div>
                     </div>
 
-                    {/* 主要内容区域 */}
+                    {/* Main content area */}
                     <div className={styles.mainContent}>
-                        {/* 编辑器区域 */}
+                        {/* Editor area */}
                         {!isFullscreen && (
                             <div className={styles.editorPanel}>
-                                {/* AI修复按钮 - 右上角 */}
+                                {/* AI fix button - top right */}
                                 {showAIFix && (
                                     <IonButton
                                         className={styles.editorAIFixButton}
@@ -683,7 +683,7 @@ export default function HomePage() {
                                         size="small"
                                     >
                                         <IonIcon slot="start" icon={sparklesOutline} />
-                                        AI 修复
+                                        AI Fix
                                     </IonButton>
                                 )}
                                 
@@ -691,7 +691,7 @@ export default function HomePage() {
                                     value={code}
                                     onIonInput={(e) => setCode(e.detail.value)}
                                     className={styles.codeEditor}
-                                    placeholder="输入 Mermaid 代码..."
+                                    placeholder="Enter Mermaid code..."
                                     rows={20}
                                     spellcheck={false}
                                     autoGrow={true}
@@ -699,22 +699,22 @@ export default function HomePage() {
                             </div>
                         )}
 
-                        {/* 预览区域 */}
+                        {/* Preview area */}
                         <ErrorBoundary 
                             name="PreviewPanel"
-                            title="预览渲染失败"
+                            title="Preview render failed"
                             onReset={() => {
-                                // 重置时清空预览区域
+                                // Clear preview area on reset
                                 if (previewRef.current) {
                                     previewRef.current.innerHTML = '';
                                 }
                                 setRenderError(null);
-                                // 重新渲染
+                                // Re-render
                                 setTimeout(() => renderDiagram(), 100);
                             }}
                         >
                             <div className={styles.previewPanel}>
-                                {/* 版本选择器 - 左上角 */}
+                                {/* Version selector - top left */}
                                 <div className={styles.previewHeader}>
                                     <IonSelect
                                         value={currentVersion}
@@ -731,7 +731,7 @@ export default function HomePage() {
                                     </IonSelect>
                                 </div>
 
-                                {/* 全屏按钮 - 右上角 */}
+                                {/* Fullscreen button - top right */}
                                 <IonButton
                                     className={styles.fullscreenButton}
                                     fill="clear"
@@ -740,7 +740,7 @@ export default function HomePage() {
                                     <IonIcon icon={isFullscreen ? contractOutline : expandOutline} />
                                 </IonButton>
 
-                                {/* 预览内容 */}
+                                {/* Preview content */}
                                 <div 
                                     className={styles.previewContent}
                                     onWheel={handleWheel}
@@ -754,11 +754,11 @@ export default function HomePage() {
                                 >
                                     {isLoading ? (
                                         <div className={styles.loadingMessage}>
-                                            加载 Mermaid v{currentVersion}...
+                                            Loading Mermaid v{currentVersion}...
                                         </div>
                                     ) : renderError ? (
                                         <div className={styles.errorMessage}>
-                                            <p>渲染错误：</p>
+                                            <p>Render Error:</p>
                                             <pre>{renderError}</pre>
                                         </div>
                                     ) : (
@@ -774,7 +774,7 @@ export default function HomePage() {
                                     )}
                                 </div>
 
-                                {/* 缩放控制 */}
+                                {/* Zoom controls */}
                                 <div className={styles.zoomControls}>
                                     <IonButton fill="clear" size="small" onClick={handleZoomOut} disabled={isLoading || scale <= 0.25}>
                                         <IonIcon icon={removeOutline} />
@@ -783,28 +783,28 @@ export default function HomePage() {
                                     <IonButton fill="clear" size="small" onClick={handleZoomIn} disabled={isLoading || scale >= 3}>
                                         <IonIcon icon={addOutline} />
                                     </IonButton>
-                                    <IonButton fill="clear" size="small" onClick={handleZoomReset} disabled={isLoading || (scale === 1 && position.x === 0 && position.y === 0)} title="重置缩放">
+                                    <IonButton fill="clear" size="small" onClick={handleZoomReset} disabled={isLoading || (scale === 1 && position.x === 0 && position.y === 0)} title="Reset Zoom">
                                         <IonIcon icon={locateOutline} />
                                     </IonButton>
                                 </div>
 
-                                {/* 操作按钮 - 底部 */}
+                                {/* Action buttons - bottom */}
                                 <div className={styles.previewActions}>
                                     <IonButton fill="clear" size="small" onClick={handleCopy} disabled={isLoading}>
                                         <IonIcon slot="start" icon={copyOutline} />
-                                        复制
+                                        Copy
                                     </IonButton>
                                     <IonButton fill="clear" size="small" onClick={handleCopyShareLink} disabled={isLoading}>
                                         <IonIcon slot="start" icon={shareOutline} />
-                                        分享
+                                        Share
                                     </IonButton>
                                     <IonButton fill="clear" size="small" onClick={saveData} disabled={isLoading}>
                                         <IonIcon slot="start" icon={bookmarkOutline} />
-                                        保存
+                                        Save
                                     </IonButton>
                                     <IonButton fill="clear" size="small" onClick={handleDownload} disabled={isLoading || !mermaidInstance}>
                                         <IonIcon slot="start" icon={downloadOutline} />
-                                        下载
+                                        Download
                                     </IonButton>
                                 </div>
                             </div>
@@ -812,10 +812,10 @@ export default function HomePage() {
                     </div>
                 </div>
 
-                {/* 历史记录面板 */}
+                {/* History panel */}
                 <ErrorBoundary 
                     name="HistoryPanel"
-                    title="历史记录加载失败"
+                    title="History loading failed"
                     onReset={() => setShowHistory(false)}
                 >
                     <HistoryPanel
@@ -825,18 +825,18 @@ export default function HomePage() {
                     />
                 </ErrorBoundary>
 
-                {/* AI生成流程图模态框 */}
+                {/* AI generate flowchart modal */}
                 <AIGenerateModal
                     isOpen={showAIGenerate}
                     onClose={() => setShowAIGenerate(false)}
                     onGenerate={handleAIGenerate}
                 />
 
-                {/* AI悬浮按钮 */}
+                {/* AI floating button */}
                 <IonButton
                     className={styles.aiFab}
                     onClick={() => setShowAIGenerate(true)}
-                    title="AI 生成流程图"
+                    title="AI Generate Flowchart"
                 >
                     <IonIcon icon={sparklesOutline} />
                 </IonButton>
@@ -849,29 +849,29 @@ export default function HomePage() {
                     position="bottom"
                 />
 
-                {/* 下载格式选择 */}
+                {/* Download format selection */}
                 <IonActionSheet
                     isOpen={showDownloadOptions}
                     onDidDismiss={() => setShowDownloadOptions(false)}
-                    header="选择下载格式"
+                    header="Select Download Format"
                     buttons={[
                         {
-                            text: 'SVG 矢量图',
+                            text: 'SVG Vector',
                             icon: documentOutline,
                             handler: downloadAsSVG
                         },
                         {
-                            text: 'PNG 图片',
+                            text: 'PNG Image',
                             icon: imageOutline,
                             handler: downloadAsPNG
                         },
                         {
-                            text: 'JPG 图片',
+                            text: 'JPG Image',
                             icon: imageOutline,
                             handler: downloadAsJPG
                         },
                         {
-                            text: '取消',
+                            text: 'Cancel',
                             role: 'cancel'
                         }
                     ]}
