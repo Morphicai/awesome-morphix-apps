@@ -1,17 +1,20 @@
 import React from 'react';
 import { IonModal, IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton } from '@ionic/react';
+import { useAppContext } from '../../contexts/AppContext';
 import styles from '../../styles/ShareImageModal.module.css';
 
 /**
  * 分享图片预览和下载弹窗
  */
 export default function ShareImageModal({ isOpen, onClose, imageUrl, fileName }) {
+  const { t } = useAppContext();
+  
   const handleDownload = () => {
     if (!imageUrl) return;
 
     const link = document.createElement('a');
     link.href = imageUrl;
-    link.download = fileName || `百万问AI_分享图_${Date.now()}.png`;
+    link.download = fileName || `${t('common.appName')}_${t('share.title')}_${Date.now()}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -21,9 +24,9 @@ export default function ShareImageModal({ isOpen, onClose, imageUrl, fileName })
     <IonModal isOpen={isOpen} onDidDismiss={onClose}>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>分享长图</IonTitle>
+          <IonTitle>{t('share.title')}</IonTitle>
           <IonButtons slot="end">
-            <IonButton onClick={onClose}>关闭</IonButton>
+            <IonButton onClick={onClose}>{t('share.closeButton')}</IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
@@ -31,20 +34,16 @@ export default function ShareImageModal({ isOpen, onClose, imageUrl, fileName })
         <div className={styles.container}>
           <div className={styles.imageWrapper}>
             {imageUrl ? (
-              <img src={imageUrl} alt="分享图" className={styles.image} />
+              <img src={imageUrl} alt={t('share.title')} className={styles.image} />
             ) : (
-              <div className={styles.loading}>生成中...</div>
+              <div className={styles.loading}>{t('common.loading')}</div>
             )}
           </div>
           
           <div className={styles.actions}>
             <button className={styles.downloadButton} onClick={handleDownload}>
-              下载到本地
+              {t('share.saveButton')}
             </button>
-            <div className={styles.tips}>
-              <p>💡 长按图片可保存或分享</p>
-              <p>📱 点击下载按钮保存到相册</p>
-            </div>
           </div>
         </div>
       </IonContent>

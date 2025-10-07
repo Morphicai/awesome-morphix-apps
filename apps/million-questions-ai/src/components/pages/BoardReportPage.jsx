@@ -10,12 +10,12 @@ import ShareImageModal from '../modals/ShareImageModal';
 import styles from '../../styles/BoardReportPage.module.css';
 
 export default function BoardReportPage() {
-  const { currentIdea, boardSelection } = useAppContext();
+  const { currentIdea, boardSelection, t } = useAppContext();
   const history = useHistory();
   const [loading, setLoading] = useState(true);
   const [report, setReport] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [message, setMessage] = useState('正在召集董事会...');
+  const [message, setMessage] = useState('');
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareImageUrl, setShareImageUrl] = useState(null);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
@@ -34,11 +34,11 @@ export default function BoardReportPage() {
     
     // 模拟加载进度
     const messages = [
-      { text: "正在召集董事会...", progress: 15 },
-      { text: "领航人正在分析项目...", progress: 35 },
-      { text: "董事会成员正在讨论...", progress: 60 },
-      { text: "生成决议报告...", progress: 85 },
-      { text: "即将完成...", progress: 100 }
+      { text: t('boardReport.loadingMessages.convening'), progress: 15 },
+      { text: t('boardReport.loadingMessages.navigatorAnalyzing'), progress: 35 },
+      { text: t('boardReport.loadingMessages.membersDiscussing'), progress: 60 },
+      { text: t('boardReport.loadingMessages.synthesizing'), progress: 85 },
+      { text: t('boardReport.loadingMessages.completing'), progress: 100 }
     ];
 
     let index = 0;
@@ -67,7 +67,7 @@ export default function BoardReportPage() {
       console.error('生成董事会报告失败:', error);
       clearInterval(interval);
       setLoading(false);
-      alert('生成报告失败，请稍后重试');
+      alert(t('boardReport.noIdea'));
     }
   };
 
@@ -152,7 +152,7 @@ export default function BoardReportPage() {
       setIsGeneratingImage(false);
     } catch (error) {
       console.error('生成分享图失败:', error);
-      alert('生成分享图失败，请稍后重试');
+      alert(t('share.saveFailed'));
       setShowShareModal(false);
       setIsGeneratingImage(false);
     }
@@ -161,14 +161,14 @@ export default function BoardReportPage() {
   if (!boardSelection) {
     return (
       <IonPage>
-        <PageHeader title="董事会决议报告" />
+        <PageHeader title={t('boardReport.title')} />
         <IonContent>
           <div className={styles.page}>
             <div className={styles.header}>
-              <div className={styles.subtitle}>请先进行董事会选择</div>
+              <div className={styles.subtitle}>{t('boardReport.noIdea')}</div>
             </div>
             <button className={styles.actionBtn} onClick={goToInspiration}>
-              返回灵感输入
+              {t('boardReport.backToInspiration')}
             </button>
           </div>
         </IonContent>
@@ -181,11 +181,11 @@ export default function BoardReportPage() {
 
   return (
     <IonPage>
-      <PageHeader title="董事会决议报告" />
+      <PageHeader title={t('boardReport.title')} />
       <IonContent>
         <div className={styles.page}>
           <div className={styles.header}>
-            <div className={styles.subtitle}>关于"{currentIdea}"项目的董事会决议</div>
+            <div className={styles.subtitle}>{t('boardReport.generatedBy')}</div>
           </div>
 
           {loading ? (
@@ -204,9 +204,9 @@ export default function BoardReportPage() {
               <div className={styles.reportContent}>
                 {/* 领航人分析报告 */}
                 <div className={styles.reportSection}>
-                  <div className={styles.sectionTitle}>{report.navigator_analysis.title}</div>
+                  <div className={styles.sectionTitle}>{t('boardReport.navigatorSection')}</div>
                   <div className={styles.reportItem}>
-                    <strong>领航人：</strong>{navigator.name}
+                    <strong>{t('boardSelection.step1Title').split('：')[0]}：</strong>{t(`boardRoles.navigators.${navigator.id}.name`)}
                   </div>
                   <div className={styles.reportText}>
                     {report.navigator_analysis.introduction}
@@ -220,9 +220,10 @@ export default function BoardReportPage() {
 
                 {/* 董事会成员意见 */}
                 <div className={styles.reportSection}>
-                  <div className={styles.sectionTitle}>董事会成员意见</div>
+                  <div className={styles.sectionTitle}>{t('boardReport.membersSection')}</div>
                   <div className={styles.reportItem}>
-                    <strong>参与成员：</strong>{members.map(m => m.name).join('、')}
+                    <strong>{t('boardSelection.step2Title').split('：')[0]}：</strong>
+                    {members.map(m => t(`boardRoles.members.${m.id}.name`)).join('、')}
                   </div>
                   {report.members_opinions.map((opinion, idx) => (
                     <div key={idx} className={styles.memberOpinion}>
@@ -238,7 +239,7 @@ export default function BoardReportPage() {
 
                 {/* 董事会决议 */}
                 <div className={styles.reportSection}>
-                  <div className={styles.sectionTitle}>{report.board_resolutions.title}</div>
+                  <div className={styles.sectionTitle}>{t('boardReport.conclusionSection')}</div>
                   <div className={styles.resolutionText}>
                     {report.board_resolutions.preamble}
                   </div>
@@ -252,14 +253,14 @@ export default function BoardReportPage() {
 
               <div className={styles.footer}>
                 <button className={styles.actionBtn} onClick={goToGoldenQuestions}>
-                  生成黄金提问清单
+                  {t('inspiration.generateButton')}
                 </button>
                 <button 
                   className={styles.shareButton} 
                   onClick={shareReport}
                   disabled={isGeneratingImage}
                 >
-                  {isGeneratingImage ? '生成中...' : '生成分享长图'}
+                  {isGeneratingImage ? t('common.loading') : t('share.title')}
                 </button>
               </div>
             </>
@@ -274,28 +275,28 @@ export default function BoardReportPage() {
                 type="board"
                 data={{
                   idea: currentIdea,
-                  navigator: boardSelection?.navigator?.name || '未选择',
-                  members: boardSelection?.members?.map(m => m.name).join('、') || '未选择',
+                  navigator: t(`boardRoles.navigators.${navigator.id}.name`),
+                  members: members.map(m => t(`boardRoles.members.${m.id}.name`)).join('、'),
                   sections: [
                     {
-                      title: '领航人分析报告',
+                      title: t('boardReport.navigatorSection'),
                       items: [
-                        `领航人：${boardSelection.navigator.name}`,
+                        `${t('boardSelection.step1Title').split('：')[0]}：${t(`boardRoles.navigators.${navigator.id}.name`)}`,
                         report.navigator_analysis.introduction,
                         ...report.navigator_analysis.key_points.map(p => `${p.aspect}：${p.analysis}`)
                       ]
                     },
                     {
-                      title: '董事会成员意见',
+                      title: t('boardReport.membersSection'),
                       items: [
-                        `参与成员：${boardSelection.members.map(m => m.name).join('、')}`,
+                        `${t('boardSelection.step2Title').split('：')[0]}：${members.map(m => t(`boardRoles.members.${m.id}.name`)).join('、')}`,
                         ...report.members_opinions.flatMap(op => 
                           [`${op.member} - ${op.perspective}`, ...op.opinions]
                         )
                       ]
                     },
                     {
-                      title: '董事会决议',
+                      title: t('boardReport.conclusionSection'),
                       items: [
                         report.board_resolutions.preamble,
                         ...report.board_resolutions.resolutions.map((r, i) => 
@@ -315,7 +316,7 @@ export default function BoardReportPage() {
           isOpen={showShareModal}
           onClose={() => setShowShareModal(false)}
           imageUrl={shareImageUrl}
-          fileName={`百万问AI_董事会报告_${Date.now()}.png`}
+          fileName={`${t('common.appName')}_${t('boardReport.title')}_${Date.now()}.png`}
         />
       </IonContent>
     </IonPage>

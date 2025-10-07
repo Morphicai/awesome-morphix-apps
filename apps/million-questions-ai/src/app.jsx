@@ -14,9 +14,22 @@ import MentorHallPage from './components/pages/MentorHallPage';
 import SolutionPage from './components/pages/SolutionPage';
 import BoardReportPage from './components/pages/BoardReportPage';
 import BoardSelectionModal from './components/modals/BoardSelectionModal';
+import LanguageSwitcher from './components/LanguageSwitcher';
 
 // 导入全局样式
 import './styles/global.css';
+
+// 检测是否为开发/调试模式 - 安全检查
+const isDevelopment = (() => {
+  try {
+    return (import.meta?.env?.DEV === true) || 
+           (import.meta?.env?.MODE === 'development') ||
+           (process?.env?.NODE_ENV === 'development') ||
+           true; // 默认显示语言切换器
+  } catch (error) {
+    return true; // 如果检测失败，默认显示
+  }
+})();
 
 // 内部组件，使用 Context
 function AppContent() {
@@ -93,6 +106,9 @@ function AppContent() {
         onComplete={handleBoardSelectionComplete}
       />
       </IonReactHashRouter>
+
+      {/* 语言切换器 - 仅在开发模式显示 */}
+      {isDevelopment && <LanguageSwitcher />}
     </IonApp>
   );
 }

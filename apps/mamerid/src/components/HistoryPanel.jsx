@@ -5,7 +5,7 @@ import HistoryService from '../services/HistoryService';
 import styles from '../styles/HistoryPanel.module.css';
 
 /**
- * 历史记录面板组件
+ * History Panel Component
  */
 export default function HistoryPanel({ isOpen, onClose, onSelectHistory }) {
     const [history, setHistory] = useState([]);
@@ -35,7 +35,7 @@ export default function HistoryPanel({ isOpen, onClose, onSelectHistory }) {
     };
 
     const handleClearAll = () => {
-        if (confirm('确定要清空所有历史记录吗？')) {
+        if (confirm('Are you sure you want to clear all history?')) {
             HistoryService.clearHistory();
             loadHistory();
         }
@@ -51,25 +51,25 @@ export default function HistoryPanel({ isOpen, onClose, onSelectHistory }) {
         const now = new Date();
         const diff = now - date;
         
-        // 小于1分钟
+        // Less than 1 minute
         if (diff < 60000) {
-            return '刚刚';
+            return 'Just now';
         }
-        // 小于1小时
+        // Less than 1 hour
         if (diff < 3600000) {
-            return `${Math.floor(diff / 60000)}分钟前`;
+            return `${Math.floor(diff / 60000)} min ago`;
         }
-        // 小于1天
+        // Less than 1 day
         if (diff < 86400000) {
-            return `${Math.floor(diff / 3600000)}小时前`;
+            return `${Math.floor(diff / 3600000)} hr ago`;
         }
-        // 小于7天
+        // Less than 7 days
         if (diff < 604800000) {
-            return `${Math.floor(diff / 86400000)}天前`;
+            return `${Math.floor(diff / 86400000)} days ago`;
         }
         
-        // 超过7天显示具体日期
-        return date.toLocaleDateString('zh-CN', {
+        // More than 7 days, show specific date
+        return date.toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',
             hour: '2-digit',
@@ -80,7 +80,7 @@ export default function HistoryPanel({ isOpen, onClose, onSelectHistory }) {
     return (
         <IonModal isOpen={isOpen} onDidDismiss={onClose}>
             <div className={styles.header}>
-                <h2 className={styles.title}>历史记录</h2>
+                <h2 className={styles.title}>History</h2>
                 <IonButton fill="clear" size="small" onClick={onClose}>
                     <IonIcon slot="icon-only" icon={closeOutline} />
                 </IonButton>
@@ -91,7 +91,7 @@ export default function HistoryPanel({ isOpen, onClose, onSelectHistory }) {
                     <IonSearchbar
                         value={searchKeyword}
                         onIonInput={(e) => handleSearch(e.detail.value)}
-                        placeholder="搜索历史记录..."
+                        placeholder="Search history..."
                         debounce={300}
                     />
                 </div>
@@ -104,7 +104,7 @@ export default function HistoryPanel({ isOpen, onClose, onSelectHistory }) {
                             color="danger"
                             onClick={handleClearAll}
                         >
-                            清空所有记录
+                            Clear All
                         </IonButton>
                     </div>
                 )}
@@ -112,7 +112,7 @@ export default function HistoryPanel({ isOpen, onClose, onSelectHistory }) {
                 {history.length === 0 ? (
                     <div className={styles.emptyState}>
                         <IonIcon icon={timeOutline} className={styles.emptyIcon} />
-                        <p>暂无历史记录</p>
+                        <p>No history yet</p>
                     </div>
                 ) : (
                     <IonList className={styles.historyList}>

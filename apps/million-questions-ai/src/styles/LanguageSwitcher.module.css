@@ -1,0 +1,188 @@
+/* 语言切换器容器 - 固定在右下角 */
+.languageSwitcher {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 9999;
+}
+
+/* 确保在移动端安全区域内 */
+@supports (padding: max(0px)) {
+  .languageSwitcher {
+    bottom: max(24px, env(safe-area-inset-bottom));
+    right: max(20px, env(safe-area-inset-right));
+  }
+}
+
+/* 主按钮 */
+.mainButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+}
+
+.mainButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
+.mainButton:active {
+  transform: translateY(0);
+}
+
+.icon {
+  font-size: 18px;
+}
+
+.currentLang {
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+/* 语言选项面板 */
+.languageOptions {
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  min-width: 160px;
+  animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 语言选项按钮 */
+.langOption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  background: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  color: #333;
+}
+
+.langOption:hover {
+  background: #f5f5f5;
+}
+
+.langOption:not(:last-child) {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.langOption.active {
+  background: #667eea;
+  color: white;
+}
+
+.langOption.active:hover {
+  background: #5568d3;
+}
+
+.flag {
+  font-size: 20px;
+}
+
+.langName {
+  font-weight: 500;
+  flex: 1;
+  text-align: left;
+}
+
+/* 遮罩层 */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .languageSwitcher {
+    bottom: 20px;
+    right: 16px;
+  }
+
+  .mainButton {
+    padding: 10px 14px;
+    font-size: 13px;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.5);
+  }
+
+  .icon {
+    font-size: 16px;
+  }
+
+  .currentLang {
+    font-size: 11px;
+  }
+
+  .languageOptions {
+    bottom: 56px;
+    min-width: 140px;
+  }
+
+  .langOption {
+    padding: 14px 16px;
+    font-size: 15px;
+  }
+
+  .flag {
+    font-size: 18px;
+  }
+}
+
+/* 深色主题支持 */
+@media (prefers-color-scheme: dark) {
+  .languageOptions {
+    background: #2d2d2d;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .langOption {
+    background: #2d2d2d;
+    color: #e0e0e0;
+  }
+
+  .langOption:hover {
+    background: #3a3a3a;
+  }
+
+  .langOption:not(:last-child) {
+    border-bottom: 1px solid #404040;
+  }
+
+  .langOption.active {
+    background: #667eea;
+    color: white;
+  }
+}

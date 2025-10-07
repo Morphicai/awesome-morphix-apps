@@ -5,20 +5,20 @@ import { reportError } from '@morphixai/lib';
 import MermaidService from '../services/MermaidService';
 import styles from '../styles/EmbedView.module.css';
 
-// Mermaid 版本配置
+// Mermaid version configuration
 const MERMAID_VERSIONS = [
-    { version: '11.4.1', label: 'v11.4.1 (最新)' },
+    { version: '11.4.1', label: 'v11.4.1 (Latest)' },
     { version: '11.3.0', label: 'v11.3.0' },
     { version: '11.2.0', label: 'v11.2.0' },
     { version: '11.0.0', label: 'v11.0.0' },
     { version: '10.9.0', label: 'v10.9.0' },
 ];
 
-// 默认代码
+// Default code
 const DEFAULT_CODE = `graph TD
-    A[开始] --> B{是否继续?}
-    B -->|是| C[执行操作]
-    B -->|否| D[结束]
+    A[Start] --> B{Continue?}
+    B -->|Yes| C[Execute Operation]
+    B -->|No| D[End]
     C --> D`;
 
 function EmbedView() {
@@ -38,19 +38,19 @@ function EmbedView() {
     const touchStartDistance = useRef(0);
     const touchStartScale = useRef(1);
 
-    // 从 URL 获取编码的代码参数
+    // Get encoded code from URL
     const getCodeFromURL = () => {
         try {
             const hash = window.location.hash;
             const match = hash.match(/[?&]code=([^&]*)/);
             
             if (match && match[1]) {
-                // 直接解码（原生支持中文和所有 Unicode 字符）
+                // Direct decode (native support for Chinese and all Unicode characters)
                 const decodedCode = decodeURIComponent(match[1]);
                 return decodedCode;
             }
         } catch (error) {
-            console.error('解析 URL 参数失败:', error);
+            console.error('Failed to parse URL parameters:', error);
             reportError(error, 'JavaScriptError', {
                 component: 'EmbedView',
                 action: 'getCodeFromURL'
@@ -59,7 +59,7 @@ function EmbedView() {
         return null;
     };
 
-    // 加载 Mermaid
+    // Load Mermaid
     const loadMermaid = async (version) => {
         try {
             setIsLoading(true);
@@ -78,7 +78,7 @@ function EmbedView() {
         }
     };
 
-    // 渲染图表
+    // Render diagram
     const renderDiagram = async () => {
         if (!mermaidInstance || !previewRef.current) return;
 
@@ -86,18 +86,18 @@ function EmbedView() {
             setRenderError(null);
             const codeToRender = code.trim() || DEFAULT_CODE;
             
-            // 清空预览区域
+            // Clear preview area
             previewRef.current.innerHTML = '';
             
-            // 生成唯一 ID
+            // Generate unique ID
             const id = `mermaid-${Date.now()}`;
             
-            // 渲染
+            // Render
             const { svg } = await mermaidInstance.render(id, codeToRender);
             previewRef.current.innerHTML = svg;
             
         } catch (error) {
-            console.error('渲染失败:', error);
+            console.error('Render failed:', error);
             setRenderError(error.message);
             await reportError(error, 'JavaScriptError', {
                 component: 'EmbedView',
@@ -106,39 +106,39 @@ function EmbedView() {
         }
     };
 
-    // 初始化
+    // Initialize
     useEffect(() => {
         const init = async () => {
-            // 从 URL 获取代码
+            // Get code from URL
             const urlCode = getCodeFromURL();
             const codeToUse = urlCode || DEFAULT_CODE;
             setCode(codeToUse);
             
-            // 加载 Mermaid
+            // Load Mermaid
             await loadMermaid(currentVersion);
         };
         init();
     }, []);
 
-    // 当代码或 Mermaid 实例变化时自动渲染
+    // Auto render when code or Mermaid instance changes
     useEffect(() => {
         if (mermaidInstance && code) {
             renderDiagram();
         }
     }, [code, mermaidInstance]);
 
-    // 版本切换
+    // Version change
     const handleVersionChange = async (newVersion) => {
         setCurrentVersion(newVersion);
         await loadMermaid(newVersion);
     };
 
-    // 显示下载选项
+    // Show download options
     const handleDownload = () => {
         setShowDownloadOptions(true);
     };
 
-    // 下载为 SVG
+    // Download as SVG
     const downloadAsSVG = async () => {
         try {
             const svgElement = previewRef.current?.querySelector('svg');
@@ -160,7 +160,7 @@ function EmbedView() {
         }
     };
 
-    // 下载为 PNG
+    // Download as PNG
     const downloadAsPNG = async () => {
         try {
             const svgElement = previewRef.current?.querySelector('svg');
@@ -209,7 +209,7 @@ function EmbedView() {
             
             img.src = svgDataUrl;
         } catch (error) {
-            console.error('PNG 下载错误:', error);
+            console.error('PNG download error:', error);
             await reportError(error, 'JavaScriptError', {
                 component: 'EmbedView',
                 action: 'downloadAsPNG'
@@ -217,7 +217,7 @@ function EmbedView() {
         }
     };
 
-    // 下载为 JPG
+    // Download as JPG
     const downloadAsJPG = async () => {
         try {
             const svgElement = previewRef.current?.querySelector('svg');
@@ -266,7 +266,7 @@ function EmbedView() {
             
             img.src = svgDataUrl;
         } catch (error) {
-            console.error('JPG 下载错误:', error);
+            console.error('JPG download error:', error);
             await reportError(error, 'JavaScriptError', {
                 component: 'EmbedView',
                 action: 'downloadAsJPG'
@@ -274,7 +274,7 @@ function EmbedView() {
         }
     };
 
-    // 缩放功能
+    // Zoom functionality
     const handleZoomIn = () => {
         setScale(prev => Math.min(prev + 0.25, 3));
     };
@@ -288,14 +288,14 @@ function EmbedView() {
         setPosition({ x: 0, y: 0 });
     };
 
-    // 鼠标滚轮缩放
+    // Mouse wheel zoom
     const handleWheel = (e) => {
         e.preventDefault();
         const delta = e.deltaY > 0 ? -0.1 : 0.1;
         setScale(prev => Math.max(0.25, Math.min(3, prev + delta)));
     };
 
-    // 鼠标拖拽
+    // Mouse drag
     const handleMouseDown = (e) => {
         if (e.button === 0) {
             isPanning.current = true;
@@ -321,7 +321,7 @@ function EmbedView() {
         isPanning.current = false;
     };
 
-    // 触摸手势
+    // Touch gestures
     const handleTouchStart = (e) => {
         if (e.touches.length === 2) {
             const touch1 = e.touches[0];
@@ -351,7 +351,7 @@ function EmbedView() {
         }
     };
 
-    // 切换全屏
+    // Toggle fullscreen
     const toggleFullscreen = () => {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen?.();
@@ -365,9 +365,9 @@ function EmbedView() {
         <IonPage>
             <IonContent className={styles.content}>
                 <div className={styles.container}>
-                    {/* 预览区域 */}
+                    {/* Preview area */}
                     <div className={styles.previewPanel}>
-                        {/* 版本选择器 - 左上角 */}
+                        {/* Version selector - top left */}
                         <div className={styles.previewHeader}>
                             <IonSelect
                                 value={currentVersion}
@@ -384,7 +384,7 @@ function EmbedView() {
                             </IonSelect>
                         </div>
 
-                        {/* 全屏按钮 - 右上角 */}
+                        {/* Fullscreen button - top right */}
                         <IonButton
                             className={styles.fullscreenButton}
                             fill="clear"
@@ -393,7 +393,7 @@ function EmbedView() {
                             <IonIcon slot="icon-only" icon={isFullscreen ? contractOutline : expandOutline} />
                         </IonButton>
 
-                        {/* 预览内容 */}
+                        {/* Preview content */}
                         <div 
                             className={styles.previewContent}
                             onWheel={handleWheel}
@@ -406,11 +406,11 @@ function EmbedView() {
                         >
                             {isLoading ? (
                                 <div className={styles.loadingMessage}>
-                                    加载 Mermaid v{currentVersion}...
+                                    Loading Mermaid v{currentVersion}...
                                 </div>
                             ) : renderError ? (
                                 <div className={styles.errorMessage}>
-                                    <p>渲染错误：</p>
+                                    <p>Render Error:</p>
                                     <pre>{renderError}</pre>
                                 </div>
                             ) : (
@@ -427,7 +427,7 @@ function EmbedView() {
                             )}
                         </div>
 
-                        {/* 缩放控制 - 左下角 */}
+                        {/* Zoom controls - bottom left */}
                         <div className={styles.zoomControls}>
                             <IonButton fill="clear" size="small" onClick={handleZoomOut} disabled={isLoading || scale <= 0.25}>
                                 <IonIcon icon={removeOutline} />
@@ -436,43 +436,43 @@ function EmbedView() {
                             <IonButton fill="clear" size="small" onClick={handleZoomIn} disabled={isLoading || scale >= 3}>
                                 <IonIcon icon={addOutline} />
                             </IonButton>
-                            <IonButton fill="clear" size="small" onClick={handleZoomReset} disabled={isLoading || (scale === 1 && position.x === 0 && position.y === 0)} title="重置缩放">
+                            <IonButton fill="clear" size="small" onClick={handleZoomReset} disabled={isLoading || (scale === 1 && position.x === 0 && position.y === 0)} title="Reset Zoom">
                                 <IonIcon icon={locateOutline} />
                             </IonButton>
                         </div>
 
-                        {/* 下载按钮 - 底部 */}
+                        {/* Download button - bottom */}
                         <div className={styles.previewActions}>
                             <IonButton fill="clear" size="small" onClick={handleDownload} disabled={isLoading || !mermaidInstance}>
                                 <IonIcon slot="start" icon={downloadOutline} />
-                                下载图表
+                                Download
                             </IonButton>
                         </div>
                     </div>
 
-                    {/* 下载格式选择 */}
+                    {/* Download format selection */}
                     <IonActionSheet
                         isOpen={showDownloadOptions}
                         onDidDismiss={() => setShowDownloadOptions(false)}
-                        header="选择下载格式"
+                        header="Select Download Format"
                         buttons={[
                             {
-                                text: 'SVG 矢量图',
+                                text: 'SVG Vector',
                                 icon: documentOutline,
                                 handler: downloadAsSVG
                             },
                             {
-                                text: 'PNG 图片',
+                                text: 'PNG Image',
                                 icon: imageOutline,
                                 handler: downloadAsPNG
                             },
                             {
-                                text: 'JPG 图片',
+                                text: 'JPG Image',
                                 icon: imageOutline,
                                 handler: downloadAsJPG
                             },
                             {
-                                text: '取消',
+                                text: 'Cancel',
                                 role: 'cancel'
                             }
                         ]}
