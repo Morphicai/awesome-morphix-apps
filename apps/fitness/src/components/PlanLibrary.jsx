@@ -228,13 +228,23 @@ const PlanLibrary = ({ onAddPlan }) => {
                           </span>
                         </div>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <IonButton 
+                          fill="clear" 
+                          color="primary" 
+                          size="small" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigateToEditPlan(plan.id);
+                          }}
+                        >
+                          <IonIcon slot="icon-only" icon={createOutline} />
+                        </IonButton>
                         <IonButton 
                           fill="clear" 
                           color="danger" 
                           size="small" 
                           onClick={(e) => confirmDeletePlan(plan, e)}
-                          style={{ marginRight: '4px' }}
                         >
                           <IonIcon slot="icon-only" icon={trashOutline} />
                         </IonButton>

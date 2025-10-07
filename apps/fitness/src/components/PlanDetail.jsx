@@ -72,7 +72,7 @@ const PlanDetail = () => {
   }, [id, loadPlans, loadScheduledWorkouts, getPlanById]);
   
   const navigateToEditPlan = () => {
-    history.push(`/edit-plan/${id}`);
+    history.push(`/plan/edit/${id}`);
   };
   
   const navigateToExecution = async () => {

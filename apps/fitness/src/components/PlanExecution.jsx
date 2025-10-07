@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
+  IonPage,
   IonContent, 
   IonCard, 
   IonCardContent,
@@ -23,7 +24,8 @@ import {
   IonTitle,
   IonButtons,
   IonBackButton,
-  IonText
+  IonText,
+  IonModal
 } from '@ionic/react';
 import { 
   playOutline, 
@@ -87,10 +89,37 @@ const PlanExecution = () => {
   const [initializationTimeout, setInitializationTimeout] = useState(false);
   const [wakeLockActive, setWakeLockActive] = useState(false);
   
-  const audioRef = useRef(null);
+  const audioContextRef = useRef(null);
   const timerIntervalRef = useRef(null);
   const saveIntervalRef = useRef(null);
   const wakeLockRef = useRef(null);
+  
+  // 播放提示音（使用 Web Audio API）
+  const playNotificationSound = () => {
+    try {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      
+      const ctx = audioContextRef.current;
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      
+      // 设置音调和音量
+      oscillator.frequency.value = 800; // 频率 800Hz
+      oscillator.type = 'sine'; // 正弦波
+      gainNode.gain.setValueAtTime(0.3, ctx.currentTime); // 音量 30%
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5); // 0.5秒淡出
+      
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.5);
+    } catch (error) {
+      console.error('播放音频失败:', error);
+    }
+  };
   
   // 屏幕常亮相关函数
   const requestWakeLock = async () => {
@@ -222,14 +251,29 @@ const PlanExecution = () => {
       loadData();
     }
     
-    // 初始化音频
-    audioRef.current = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3');
-    
     // 启用屏幕常亮
     requestWakeLock();
     
     // 监听页面可见性变化
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // ✅ 监听页面卸载，保存进度
+    const handleBeforeUnload = () => {
+      if (!workoutComplete && exerciseProgress.length > 0 && startTime) {
+        const progressToSave = {
+          currentExerciseIndex,
+          currentSetIndex,
+          exerciseProgress,
+          timer,
+          restMode,
+          restDuration,
+          startTime: startTime.toISOString()
+        };
+        saveWorkoutProgress(id, progressToSave);
+        console.log('页面卸载，保存进度');
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
     
     return () => {
       if (timerIntervalRef.current) {
@@ -244,8 +288,9 @@ const PlanExecution = () => {
       
       // 移除事件监听器
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [id, loadPlans, loadScheduledWorkouts, getPlanById, getScheduledWorkoutById, getWorkoutProgress, checkWorkoutRecordExists]);
+  }, [id, loadPlans, loadScheduledWorkouts, getPlanById, getScheduledWorkoutById, getWorkoutProgress, checkWorkoutRecordExists, workoutComplete, exerciseProgress, currentExerciseIndex, currentSetIndex, timer, restMode, restDuration, startTime, saveWorkoutProgress]);
   
   // 监听计划数据变化，确保进度正确初始化
   useEffect(() => {
@@ -291,8 +336,8 @@ const PlanExecution = () => {
   
   // 定期保存进度
   useEffect(() => {
-    if (plan && exerciseProgress.length > 0 && !workoutComplete) {
-      // 每30秒保存一次进度
+    if (plan && exerciseProgress.length > 0 && !workoutComplete && startTime) {
+      // 每15秒保存一次进度（提高保存频率）
       saveIntervalRef.current = setInterval(() => {
         const progressToSave = {
           currentExerciseIndex,
@@ -300,10 +345,12 @@ const PlanExecution = () => {
           exerciseProgress,
           timer,
           restMode,
-          restDuration
+          restDuration,
+          startTime: startTime.toISOString() // ✅ 保存开始时间
         };
         saveWorkoutProgress(id, progressToSave);
-      }, 30000);
+        console.log('自动保存进度:', new Date().toLocaleTimeString());
+      }, 15000); // 改为15秒
       
       return () => {
         if (saveIntervalRef.current) {
@@ -311,7 +358,7 @@ const PlanExecution = () => {
         }
       };
     }
-  }, [id, plan, exerciseProgress, currentExerciseIndex, currentSetIndex, timer, restMode, restDuration, workoutComplete, saveWorkoutProgress]);
+  }, [id, plan, exerciseProgress, currentExerciseIndex, currentSetIndex, timer, restMode, restDuration, workoutComplete, startTime, saveWorkoutProgress]);
   
   // 计时器逻辑
   useEffect(() => {
@@ -323,9 +370,7 @@ const PlanExecution = () => {
           // 如果是休息模式且时间到了休息结束时间
           if (restMode && newTime >= restDuration) {
             // 播放声音提醒
-            if (audioRef.current) {
-              audioRef.current.play().catch(e => console.error('播放音频失败:', e));
-            }
+            playNotificationSound();
             
             // 显示提示
             setToastMessage('休息时间结束，请继续下一组训练');
@@ -540,7 +585,8 @@ const PlanExecution = () => {
         exerciseProgress,
         timer,
         restMode,
-        restDuration
+        restDuration,
+        startTime: startTime ? startTime.toISOString() : new Date().toISOString() // ✅ 保存开始时间
       };
       saveWorkoutProgress(id, progressToSave);
       
@@ -714,6 +760,14 @@ const PlanExecution = () => {
       setTimer(progressData.timer || 0);
       setRestMode(progressData.restMode || false);
       setRestDuration(progressData.restDuration || 0);
+      
+      // ✅ 恢复开始时间
+      if (progressData.startTime) {
+        setStartTime(new Date(progressData.startTime));
+        console.log('恢复开始时间:', progressData.startTime);
+      } else {
+        setStartTime(new Date()); // 如果没有保存，使用当前时间
+      }
     }
     
     setShowContinueWorkoutAlert(false);
@@ -825,7 +879,7 @@ const PlanExecution = () => {
   const currentExerciseTotalSets = currentExercise ? currentExercise.sets : 0;
   
   return (
-    <>
+    <IonPage>
       <PageHeader title={`执行: ${plan.name}`} />
       <IonContent>
         {/* 总进度条 */}
@@ -1118,26 +1172,120 @@ const PlanExecution = () => {
         />
         
         {/* 完成提示 */}
-        <IonAlert
+        <IonModal
           isOpen={showCompleteAlert}
           onDidDismiss={() => setShowCompleteAlert(false)}
-          header="健身完成！"
-          message={`
-            <div style="text-align: center">
-              <img src="https://cdn-icons-png.flaticon.com/512/5228/5228061.png" style="width: 100px; height: 100px; margin: 16px auto;">
-              <p>恭喜你完成了今天的健身计划！</p>
-              <p>共完成 ${completedSets} 组训练</p>
-              <p>${plan.exercises.length} 个动作全部完成</p>
+          cssClass="workout-complete-modal"
+        >
+          <IonContent className="ion-padding">
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '40px 20px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '100%'
+            }}>
+              {/* 完成图标 */}
+              <div style={{
+                width: '120px',
+                height: '120px',
+                borderRadius: '60px',
+                backgroundColor: 'rgba(76, 217, 100, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '24px',
+                animation: 'scaleIn 0.5s ease-out'
+              }}>
+                <IonIcon 
+                  icon={checkmarkOutline} 
+                  style={{ 
+                    fontSize: '64px', 
+                    color: 'var(--ion-color-success)' 
+                  }} 
+                />
+              </div>
+              
+              <h1 style={{ 
+                fontSize: '28px', 
+                fontWeight: 'bold', 
+                marginBottom: '16px',
+                color: 'var(--ion-text-color)'
+              }}>
+                健身完成！
+              </h1>
+              
+              <p style={{ 
+                fontSize: '16px', 
+                color: 'var(--ion-color-medium)', 
+                marginBottom: '8px' 
+              }}>
+                恭喜你完成了今天的健身计划！
+              </p>
+              
+              <div style={{ 
+                display: 'flex', 
+                gap: '24px', 
+                marginTop: '24px',
+                marginBottom: '32px'
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ 
+                    fontSize: '32px', 
+                    fontWeight: 'bold', 
+                    color: 'var(--ion-color-primary)' 
+                  }}>
+                    {completedSets}
+                  </div>
+                  <div style={{ 
+                    fontSize: '14px', 
+                    color: 'var(--ion-color-medium)' 
+                  }}>
+                    组训练
+                  </div>
+                </div>
+                
+                <div style={{ 
+                  width: '1px', 
+                  backgroundColor: 'var(--ion-color-light)' 
+                }} />
+                
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ 
+                    fontSize: '32px', 
+                    fontWeight: 'bold', 
+                    color: 'var(--ion-color-primary)' 
+                  }}>
+                    {plan.exercises.length}
+                  </div>
+                  <div style={{ 
+                    fontSize: '14px', 
+                    color: 'var(--ion-color-medium)' 
+                  }}>
+                    个动作
+                  </div>
+                </div>
+              </div>
+              
+              <IonButton 
+                expand="block" 
+                color="success"
+                onClick={completeWorkout}
+                style={{ 
+                  width: '100%',
+                  maxWidth: '300px',
+                  marginTop: '16px',
+                  '--border-radius': '12px'
+                }}
+              >
+                <IonIcon slot="start" icon={checkmarkOutline} />
+                保存记录
+              </IonButton>
             </div>
-          `}
-          buttons={[
-            {
-              text: '保存记录',
-              cssClass: 'primary',
-              handler: completeWorkout
-            }
-          ]}
-        />
+          </IonContent>
+        </IonModal>
         
         {/* 退出提示 */}
         <IonAlert
@@ -1209,7 +1357,7 @@ const PlanExecution = () => {
           ]}
         />
       </IonContent>
-    </>
+    </IonPage>
   );
 };
 

@@ -90,7 +90,7 @@ const TemplateLibrary = () => {
     try {
       const newPlan = await createPlanFromTemplate(templateId);
       if (newPlan && newPlan.id) {
-        history.push(`/edit-plan/${newPlan.id}`);
+        history.push(`/plan/edit/${newPlan.id}`);
       }
     } catch (error) {
       console.error('从模板创建计划失败:', error);
