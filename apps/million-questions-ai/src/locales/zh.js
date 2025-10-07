@@ -118,16 +118,32 @@ export const zh = {
   // 导师信息
   mentors: {
     visionary: {
-      name: '远见者',
-      philosophy: '面向未来，大胆愿景',
+      name: '远见创始人',
+      philosophy: '痴迷于产品的灵魂与用户的情感共鸣',
+    },
+    hacker: {
+      name: '增长黑客',
+      philosophy: '用数据驱动增长，用创新突破瓶颈',
+    },
+    cfo: {
+      name: '首席财务官',
+      philosophy: '数字背后是商业的真相',
+    },
+    scientist: {
+      name: '数据科学家',
+      philosophy: '让数据说话，让科学决策',
+    },
+    doer: {
+      name: '实干家',
+      philosophy: '行动胜于雄辩，结果证明一切',
+    },
+    strategist: {
+      name: '首席战略官',
+      philosophy: '战略决定方向，执行决定成败',
     },
     innovator: {
       name: '创新者',
       philosophy: '打破常规，创造新范式',
-    },
-    strategist: {
-      name: '战略家',
-      philosophy: '战略规划，长期布局',
     },
     pragmatist: {
       name: '实用主义者',

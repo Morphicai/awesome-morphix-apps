@@ -118,16 +118,32 @@ export const en = {
   // Mentors
   mentors: {
     visionary: {
-      name: 'Visionary',
-      philosophy: 'Future-oriented thinking, bold vision',
+      name: 'Visionary Founder',
+      philosophy: 'Obsessed with product soul and emotional resonance with users',
+    },
+    hacker: {
+      name: 'Growth Hacker',
+      philosophy: 'Drive growth with data, break through with innovation',
+    },
+    cfo: {
+      name: 'Chief Financial Officer',
+      philosophy: 'Numbers reveal the truth of business',
+    },
+    scientist: {
+      name: 'Data Scientist',
+      philosophy: 'Let data speak, let science decide',
+    },
+    doer: {
+      name: 'Executor',
+      philosophy: 'Actions speak louder than words, results prove everything',
+    },
+    strategist: {
+      name: 'Chief Strategy Officer',
+      philosophy: 'Strategy determines direction, execution determines success',
     },
     innovator: {
       name: 'Innovator',
       philosophy: 'Breaking conventions, creating new paradigms',
-    },
-    strategist: {
-      name: 'Strategist',
-      philosophy: 'Strategic planning, long-term layout',
     },
     pragmatist: {
       name: 'Pragmatist',
