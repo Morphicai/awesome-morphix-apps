@@ -8,13 +8,13 @@ import { MENTORS } from '../../constants/mentors';
 import styles from '../../styles/MentorHallPage.module.css';
 
 export default function MentorHallPage() {
-  const { currentQuestion, currentIdea, setSelectedMentorId: setGlobalSelectedMentorId } = useAppContext();
+  const { currentQuestion, currentIdea, setSelectedMentorId: setGlobalSelectedMentorId, t } = useAppContext();
   const history = useHistory();
   const [loading, setLoading] = useState(true);
   const [recommendedMentorId, setRecommendedMentorId] = useState('visionary');
   const [localSelectedMentorId, setLocalSelectedMentorId] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [message, setMessage] = useState('正在分析您的问题核心...');
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     generateMentorRecommendation();
@@ -22,20 +22,20 @@ export default function MentorHallPage() {
 
   const generateMentorRecommendation = async () => {
     if (!currentQuestion) {
-      alert('请先选择一个问题');
+      alert(t('mentorHall.selectQuestionFirst'));
       history.push('/questions');
       return;
     }
 
     setLoading(true);
     setProgress(10);
-    setMessage('正在分析您的问题核心，链接AI智慧网络...');
+    setMessage(t('mentorHall.loadingMessages.analyzing'));
 
     try {
       // 阶段1: 开始分析
       setTimeout(() => {
         setProgress(30);
-        setMessage('AI正在深入理解您的问题本质...');
+        setMessage(t('mentorHall.loadingMessages.understanding'));
       }, 300);
 
       // 阶段2: 调用AI服务推荐导师（传入商业想法作为上下文）
@@ -43,13 +43,13 @@ export default function MentorHallPage() {
 
       // 阶段3: AI返回后
       setProgress(80);
-      setMessage('正在计算导师匹配度...');
+      setMessage(t('mentorHall.loadingMessages.calculating'));
       
       await new Promise(resolve => setTimeout(resolve, 500));
       
       // 阶段4: 完成
       setProgress(100);
-      setMessage('天命导师锁定！正在建立专属链接...');
+      setMessage(t('mentorHall.loadingMessages.locking'));
       
       setTimeout(() => {
         setRecommendedMentorId(mentorId);
@@ -72,7 +72,7 @@ export default function MentorHallPage() {
 
   const confirmMentorSelection = () => {
     if (!localSelectedMentorId) {
-      alert('请先选择一位导师');
+      alert(t('mentorHall.selectMentorFirst'));
       return;
     }
     console.log('✅ 确认选择导师:', localSelectedMentorId);
@@ -89,11 +89,11 @@ export default function MentorHallPage() {
 
   return (
     <IonPage>
-      <PageHeader title="大师殿堂" />
+      <PageHeader title={t('mentorHall.title')} />
       <IonContent>
         <div className={styles.page}>
           <div className={styles.header}>
-            <div className={styles.subtitle}>与一位宗师对话，为你的问题寻求智慧方案</div>
+            <div className={styles.subtitle}>{t('mentorHall.subtitle')}</div>
           </div>
 
           {loading ? (
@@ -110,8 +110,8 @@ export default function MentorHallPage() {
           ) : (
             <>
               <div className={styles.mentorSection}>
-                <div className={styles.sectionTitle}>AI天命推荐</div>
-                <div className={styles.sectionSubtitle}>根据您的问题，我们认为这位导师最匹配</div>
+                <div className={styles.sectionTitle}>{t('mentorHall.aiRecommendation')}</div>
+                <div className={styles.sectionSubtitle}>{t('mentorHall.aiRecommendationSubtitle')}</div>
 
                 <div 
                   className={`${styles.mentorCard} ${styles.recommended} ${localSelectedMentorId === recommendedMentorId ? styles.selected : ''}`}
@@ -119,16 +119,16 @@ export default function MentorHallPage() {
                 >
                   <div className={styles.mentorIcon}>{recommendedMentor.icon}</div>
                   <div className={styles.mentorInfo}>
-                    <div className={styles.mentorName}>{recommendedMentor.name}</div>
-                    <div className={styles.mentorPhilosophy}>{recommendedMentor.philosophy}</div>
+                    <div className={styles.mentorName}>{t(`mentors.${recommendedMentor.id}.name`)}</div>
+                    <div className={styles.mentorPhilosophy}>{t(`mentors.${recommendedMentor.id}.philosophy`)}</div>
                   </div>
-                  <div className={styles.badge}>天命推荐</div>
+                  <div className={styles.badge}>{t('mentorHall.recommendedBadge')}</div>
                 </div>
               </div>
 
               <div className={styles.mentorSection}>
-                <div className={styles.sectionTitle}>大师画廊</div>
-                <div className={styles.sectionSubtitle}>您也可以选择其他导师</div>
+                <div className={styles.sectionTitle}>{t('mentorHall.masterGallery')}</div>
+                <div className={styles.sectionSubtitle}>{t('mentorHall.masterGallerySubtitle')}</div>
 
                 <div className={styles.mentorGallery}>
                   {otherMentors.map(mentor => (
@@ -139,7 +139,7 @@ export default function MentorHallPage() {
                     >
                       <div className={styles.mentorIcon}>{mentor.icon}</div>
                       <div className={styles.mentorInfo}>
-                        <div className={styles.mentorName}>{mentor.name}</div>
+                        <div className={styles.mentorName}>{t(`mentors.${mentor.id}.name`)}</div>
                       </div>
                     </div>
                   ))}
@@ -148,7 +148,7 @@ export default function MentorHallPage() {
 
               <div className={styles.footer}>
                 <button className={styles.confirmBtn} onClick={confirmMentorSelection}>
-                  向他请教
+                  {t('mentorHall.consultButton')}
                 </button>
               </div>
             </>

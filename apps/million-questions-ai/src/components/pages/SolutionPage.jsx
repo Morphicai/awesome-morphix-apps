@@ -11,12 +11,12 @@ import ShareImageModal from '../modals/ShareImageModal';
 import styles from '../../styles/SolutionPage.module.css';
 
 export default function SolutionPage() {
-  const { currentQuestion, selectedMentorId, currentIdea } = useAppContext();
+  const { currentQuestion, selectedMentorId, currentIdea, t } = useAppContext();
   const history = useHistory();
   const [loading, setLoading] = useState(true);
   const [solution, setSolution] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [message, setMessage] = useState('正在分析问题核心...');
+  const [message, setMessage] = useState('');
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareImageUrl, setShareImageUrl] = useState(null);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
@@ -28,21 +28,21 @@ export default function SolutionPage() {
 
   const generateSolution = async () => {
     if (!currentQuestion || !selectedMentorId) {
-      alert('缺少必要信息');
+      alert(t('solution.noQuestion'));
       history.push('/mentor-hall');
       return;
     }
 
     setLoading(true);
     setProgress(10);
-    setMessage('正在分析问题核心...');
+    setMessage(t('solution.loadingMessages.connecting'));
 
     try {
       // 开始阶段
       setTimeout(() => {
         if (loading) {
           setProgress(30);
-          setMessage('调用AI导师智慧...');
+          setMessage(t('solution.loadingMessages.analyzing'));
         }
       }, 500);
 
@@ -51,13 +51,13 @@ export default function SolutionPage() {
 
       // AI返回后
       setProgress(80);
-      setMessage('生成个性化方案...');
+      setMessage(t('solution.loadingMessages.crafting'));
       
       // 短暂延迟以显示最后的进度
       await new Promise(resolve => setTimeout(resolve, 500));
       
       setProgress(100);
-      setMessage('完成！');
+      setMessage(t('solution.loadingMessages.completing'));
       
       // 设置结果
       setTimeout(() => {
@@ -67,7 +67,7 @@ export default function SolutionPage() {
     } catch (error) {
       console.error('生成解决方案失败:', error);
       setLoading(false);
-      alert('生成失败，请稍后重试');
+      alert(t('solution.noQuestion'));
     }
   };
 
@@ -99,7 +99,7 @@ export default function SolutionPage() {
       setIsGeneratingImage(false);
     } catch (error) {
       console.error('生成分享图失败:', error);
-      alert('生成分享图失败，请稍后重试');
+      alert(t('share.saveFailed'));
       setShowShareModal(false);
       setIsGeneratingImage(false);
     }
@@ -113,11 +113,11 @@ export default function SolutionPage() {
 
   return (
     <IonPage>
-      <PageHeader title="行动蓝图" />
+      <PageHeader title={t('solution.title')} />
       <IonContent>
         <div className={styles.page}>
           <div className={styles.header}>
-            <div className={styles.subtitle}>由 {mentorInfo?.name} 提供</div>
+            <div className={styles.subtitle}>{t('solution.generatedBy')} {t(`mentors.${selectedMentorId}.name`)}</div>
             <div className={styles.questionText}>"{currentQuestion}"</div>
           </div>
 
@@ -153,7 +153,7 @@ export default function SolutionPage() {
                   onClick={shareSolution}
                   disabled={isGeneratingImage}
                 >
-                  {isGeneratingImage ? '生成中...' : '生成分享长图'}
+                  {isGeneratingImage ? t('common.loading') : t('share.title')}
                 </button>
               </div>
             </>
@@ -167,7 +167,7 @@ export default function SolutionPage() {
               type="solution"
               data={{
                 question: currentQuestion,
-                mentorName: mentorInfo?.name || '导师',
+                mentorName: t(`mentors.${selectedMentorId}.name`) || t('mentors.visionary.name'),
                 sections: solution?.sections || []
               }}
             />
@@ -179,7 +179,7 @@ export default function SolutionPage() {
           isOpen={showShareModal}
           onClose={() => setShowShareModal(false)}
           imageUrl={shareImageUrl}
-          fileName={`百万问AI_行动蓝图_${Date.now()}.png`}
+          fileName={`${t('common.appName')}_${t('solution.title')}_${Date.now()}.png`}
         />
       </IonContent>
     </IonPage>

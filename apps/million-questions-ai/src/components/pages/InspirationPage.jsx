@@ -7,7 +7,7 @@ import styles from '../../styles/InspirationPage.module.css';
 
 export default function InspirationPage() {
   const history = useHistory();
-  const { currentIdea, setCurrentIdea } = useAppContext();
+  const { currentIdea, setCurrentIdea, t } = useAppContext();
 
   // 确保组件更新时同步最新的 idea 值
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function InspirationPage() {
   const generateQuestionList = () => {
     console.log('🔍 检查当前想法:', currentIdea);
     if (!currentIdea || !currentIdea.trim()) {
-      alert('请输入你的问题或想法');
+      alert(t('inspiration.inputRequired'));
       return;
     }
     console.log('✅ 想法已输入，跳转到问题清单页');
@@ -33,7 +33,7 @@ export default function InspirationPage() {
   const conveneBoardMeeting = () => {
     console.log('🔍 检查当前想法:', currentIdea);
     if (!currentIdea || !currentIdea.trim()) {
-      alert('请输入你的问题或想法');
+      alert(t('inspiration.inputRequired'));
       return;
     }
     console.log('✅ 想法已输入，跳转到董事会选择');
@@ -42,18 +42,18 @@ export default function InspirationPage() {
 
   return (
     <IonPage>
-      <PageHeader title="探索可能性" />
+      <PageHeader title={t('inspiration.title')} />
       <IonContent>
         <div className={styles.page}>
           <div className={styles.header}>
-            <div className={styles.title}>一个好问题，价值百万。</div>
-            <div className={styles.subtitle}>在这里，提出你的挑战，我们将为你揭示机遇。</div>
+            <div className={styles.title}>{t('inspiration.header')}</div>
+            <div className={styles.subtitle}>{t('inspiration.subtitle')}</div>
           </div>
 
           <div style={{ width: '100%', maxWidth: '600px' }}>
             <textarea
               className={styles.ideaInput}
-              placeholder="例如：如何为新一代创造一个现象级的学习产品？"
+              placeholder={t('inspiration.placeholder')}
               value={currentIdea}
               onChange={handleInputChange}
             />
@@ -63,14 +63,14 @@ export default function InspirationPage() {
                 className={styles.secondaryButton}
                 onClick={generateQuestionList}
               >
-                生成黄金提问清单
+                {t('inspiration.generateButton')}
               </button>
               <button
                 className={styles.primaryButton}
                 onClick={conveneBoardMeeting}
                 disabled={!currentIdea || !currentIdea.trim()}
               >
-                召开虚拟董事会
+                {t('inspiration.boardButton')}
               </button>
             </div>
           </div>

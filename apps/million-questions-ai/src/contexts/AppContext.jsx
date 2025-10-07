@@ -1,7 +1,9 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { getBrowserLanguage, getTranslations, createT, LANGUAGES } from '../locales/i18n';
 
 // 状态持久化KEY
 const STATE_KEY = 'million-questions-ai-state';
+const LANGUAGE_KEY = 'million-questions-ai-language';
 
 // 创建 Context
 const AppContext = createContext(null);
@@ -17,12 +19,38 @@ export const useAppContext = () => {
 
 // Context Provider 组件
 export const AppProvider = ({ children }) => {
+  // 语言状态 - 自动检测浏览器语言，默认英文
+  const [language, setLanguageState] = useState(() => {
+    // 首先尝试从 localStorage 获取
+    const savedLanguage = localStorage.getItem(LANGUAGE_KEY);
+    if (savedLanguage && Object.values(LANGUAGES).includes(savedLanguage)) {
+      return savedLanguage;
+    }
+    // 否则自动检测浏览器语言
+    return getBrowserLanguage();
+  });
+
   // 应用全局状态
   const [currentIdea, setCurrentIdea] = useState('');
   const [currentQuestion, setCurrentQuestion] = useState('');
   const [selectedMentorId, setSelectedMentorId] = useState(null);
   const [boardSelection, setBoardSelection] = useState(null);
   const [showBoardModal, setShowBoardModal] = useState(false);
+
+  // 获取当前语言的翻译
+  const translations = useMemo(() => getTranslations(language), [language]);
+  
+  // 创建翻译函数
+  const t = useMemo(() => createT(translations), [translations]);
+
+  // 设置语言并保存到 localStorage
+  const setLanguage = useCallback((newLanguage) => {
+    if (Object.values(LANGUAGES).includes(newLanguage)) {
+      setLanguageState(newLanguage);
+      localStorage.setItem(LANGUAGE_KEY, newLanguage);
+      console.log('🌍 语言已切换到:', newLanguage);
+    }
+  }, []);
 
   // 从 sessionStorage 恢复状态（组件挂载时）
   useEffect(() => {
@@ -97,6 +125,13 @@ export const AppProvider = ({ children }) => {
 
   // Context value
   const value = {
+    // 语言相关
+    language,
+    setLanguage,
+    t,
+    translations,
+    LANGUAGES,
+    
     // 状态
     currentIdea,
     currentQuestion,

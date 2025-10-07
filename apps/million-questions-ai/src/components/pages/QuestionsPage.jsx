@@ -8,11 +8,11 @@ import styles from '../../styles/QuestionsPage.module.css';
 
 export default function QuestionsPage() {
   const history = useHistory();
-  const { currentIdea, setCurrentQuestion } = useAppContext();
+  const { currentIdea, setCurrentQuestion, t } = useAppContext();
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState([]);
   const [progress, setProgress] = useState(0);
-  const [message, setMessage] = useState('正在召唤首席战略分析师...');
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     console.log('🚀 QuestionsPage 挂载，当前想法:', currentIdea);
@@ -24,21 +24,21 @@ export default function QuestionsPage() {
     
     if (!currentIdea || !currentIdea.trim()) {
       console.warn('⚠️ 想法为空，跳转回输入页');
-      alert('请先输入你的想法');
+      alert(t('questions.noIdea'));
       history.push('/inspiration');
       return;
     }
 
     setLoading(true);
     setProgress(10);
-    setMessage('正在召唤首席战略分析师...');
+    setMessage(t('questions.loadingMessages.summoning'));
 
     try {
       console.log('🤖 调用AI：战略分析');
       // 开始阶段
       setTimeout(() => {
         setProgress(25);
-        setMessage('深度剖析您的想法，提炼核心洞察...');
+        setMessage(t('questions.loadingMessages.analyzing'));
       }, 500);
 
       // 第一步：战略分析
@@ -46,7 +46,7 @@ export default function QuestionsPage() {
       console.log('✅ 战略分析完成:', analysis);
 
       setProgress(55);
-      setMessage('金牌提问官正在量身打造问题...');
+      setMessage(t('questions.loadingMessages.crafting'));
 
       // 短暂延迟
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -57,13 +57,13 @@ export default function QuestionsPage() {
       console.log('✅ 问题生成完成:', generatedQuestions);
 
       setProgress(90);
-      setMessage('正在整理问题清单...');
+      setMessage(t('questions.loadingMessages.organizing'));
 
       // 短暂延迟后显示结果
       await new Promise(resolve => setTimeout(resolve, 500));
       
       setProgress(100);
-      setMessage('即将完成个性化问题清单...');
+      setMessage(t('questions.loadingMessages.completing'));
 
       setTimeout(() => {
         setQuestions(generatedQuestions);
@@ -88,11 +88,11 @@ export default function QuestionsPage() {
 
   return (
     <IonPage>
-      <PageHeader title="黄金提问清单" />
+      <PageHeader title={t('questions.title')} />
       <IonContent>
         <div className={styles.page}>
           <div className={styles.header}>
-            <div className={styles.subtitle}>由 首席战略官 生成</div>
+            <div className={styles.subtitle}>{t('questions.generatedBy')}</div>
           </div>
 
           {loading ? (
@@ -118,7 +118,7 @@ export default function QuestionsPage() {
                         className={styles.solveButton} 
                         onClick={() => seekSolution(question)}
                       >
-                        寻求解决方案
+                        {t('questions.seekSolution')}
                       </button>
                     </div>
                   ))}
