@@ -30,6 +30,7 @@ import { useMatrix } from '../store/matrixStore';
 
 const COLLECTION_NAME = 'act_matrix_quadrants';
 const MATRIX_SESSIONS_COLLECTION = 'act_matrix_sessions';
+const HOOKS_COLLECTION = 'act_matrix_hooks';
 
 export default function HistoryPage({ onBack, onCreateNew }) {
     const { currentMatrixId, setCurrentMatrix } = useMatrix();
@@ -47,7 +48,7 @@ export default function HistoryPage({ onBack, onCreateNew }) {
         console.log('[HistoryPage] loadHistoryData: start');
         setLoading(true);
         try {
-            // 获取所有象限数据（如有后端支持，建议分页+只取必要字段）
+            // 获取所有象限数据
             const quadrantsResult = await AppSdk.appData.queryData({
                 collection: COLLECTION_NAME,
                 query: [],
@@ -57,19 +58,24 @@ export default function HistoryPage({ onBack, onCreateNew }) {
                 Array.isArray(quadrantsResult) ? quadrantsResult.length : 'N/A'
             );
 
-            // 过滤掉内容为空的条目（仅在历史记录中隐藏空内容）
-            const usableItems = Array.isArray(quadrantsResult)
-                ? quadrantsResult.filter((item) => {
-                      const text = String(item?.content ?? '').trim();
-                      return text.length > 0;
-                  })
-                : [];
+            // 获取所有钩子记录表数据
+            const hooksResult = await AppSdk.appData.queryData({
+                collection: HOOKS_COLLECTION,
+                query: [],
+            });
+            console.log(
+                '[HistoryPage] hooks result count:',
+                Array.isArray(hooksResult) ? hooksResult.length : 'N/A'
+            );
 
-            // 按矩阵ID分组数据，创建会话（仅基于非空内容）
+            // 不再过滤空内容，保留所有矩阵
+            const allItems = Array.isArray(quadrantsResult) ? quadrantsResult : [];
+
+            // 按矩阵ID分组数据，创建会话
             const sessionMap = new Map();
 
-            if (Array.isArray(usableItems)) {
-                usableItems.forEach((item) => {
+            if (Array.isArray(allItems)) {
+                allItems.forEach((item) => {
                     const matrixId = item.matrixId || 'default';
                     const createdAt = item.createdAt || Date.now();
 
@@ -79,6 +85,7 @@ export default function HistoryPage({ onBack, onCreateNew }) {
                             matrixId: matrixId,
                             timestamp: createdAt,
                             items: [],
+                            hooksCount: 0,
                             isCurrentMatrix: matrixId === currentMatrixId,
                         });
                     }
@@ -88,6 +95,38 @@ export default function HistoryPage({ onBack, onCreateNew }) {
                     // 更新时间戳为最新的项目时间
                     if (createdAt > session.timestamp) {
                         session.timestamp = createdAt;
+                    }
+                });
+            }
+
+            // 统计每个矩阵的钩子数量
+            if (Array.isArray(hooksResult)) {
+                hooksResult.forEach((hookRecord) => {
+                    // hookRecord.id 就是 matrixId（因为我们用 matrixId 作为记录的 id）
+                    const matrixId = hookRecord.id || hookRecord.matrixId;
+                    console.log('[HistoryPage] processing hook record:', { 
+                        recordId: hookRecord.id, 
+                        matrixId: hookRecord.matrixId,
+                        hooksLength: hookRecord.hooks?.length 
+                    });
+                    
+                    if (matrixId) {
+                        // 如果 sessionMap 中还没有这个矩阵，创建一个空的会话
+                        if (!sessionMap.has(matrixId)) {
+                            sessionMap.set(matrixId, {
+                                id: matrixId,
+                                matrixId: matrixId,
+                                timestamp: hookRecord.createdAt || Date.now(),
+                                items: [],
+                                hooksCount: 0,
+                                isCurrentMatrix: matrixId === currentMatrixId,
+                            });
+                        }
+                        
+                        const session = sessionMap.get(matrixId);
+                        const hooksArray = hookRecord.hooks || [];
+                        session.hooksCount = Array.isArray(hooksArray) ? hooksArray.length : 0;
+                        console.log('[HistoryPage] set hooksCount:', session.hooksCount, 'for matrixId:', matrixId);
                     }
                 });
             }
@@ -220,6 +259,17 @@ export default function HistoryPage({ onBack, onCreateNew }) {
                 );
             }
             console.log('[HistoryPage] delete results:', deleteResults);
+
+            // 删除该矩阵的钩子记录表
+            try {
+                await AppSdk.appData.deleteData({
+                    collection: HOOKS_COLLECTION,
+                    id: matrixId,
+                });
+                console.log('[HistoryPage] deleted hooks for matrixId:', matrixId);
+            } catch (e) {
+                console.warn('[HistoryPage] failed to delete hooks (may not exist):', e);
+            }
             // 如果删除的是当前矩阵，则清空当前选择
             if (currentMatrixId === matrixId) {
                 console.log('[HistoryPage] deleted current matrix, switching to fallback');
@@ -368,6 +418,21 @@ export default function HistoryPage({ onBack, onCreateNew }) {
                                                                 </IonCol>
                                                             )
                                                         )}
+                                                    </IonRow>
+                                                    <IonRow>
+                                                        <IonCol size="12">
+                                                            <div
+                                                                className={
+                                                                    styles.hooksCountDisplay
+                                                                }
+                                                            >
+                                                                <span className={styles.hooksIcon}>🪝</span>
+                                                                <span className={styles.hooksLabel}>钩子记录：</span>
+                                                                <span className={styles.hooksCount}>
+                                                                    {session.hooksCount || 0} 项
+                                                                </span>
+                                                            </div>
+                                                        </IonCol>
                                                     </IonRow>
                                                 </IonGrid>
                                             </div>

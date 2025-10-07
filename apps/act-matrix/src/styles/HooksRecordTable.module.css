@@ -1,0 +1,342 @@
+/* 钩子记录表样式 - 纸质主题 */
+
+.content {
+    --background: var(--paper-cream);
+    --padding-top: 0;
+    --padding-bottom: 20px;
+}
+
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 48px 0;
+}
+
+.container {
+    padding: 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ===== 表单卡片 ===== */
+.formCard {
+    background: linear-gradient(135deg, #FFF8E7 0%, #FFF4D6 100%);
+    border: 2px solid #F0E5CF;
+    border-radius: var(--paper-border-radius-large);
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 
+        var(--paper-shadow-medium),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.formHeader {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px dashed var(--line-color);
+}
+
+.formTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent-brown);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.formTitle::before {
+    content: "🪝";
+    font-size: 20px;
+}
+
+.formContent {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 标题行 - 完全隐藏，只显示输入框 */
+.labelRow {
+    display: none;
+}
+
+.labelCell {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent-brown);
+    padding: 0 4px;
+    text-align: left;
+}
+
+/* 输入框行 - 真正的一行左右布局 */
+.inputRow {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+}
+
+.inputItemLeft,
+.inputItemRight {
+    --background: var(--paper-white);
+    --border-radius: var(--paper-border-radius);
+    --border-color: var(--line-color);
+    --padding-start: 12px;
+    --padding-end: 12px;
+    border: 1px solid var(--line-color);
+    border-radius: var(--paper-border-radius);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+}
+
+/* 保持兼容性 */
+.inputItem {
+    --background: var(--paper-white);
+    --border-radius: var(--paper-border-radius);
+    --border-color: var(--line-color);
+    --padding-start: 12px;
+    --padding-end: 12px;
+    border: 1px solid var(--line-color);
+    border-radius: var(--paper-border-radius);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* 单行左右布局 - 强制不换行 */
+.singleRow {
+    display: flex;
+    flex-wrap: nowrap; /* 禁止换行 */
+    gap: 12px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.fieldGroup {
+    flex: 1 1 50%; /* 各占50% */
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0; /* 允许缩小 */
+    max-width: 50%; /* 限制最大宽度 */
+}
+
+.fieldLabel {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent-brown);
+    padding-left: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fieldInput {
+    --background: var(--paper-white);
+    --border-radius: var(--paper-border-radius);
+    --border-color: var(--line-color);
+    --padding-start: 12px;
+    --padding-end: 12px;
+    border: 1px solid var(--line-color);
+    border-radius: var(--paper-border-radius);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin: 0;
+    width: 100%;
+    font-size: 13px;
+}
+
+/* 移动端响应式 - 保持左右布局 */
+@media (max-width: 768px) {
+    .singleRow {
+        gap: 8px; /* 减小间距 */
+    }
+    
+    .fieldLabel {
+        font-size: 12px; /* 缩小字体 */
+    }
+    
+    .fieldInput {
+        --padding-start: 8px;
+        --padding-end: 8px;
+    }
+}
+
+.input {
+    font-size: 13px;
+    color: var(--ink-black);
+}
+
+.buttonRow {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.addButton {
+    --background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    --background-activated: #ea580c;
+    --color: white;
+    --border-radius: var(--paper-border-radius);
+    --box-shadow: var(--paper-shadow-soft);
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.3px;
+}
+
+.saveButton {
+    flex: 1;
+    --border-radius: var(--paper-border-radius);
+    font-weight: 600;
+    text-transform: none;
+}
+
+/* ===== 预览区域 ===== */
+.previewSection {
+    background: var(--paper-white);
+    border: 1px solid var(--line-color);
+    border-radius: var(--paper-border-radius-large);
+    overflow: hidden;
+    box-shadow: var(--paper-shadow-soft);
+}
+
+.previewHeader {
+    background: linear-gradient(135deg, #f6f2ea 0%, #ede7dd 100%);
+    padding: 16px 20px;
+    border-bottom: 2px solid var(--line-color);
+}
+
+.previewTitle {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink-black);
+}
+
+/* ===== 空状态 ===== */
+.emptyState {
+    padding: 48px 20px;
+    text-align: center;
+    color: var(--muted-ink);
+}
+
+.emptyIcon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.6;
+}
+
+.emptyText {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--pencil-gray);
+    margin-bottom: 8px;
+}
+
+.emptyHint {
+    font-size: 14px;
+    color: var(--pencil-gray);
+    opacity: 0.8;
+}
+
+/* ===== 预览列表样式 - 一行显示 ===== */
+.hooksList {
+    padding: 0;
+}
+
+/* 每一行预览 */
+.previewRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px dashed var(--line-color);
+    transition: background-color 0.2s ease;
+}
+
+.previewRow:hover {
+    background: var(--paper-aged);
+}
+
+.previewRow:last-child {
+    border-bottom: none;
+}
+
+/* 内容区域 - 左右布局 */
+.previewContent {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+.hookDisplay,
+.behaviorDisplay {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.hookIcon,
+.behaviorIcon {
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.hookText,
+.behaviorText {
+    font-size: 14px;
+    color: var(--ink-black);
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 操作按钮区域 */
+.previewActions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+/* ===== 响应式调整 - 保持左右布局 ===== */
+@media (max-width: 768px) {
+    .container {
+        padding: 12px;
+    }
+
+    .formCard {
+        padding: 16px;
+    }
+
+    .previewRow {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .previewContent {
+        gap: 8px; /* 减小间距 */
+    }
+
+    .hookText,
+    .behaviorText {
+        font-size: 13px;
+    }
+
+    .hookIcon,
+    .behaviorIcon {
+        font-size: 14px;
+    }
+}
+
+
+/* ===== 按钮样式优化 ===== */
+ion-button {
+    text-transform: none;
+    letter-spacing: 0.3px;
+}

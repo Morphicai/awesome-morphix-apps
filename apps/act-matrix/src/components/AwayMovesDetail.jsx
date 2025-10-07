@@ -268,7 +268,7 @@ export default function AwayMovesDetail() {
                                 <IonItem>
                                     <IonInput
                                         value={newItemText}
-                                        placeholder="例如：刷手机、拖延、找借口"
+                                        placeholder="例如:刷手机、拖延、找借口"
                                         onIonInput={(e) => setNewItemText(e.detail.value || '')}
                                     />
                                 </IonItem>

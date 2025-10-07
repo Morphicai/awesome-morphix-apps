@@ -4,6 +4,7 @@ import { IonReactHashRouter } from '@ionic/react-router';
 import { Switch, Route } from 'react-router-dom';
 import ActMatrixForm from './components/ActMatrixForm';
 import AwayMovesDetail from './components/AwayMovesDetail.jsx';
+import HooksRecordTable from './components/HooksRecordTable.jsx';
 import { MatrixProvider } from './store/matrixStore';
 import styles from './styles/App.module.css';
 import './styles/PaperTheme.css';
@@ -26,6 +27,9 @@ export default function App() {
                             </Route>
                             <Route path="/away/:matrixId?">
                                 <AwayMovesDetail />
+                            </Route>
+                            <Route path="/hooks/:matrixId">
+                                <HooksRecordTable />
                             </Route>
                         </Switch>
                     </IonRouterOutlet>

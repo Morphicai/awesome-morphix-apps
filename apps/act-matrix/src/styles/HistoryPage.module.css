@@ -310,6 +310,43 @@
   font-weight: 600;
 }
 
+/* 钩子记录数量显示 */
+.hooksCountDisplay {
+  background: linear-gradient(135deg, 
+    rgba(255, 248, 231, 0.6) 0%, 
+    rgba(255, 240, 214, 0.7) 100%
+  );
+  border: 1px solid rgba(240, 229, 207, 0.5);
+  border-radius: var(--paper-border-radius);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.02),
+    0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.hooksIcon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.hooksLabel {
+  font-size: 13px;
+  color: var(--accent-brown);
+  font-weight: 500;
+}
+
+.hooksCount {
+  font-size: 15px;
+  color: var(--ink-black);
+  font-weight: 600;
+  margin-left: auto;
+}
+
 /* 会话操作按钮 */
 .sessionActions {
   display: flex;

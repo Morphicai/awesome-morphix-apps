@@ -56,7 +56,7 @@ const QUADRANT_CONFIG = {
         title: '负面内在体验',
         subtitle: '朝向重要的事(人)的时候，阻碍你的负面内心感受是什么?',
         question: '朝向重要的事(人)的时候，阻碍你的负面内心感受是什么?',
-        placeholder: '例如：恐惧、焦虑、"我不够好"的想法',
+        placeholder: '例如:恐惧、焦虑、"我不够好"的想法',
         position: 'left-bottom',
         color: '#ef4444',
     },
@@ -64,7 +64,7 @@ const QUADRANT_CONFIG = {
         title: '远离行为',
         subtitle: '为了解决你的负面内心体验，你会做什么?',
         question: '为了解决你的负面内心体验，你会做什么?',
-        placeholder: '例如：逃避、拖延、刷手机、找借口',
+        placeholder: '例如:逃避、拖延、刷手机、找借口',
         position: 'left-top',
         color: '#f97316',
     },
@@ -72,7 +72,7 @@ const QUADRANT_CONFIG = {
         title: '对你重要的事(人)',
         subtitle: '对你重要的事(人)是什么?',
         question: '谁和什么对你是重要的？',
-        placeholder: '例如：家人、成长、诚实、创造价值',
+        placeholder: '例如:家人、成长、诚实、创造价值',
         position: 'right-bottom',
         color: '#10b981',
     },
@@ -80,7 +80,7 @@ const QUADRANT_CONFIG = {
         title: '趋向行为',
         subtitle: '朝向对你重要的事的时候，你会做什么?',
         question: '朝向对你重要的事的时候，你会做什么?',
-        placeholder: '例如：主动沟通、练习技能、关心他人',
+        placeholder: '例如:主动沟通、练习技能、关心他人',
         position: 'right-top',
         color: '#7A6C5D',
     },
@@ -706,6 +706,26 @@ export default function ActMatrixForm() {
                                             点击添加内容
                                         </div>
                                     )}
+                                    {/* 右下角钩子图标 - 钩子记录表入口 */}
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            const id = currentMatrixId;
+                                            if (!id) {
+                                                alert('请先创建矩阵');
+                                                return;
+                                            }
+                                            history.push(
+                                                `/hooks/${encodeURIComponent(
+                                                    id
+                                                )}`
+                                            );
+                                        }}
+                                        className={styles.quadrantCornerHook}
+                                        aria-label="查看钩子记录表"
+                                    >
+                                        🪝
+                                    </button>
                                 </div>
                             </div>
 
