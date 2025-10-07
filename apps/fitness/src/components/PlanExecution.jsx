@@ -38,20 +38,20 @@ import {
   barbellOutline,
   volumeHighOutline,
   arrowForwardOutline,
-  informationCircleOutline,
   sunnyOutline
 } from 'ionicons/icons';
 import { PageHeader } from '@morphixai/components';
 import { useParams, useHistory } from 'react-router-dom';
 
 import useStore from '../utils/store';
+import useLanguage from '../utils/useLanguage';
 import { formatSeconds } from '../utils/helpers';
 import LoadingSpinner from './LoadingSpinner';
-import exerciseDatabase from '../utils/exerciseData';
 
 const PlanExecution = () => {
   const { id } = useParams();
   const history = useHistory();
+  const { t } = useLanguage();
   const { 
     getScheduledWorkoutById, 
     getPlanById, 
@@ -81,7 +81,6 @@ const PlanExecution = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [startTime, setStartTime] = useState(null);
-  const [showExerciseInfo, setShowExerciseInfo] = useState(false);
   const [showContinueWorkoutAlert, setShowContinueWorkoutAlert] = useState(false);
   const [savedProgress, setSavedProgress] = useState(null);
   const [existingRecord, setExistingRecord] = useState(null);
@@ -161,27 +160,8 @@ const PlanExecution = () => {
       await requestWakeLock();
     }
   };
-
-  // 获取动作详细信息
-  const getExerciseDetails = (exerciseName) => {
-    const allExercises = [];
-    Object.keys(exerciseDatabase).forEach(categoryId => {
-      const category = exerciseDatabase[categoryId];
-      category.exercises.forEach(exercise => {
-        allExercises.push({
-          ...exercise,
-          category: {
-            id: categoryId,
-            name: category.name
-          }
-        });
-      });
-    });
-    
-    return allExercises.find(ex => ex.name === exerciseName) || null;
-  };
   
-  // 初始化数据
+  // 初始化数据（只在组件挂载和 id 变化时执行）
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -254,43 +234,47 @@ const PlanExecution = () => {
     // 启用屏幕常亮
     requestWakeLock();
     
-    // 监听页面可见性变化
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    
-    // ✅ 监听页面卸载，保存进度
-    const handleBeforeUnload = () => {
-      if (!workoutComplete && exerciseProgress.length > 0 && startTime) {
-        const progressToSave = {
-          currentExerciseIndex,
-          currentSetIndex,
-          exerciseProgress,
-          timer,
-          restMode,
-          restDuration,
-          startTime: startTime.toISOString()
-        };
-        saveWorkoutProgress(id, progressToSave);
-        console.log('页面卸载，保存进度');
-      }
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    
     return () => {
+      // 释放屏幕常亮
+      releaseWakeLock();
+      
+      // 清理定时器
       if (timerIntervalRef.current) {
         clearInterval(timerIntervalRef.current);
       }
       if (saveIntervalRef.current) {
         clearInterval(saveIntervalRef.current);
       }
-      
-      // 释放屏幕常亮
-      releaseWakeLock();
-      
-      // 移除事件监听器
+    };
+  }, [id]); // 只依赖 id
+  
+  // 监听页面可见性变化和卸载事件
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // 使用最新的状态值保存进度
+      const progressToSave = {
+        currentExerciseIndex,
+        currentSetIndex,
+        exerciseProgress,
+        timer,
+        restMode,
+        restDuration,
+        startTime: startTime ? startTime.toISOString() : new Date().toISOString()
+      };
+      if (!workoutComplete && exerciseProgress.length > 0) {
+        saveWorkoutProgress(id, progressToSave);
+        console.log('页面卸载，保存进度');
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [id, loadPlans, loadScheduledWorkouts, getPlanById, getScheduledWorkoutById, getWorkoutProgress, checkWorkoutRecordExists, workoutComplete, exerciseProgress, currentExerciseIndex, currentSetIndex, timer, restMode, restDuration, startTime, saveWorkoutProgress]);
+  }, [id, currentExerciseIndex, currentSetIndex, exerciseProgress, timer, restMode, restDuration, startTime, workoutComplete, saveWorkoutProgress]); // 这些变量用于保存进度
   
   // 监听计划数据变化，确保进度正确初始化
   useEffect(() => {
@@ -309,7 +293,7 @@ const PlanExecution = () => {
         setExerciseProgress(progress);
       }
     }
-  }, [plan, exerciseProgress, showContinueWorkoutAlert, showRecordExistsAlert]);
+  }, [plan, exerciseProgress.length, showContinueWorkoutAlert, showRecordExistsAlert]); // 只依赖 length，避免循环
   
   // 初始化超时检查
   useEffect(() => {
@@ -364,8 +348,8 @@ const PlanExecution = () => {
   useEffect(() => {
     if (timerRunning) {
       timerIntervalRef.current = setInterval(() => {
-        setTimer(t => {
-          const newTime = t + 1;
+        setTimer(prevTime => {
+          const newTime = prevTime + 1;
           
           // 如果是休息模式且时间到了休息结束时间
           if (restMode && newTime >= restDuration) {
@@ -373,7 +357,7 @@ const PlanExecution = () => {
             playNotificationSound();
             
             // 显示提示
-            setToastMessage('休息时间结束，请继续下一组训练');
+            setToastMessage(t('execution.restTimeEnd'));
             setShowToast(true);
             
             // 自动结束休息
@@ -393,7 +377,7 @@ const PlanExecution = () => {
         timerIntervalRef.current = null;
       }
     };
-  }, [timerRunning, restMode, restDuration]);
+  }, [timerRunning, restMode, restDuration, t]);
   
   // 检查当前练习和组是否完成
   const checkWorkoutStatus = useCallback(() => {
@@ -478,7 +462,9 @@ const PlanExecution = () => {
     
     setRestDuration(restTime);
     
-    setToastMessage(`休息时间: ${Math.floor(restTime / 60)}分${restTime % 60}秒`);
+    const minutes = Math.floor(restTime / 60);
+    const seconds = restTime % 60;
+    setToastMessage(t('execution.restTime').replace('{minutes}', minutes).replace('{seconds}', seconds));
     setShowToast(true);
   };
   
@@ -561,7 +547,7 @@ const PlanExecution = () => {
       await releaseWakeLock();
       
       // 显示成功提示
-      setToastMessage('健身记录已保存！');
+      setToastMessage(t('execution.recordSaved'));
       setShowToast(true);
       
       // 返回首页
@@ -570,7 +556,7 @@ const PlanExecution = () => {
       }, 1500);
     } catch (error) {
       console.error('保存健身记录失败:', error);
-      setToastMessage('保存记录失败，请重试');
+      setToastMessage(t('execution.saveFailed'));
       setShowToast(true);
     }
   };
@@ -761,6 +747,12 @@ const PlanExecution = () => {
       setRestMode(progressData.restMode || false);
       setRestDuration(progressData.restDuration || 0);
       
+      // ✅ 如果当前是休息时间，自动开始计时
+      if (progressData.restMode) {
+        setTimerRunning(true);
+        console.log('休息模式已恢复，自动启动计时器');
+      }
+      
       // ✅ 恢复开始时间
       if (progressData.startTime) {
         setStartTime(new Date(progressData.startTime));
@@ -806,63 +798,76 @@ const PlanExecution = () => {
   };
   
   if (isLoading || !plan) {
-    return <LoadingSpinner message="加载健身计划..." />;
+    return (
+      <IonPage>
+        <PageHeader title={t('execution.workoutExecution')} />
+        <IonContent>
+          <LoadingSpinner message={t('execution.loadingWorkout')} />
+        </IonContent>
+      </IonPage>
+    );
   }
 
   // 安全检查：确保exerciseProgress已初始化且currentExerciseIndex有效
   if (!exerciseProgress.length) {
-    // 如果计划存在但进度未初始化，尝试初始化
+    // 如果计划存在但进度未初始化，尝试初始化（但不阻塞渲染）
     if (plan && plan.exercises && plan.exercises.length > 0) {
-      const progress = plan.exercises.map((exercise, index) => ({
-        exerciseId: exercise.id || `exercise_${index}`,
-        name: exercise.name,
-        totalSets: exercise.sets || 1,
-        completedSets: Array(exercise.sets || 1).fill(false),
-        weights: Array(exercise.sets || 1).fill(exercise.weight || 0)
-      }));
-      
-      console.log('延迟初始化练习进度:', progress);
-      setExerciseProgress(progress);
+      // 延迟初始化会在 useEffect 中处理
+      console.log('等待进度初始化...');
     }
     
     // 如果初始化超时，显示错误信息
     if (initializationTimeout) {
       return (
-        <IonContent>
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            height: '50vh',
-            padding: '20px',
-            textAlign: 'center'
-          }}>
-            <h2>初始化失败</h2>
-            <p>无法加载训练数据，请返回重试</p>
-            <IonButton onClick={() => history.goBack()} color="primary">
-              返回
-            </IonButton>
-          </div>
-        </IonContent>
+        <IonPage>
+          <PageHeader title={`${t('execution.workoutExecution')}: ${plan.name}`} />
+          <IonContent>
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              height: '50vh',
+              padding: '20px',
+              textAlign: 'center'
+            }}>
+              <h2>{t('execution.initializationFailed')}</h2>
+              <p>{t('execution.cannotLoadData')}</p>
+              <IonButton onClick={() => history.goBack()} color="primary">
+                {t('common.back')}
+              </IonButton>
+            </div>
+          </IonContent>
+        </IonPage>
       );
     }
     
-    return <LoadingSpinner message="初始化训练数据..." />;
+    return (
+      <IonPage>
+        <PageHeader title={`${t('execution.workoutExecution')}: ${plan.name}`} />
+        <IonContent>
+          <LoadingSpinner message={t('execution.initializingData')} />
+        </IonContent>
+      </IonPage>
+    );
   }
 
   // 确保 currentExerciseIndex 在有效范围内
   if (currentExerciseIndex >= exerciseProgress.length) {
     console.warn('当前练习索引超出范围，重置为0');
     setCurrentExerciseIndex(0);
-    return <LoadingSpinner message="调整训练进度..." />;
+    return (
+      <IonPage>
+        <PageHeader title={`${t('execution.workoutExecution')}: ${plan.name}`} />
+        <IonContent>
+          <LoadingSpinner message={t('execution.adjustingProgress')} />
+        </IonContent>
+      </IonPage>
+    );
   }
   
   const currentExercise = plan.exercises[currentExerciseIndex];
   const progress = exerciseProgress[currentExerciseIndex];
-  
-  // 获取动作详细信息
-  const exerciseDetails = getExerciseDetails(currentExercise.name);
   
   // 计算总进度百分比（基于所有组的完成情况）
   const totalSets = plan.exercises.reduce((sum, exercise) => sum + exercise.sets, 0);
@@ -886,7 +891,7 @@ const PlanExecution = () => {
         <div style={{ position: 'relative', padding: '8px 16px', backgroundColor: 'var(--app-light-bg)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <small style={{ color: 'var(--app-medium-text)', fontSize: '12px' }}>总进度</small>
+              <small style={{ color: 'var(--app-medium-text)', fontSize: '12px' }}>{t('execution.totalProgress')}</small>
               {wakeLockActive && (
                 <div style={{ 
                   display: 'flex', 
@@ -946,13 +951,6 @@ const PlanExecution = () => {
               }}>
                 {currentExerciseIndex + 1}/{plan.exercises.length}
               </div>
-              <IonButton 
-                fill="clear" 
-                size="small"
-                onClick={() => setShowExerciseInfo(true)}
-              >
-                <IonIcon slot="icon-only" icon={informationCircleOutline} />
-              </IonButton>
             </div>
             
             <h1 style={{ 
@@ -1026,7 +1024,7 @@ const PlanExecution = () => {
                 <IonChip color="medium" style={{ '--background': 'var(--app-light-bg)' }}>
                   <IonIcon icon={barbellOutline} />
                   <IonLabel>
-                    {restMode ? '休息中' : `第 ${currentSetIndex + 1} 组，共 ${currentExercise.sets} 组`}
+                    {restMode ? t('execution.rest') : `${t('execution.set')} ${currentSetIndex + 1}/${currentExercise.sets}`}
                   </IonLabel>
                 </IonChip>
                 
@@ -1085,26 +1083,26 @@ const PlanExecution = () => {
                   onClick={endRest}
                   className="control-button"
                 >
-                  <IonIcon slot="start" icon={arrowForwardOutline} />
-                  跳过
-                </IonButton>
-              ) : (
-                <IonButton 
-                  color="success" 
-                  onClick={() => markSetComplete(currentSetIndex)}
-                  disabled={progress && progress.completedSets[currentSetIndex]}
-                  className="control-button"
-                >
-                  <IonIcon slot="start" icon={checkmarkOutline} />
-                  完成
-                </IonButton>
+                <IonIcon slot="start" icon={arrowForwardOutline} />
+                {t('execution.skip')}
+              </IonButton>
+            ) : (
+              <IonButton 
+                color="success" 
+                onClick={() => markSetComplete(currentSetIndex)}
+                disabled={progress && progress.completedSets[currentSetIndex]}
+                className="control-button"
+              >
+                <IonIcon slot="start" icon={checkmarkOutline} />
+                {t('common.complete')}
+              </IonButton>
               )}
             </div>
           </IonCardContent>
         </IonCard>
         
         {/* 组状态列表 */}
-        <div className="section-title">组进度</div>
+        <div className="section-title">{t('execution.setProgress')}</div>
         <IonList style={{ margin: '0 16px', borderRadius: '12px', overflow: 'hidden' }}>
           {progress && progress.totalSets && Array.from({ length: progress.totalSets }).map((_, index) => (
             <IonItem key={index} className={progress.completedSets[index] ? 'completed-set' : ''} style={{
@@ -1120,8 +1118,8 @@ const PlanExecution = () => {
                 style={{ '--size': '24px' }}
               />
               <IonLabel>
-                <h2 style={{ fontWeight: progress.completedSets[index] ? '600' : '400' }}>第 {index + 1} 组</h2>
-                <p>{currentExercise.reps} 次</p>
+                <h2 style={{ fontWeight: progress.completedSets[index] ? '600' : '400' }}>{t('execution.set')} {index + 1}</h2>
+                <p>{currentExercise.reps} {t('execution.reps')}</p>
               </IonLabel>
               <div slot="end" style={{ display: 'flex', alignItems: 'center' }}>
                 <IonInput
@@ -1136,7 +1134,7 @@ const PlanExecution = () => {
                     textAlign: 'right'
                   }}
                 />
-                <IonText color="medium" style={{ marginLeft: '4px' }}>kg</IonText>
+                <IonText color="medium" style={{ marginLeft: '4px' }}>{t('createPlan.weightUnit')}</IonText>
               </div>
             </IonItem>
           ))}
@@ -1152,24 +1150,9 @@ const PlanExecution = () => {
             style={{ marginTop: '16px' }}
           >
             <IonIcon slot="start" icon={stopOutline} />
-            结束健身
+            {t('execution.finishWorkout')}
           </IonButton>
         </div>
-        
-        {/* 动作信息模态框 */}
-        <IonAlert
-          isOpen={showExerciseInfo}
-          onDidDismiss={() => setShowExerciseInfo(false)}
-          header={currentExercise.name}
-          message={`
-            <div style="text-align: left">
-              <p><strong>目标肌群:</strong> ${exerciseDetails?.category?.name || '未知'}</p>
-              <p><strong>动作描述:</strong> ${exerciseDetails?.description || currentExercise.description || '暂无描述'}</p>
-              <p><strong>注意事项:</strong> ${exerciseDetails?.tips || '请根据自身情况调整重量和次数'}</p>
-            </div>
-          `}
-          buttons={['关闭']}
-        />
         
         {/* 完成提示 */}
         <IonModal
@@ -1214,7 +1197,7 @@ const PlanExecution = () => {
                 marginBottom: '16px',
                 color: 'var(--ion-text-color)'
               }}>
-                健身完成！
+                {t('execution.workoutComplete')}
               </h1>
               
               <p style={{ 
@@ -1222,7 +1205,7 @@ const PlanExecution = () => {
                 color: 'var(--ion-color-medium)', 
                 marginBottom: '8px' 
               }}>
-                恭喜你完成了今天的健身计划！
+                {t('execution.congratulations')} {t('home.congratulationsMessage')}
               </p>
               
               <div style={{ 
@@ -1243,7 +1226,7 @@ const PlanExecution = () => {
                     fontSize: '14px', 
                     color: 'var(--ion-color-medium)' 
                   }}>
-                    组训练
+                    {t('execution.setsCompleted')}
                   </div>
                 </div>
                 
@@ -1264,7 +1247,7 @@ const PlanExecution = () => {
                     fontSize: '14px', 
                     color: 'var(--ion-color-medium)' 
                   }}>
-                    个动作
+                    {t('execution.exercisesCompleted')}
                   </div>
                 </div>
               </div>
@@ -1281,7 +1264,7 @@ const PlanExecution = () => {
                 }}
               >
                 <IonIcon slot="start" icon={checkmarkOutline} />
-                保存记录
+                {t('common.saveRecord')}
               </IonButton>
             </div>
           </IonContent>
@@ -1291,15 +1274,15 @@ const PlanExecution = () => {
         <IonAlert
           isOpen={showExitAlert}
           onDidDismiss={() => setShowExitAlert(false)}
-          header="确认结束"
-          message="确定要结束当前健身吗？已完成的进度将被保存。"
+          header={t('execution.confirmExit')}
+          message={t('execution.confirmExitMessage')}
           buttons={[
             {
-              text: '取消',
+              text: t('common.cancel'),
               role: 'cancel'
             },
             {
-              text: '保存进度并退出',
+              text: t('execution.exitAndSave'),
               cssClass: 'danger',
               handler: exitWorkoutWithProgress
             }
