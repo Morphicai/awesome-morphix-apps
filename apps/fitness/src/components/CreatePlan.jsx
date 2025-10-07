@@ -258,6 +258,7 @@ const CreatePlan = () => {
   
   // 选择动作
   const handleExerciseSelect = (exercise) => {
+    console.log('选择动作:', exercise);
     setSelectedExercise(exercise);
   };
   
@@ -351,6 +352,17 @@ const CreatePlan = () => {
                       )}
                     </div>
                   </IonLabel>
+                  <IonButton 
+                    fill="clear" 
+                    color="danger" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      confirmDeleteExercise(index);
+                    }}
+                    style={{ marginRight: '8px' }}
+                  >
+                    <IonIcon slot="icon-only" icon={trashOutline} />
+                  </IonButton>
                   <IonReorder slot="end" />
                 </IonItem>
                 
@@ -594,16 +606,24 @@ const CreatePlan = () => {
                         {exerciseCategories.find(c => c.id === activeCategory)?.name}
                       </IonLabel>
                     </IonItem>
-                    <IonRadioGroup 
-                      value={selectedExercise?.name || ''} 
-                      onIonChange={e => {
-                        const selected = exerciseResults.find(ex => ex.name === e.detail.value);
-                        if (selected) handleExerciseSelect(selected);
-                      }}
-                    >
+                    <IonRadioGroup value={selectedExercise?.name || ''}>
                       {exerciseResults.map(exercise => (
-                        <IonItem key={exercise.name} button>
-                          <IonLabel>
+                        <IonItem 
+                          key={exercise.name} 
+                          button 
+                          detail={false}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('IonItem clicked:', exercise.name);
+                            handleExerciseSelect(exercise);
+                          }}
+                        >
+                          <IonLabel onClick={(e) => {
+                            e.stopPropagation();
+                            console.log('Label clicked:', exercise.name);
+                            handleExerciseSelect(exercise);
+                          }}>
                             <h2>{exercise.name}</h2>
                             <IonNote>
                               {exercise.defaultSets} {t('createPlan.sets')} × {exercise.defaultReps} {t('createPlan.reps')}
@@ -613,6 +633,10 @@ const CreatePlan = () => {
                           <IonRadio 
                             slot="end" 
                             value={exercise.name}
+                            onIonSelect={() => {
+                              console.log('Radio selected:', exercise.name);
+                              handleExerciseSelect(exercise);
+                            }}
                           />
                         </IonItem>
                       ))}
@@ -624,17 +648,25 @@ const CreatePlan = () => {
             
             {/* 搜索模式 */}
             {exerciseSelectorMode === 'search' && (
-              <IonRadioGroup 
-                value={selectedExercise?.name || ''}
-                onIonChange={e => {
-                  const selected = exerciseResults.find(ex => ex.name === e.detail.value);
-                  if (selected) handleExerciseSelect(selected);
-                }}
-              >
+              <IonRadioGroup value={selectedExercise?.name || ''}>
                 {exerciseResults.length > 0 ? (
                   exerciseResults.map(exercise => (
-                    <IonItem key={exercise.name} button>
-                      <IonLabel>
+                    <IonItem 
+                      key={exercise.name} 
+                      button
+                      detail={false}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Search IonItem clicked:', exercise.name);
+                        handleExerciseSelect(exercise);
+                      }}
+                    >
+                      <IonLabel onClick={(e) => {
+                        e.stopPropagation();
+                        console.log('Search Label clicked:', exercise.name);
+                        handleExerciseSelect(exercise);
+                      }}>
                         <h2>{exercise.name}</h2>
                         <IonNote>
                           {exercise.category?.name} • 
@@ -645,6 +677,10 @@ const CreatePlan = () => {
                       <IonRadio 
                         slot="end" 
                         value={exercise.name}
+                        onIonSelect={() => {
+                          console.log('Search Radio selected:', exercise.name);
+                          handleExerciseSelect(exercise);
+                        }}
                       />
                     </IonItem>
                   ))
