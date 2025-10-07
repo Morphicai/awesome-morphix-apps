@@ -1,0 +1,13 @@
+/* 主应用样式 - 纸质书写主题 */
+
+.content {
+  --padding: 0;
+  /* 继承全局纸质主题变量 */
+  /* background: var(--paper-cream);
+  color: var(--ink-black); */
+  
+  /* 确保所有 Ionic 组件使用纸质主题 */
+  /* --ion-background-color: var(--paper-cream);
+  --ion-text-color: var(--ink-black);
+  --ion-border-color: var(--line-color); */
+}

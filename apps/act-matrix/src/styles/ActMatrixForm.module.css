@@ -1,0 +1,607 @@
+.content {
+  /* 继承全局纸质主题，只保留页面特定样式 */
+  overflow: hidden;
+  position: relative;
+}
+
+
+.container {
+  padding: 5px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+.currentIdBar {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  font-size: 12px;
+  color: var(--muted-ink);
+  background: rgba(255,255,255,0.8);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--line-color);
+  z-index: 4;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+/* ACT 坐标系容器 - 使用全局纸质主题 */
+.coordinateSystem {
+  width: 100%;
+  max-width: 98%;
+  max-height: 80%;
+  aspect-ratio: 0.618;
+  position: relative;
+  background: var(--paper-cream);
+  border-radius: var(--paper-border-radius-large);
+  border: 1px solid var(--line-color);
+  box-shadow: 
+    var(--paper-shadow-strong),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  overflow: visible;
+  margin: 40px 0;
+  /* 添加轻微的纸张弯曲效果 */
+  transform: perspective(1000px) rotateX(1deg);
+}
+@media (min-width: 768px) {
+  .coordinateSystem {
+    max-width: 768px;
+  }
+}
+
+.coordinateSystem::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    /* 纸张纤维纹理 */
+    radial-gradient(circle at 20% 30%, rgba(120, 108, 93, 0.02) 1px, transparent 1px),
+    radial-gradient(circle at 80% 70%, rgba(203, 187, 165, 0.025) 1px, transparent 1px),
+    radial-gradient(circle at 60% 20%, rgba(0, 0, 0, 0.008) 1px, transparent 1px),
+    radial-gradient(circle at 30% 80%, rgba(74, 73, 71, 0.015) 1px, transparent 1px),
+    /* 细微的纸张纹理 */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(0, 0, 0, 0.003) 1px,
+      rgba(0, 0, 0, 0.003) 2px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 1px,
+      rgba(0, 0, 0, 0.003) 1px,
+      rgba(0, 0, 0, 0.003) 2px
+    );
+  background-position: 
+    0 0, 
+    10px 10px, 
+    20px 5px, 
+    5px 15px,
+    0 0,
+    0 0;
+  background-size: 
+    24px 24px, 
+    32px 32px, 
+    18px 18px, 
+    28px 28px,
+    2px 2px,
+    2px 2px;
+}
+
+/* 为坐标系添加纸张边缘的细微阴影 */
+.coordinateSystem::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, 
+    rgba(0, 0, 0, 0.02) 0%, 
+    transparent 20%, 
+    transparent 80%, 
+    rgba(0, 0, 0, 0.03) 100%
+  );
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* 坐标轴线 - 穿过整个容器 */
+.axisLines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.horizontalAxis {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--line-color);
+  transform: translateY(-50%);
+}
+
+.verticalAxis {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--line-color);
+  transform: translateX(-50%);
+}
+
+/* 坐标轴标签容器 */
+.axisLabels {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* 轴标签 - 绝对定位在坐标轴上 */
+.topAxisLabel {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 3px 6px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.bottomAxisLabel {
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 3px 6px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.leftAxisLabel {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 3px 6px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.rightAxisLabel {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 3px 6px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.axisLabelText {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-black);
+  margin: 0;
+  line-height: 1.2;
+  font-family: var(--ion-font-family);
+}
+
+.axisSubLabelText {
+  font-size: 9px;
+  color: rgba(var(--ink-black-rgb), 0.45) !important;
+  font-style: italic;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.axisArrow {
+  font-size: 10px;
+  color: var(--ink-black);
+}
+
+/* 四象限网格 - 铺满整个容器 */
+.quadrantGrid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  z-index: 1;
+}
+
+/* 象限区域 - 铺满对应的网格区域 */
+.quadrant {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.quadrant:hover {
+  background: rgba(250, 248, 244, 0.6);
+}
+
+.quadrantHeader {
+  margin-bottom: 12px;
+}
+
+.quadrantTitle {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: var(--ink-black);
+  font-family: var(--ion-font-family);
+}
+
+.quadrantSubtitle {
+  font-size: 12px;
+  color: rgba(var(--ink-black-rgb), 0.55) !important;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.quadrantContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 右下角“眼睛”小按钮（进入详情） */
+.quadrantCornerEye {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--line-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b5d52;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quadrantCornerEye:hover {
+  background: rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.quadrantCornerEye ion-icon {
+  font-size: 16px;
+}
+
+/* 右下角“编辑”小按钮（打开象限编辑弹窗） */
+.quadrantCornerEdit {
+  position: absolute;
+  right: 40px;
+  bottom: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--line-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b5d52;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quadrantCornerEdit:hover {
+  background: rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.quadrantCornerEdit ion-icon {
+  font-size: 16px;
+}
+
+.quadrantItem {
+  background: var(--paper-aged);
+  padding: 4px 6px;
+  border-radius: var(--paper-border-radius);
+  border: 1px solid var(--line-color);
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--ink-black);
+  margin-bottom: 4px;
+}
+
+.moreItems {
+  font-size: 12px;
+  color: rgba(var(--ink-black-rgb), 0.5) !important;
+  text-align: center;
+  padding: 8px 4px;
+  font-style: italic;
+}
+
+.emptyHint {
+  color: #b0a69a;
+  text-align: center;
+  padding: 15px 8px;
+  font-size: 13px;
+  font-style: italic;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 模态框样式 */
+.modalContent {
+  padding: 16px;
+  /* background: #ffffff; */
+}
+
+.modalHeader {
+  padding: 0 0 16px 0;
+  border-bottom: 1px solid var(--line-color);
+  margin-bottom: 16px;
+}
+
+.modalSubtitle {
+  color: var(--muted-ink);
+  font-size: 14px;
+  margin: 0;
+}
+
+.modalQuestion {
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 500;
+}
+
+.inputSection {
+  margin-bottom: 24px;
+}
+
+.inputSection ion-item {
+  --background: transparent;
+  --border-color: var(--line-color);
+  --border-radius: 8px;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.inputSection ion-textarea {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+}
+
+/* 让 ion-input 与 ion-textarea 一致的内边距与字体大小 */
+.inputSection ion-input {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  font-size: 13px;
+}
+
+.inputActions {
+  padding: 12px 16px 0 16px;
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 16px;
+}
+
+/* 已填写内容区域样式 */
+.existingItemsSection {
+  margin-bottom: 24px;
+}
+
+.existingItemsSection ion-list {
+  background: transparent;
+  padding: 0;
+}
+
+.existingItem {
+  --background: #f6f2ea;
+  --border-radius: 8px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+}
+
+.existingItem:last-child {
+  margin-bottom: 0;
+}
+
+.existingItem ion-button {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  margin-left: 4px;
+  --box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 1px 2px rgba(0,0,0,0.06);
+}
+
+/* 输入框和按钮的布局样式 */
+.inputWithButton {
+  --padding-end: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inputWithButton ion-textarea {
+  flex: 1;
+}
+
+.inputWithButton ion-input {
+  flex: 1;
+}
+
+.inputWithButton ion-button {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  margin: 0;
+  flex-shrink: 0;
+  /* 固定较小高度，避免 100% 拉伸 */
+  height: 32px;
+  --box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 1px 2px rgba(0,0,0,0.06);
+}
+
+/* 输入框文字更小 */
+.inputSection ion-textarea {
+  font-size: 13px;
+}
+
+/* 输入框上方标题（问题）更小 */
+.modalQuestion {
+  font-size: 14px;
+}
+
+.itemContent {
+  font-size: 14px;
+  color: #2b2b2b;
+  line-height: 1.5;
+  margin: 0 0 4px 0;
+}
+
+.itemDate {
+  font-size: 12px;
+  color: rgba(var(--ink-black-rgb), 0.5) !important;
+  margin: 0;
+}
+
+/* 浮动历史记录按钮 - 使用全局主题 */
+.floatingButton {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.historyButton {
+  background: linear-gradient(135deg, 
+    var(--accent-brown) 0%, 
+    #6b5d52 50%, 
+    var(--accent-brown) 100%
+  );
+  color: #ffffff;
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.historyButton:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.2),
+    0 3px 12px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+.historyButton:active {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    0 1px 6px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.historyButton ion-icon {
+  font-size: 24px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+
+/* ===== Desktop typography scaling (~1.5x) ===== */
+@media (min-width: 1024px) {
+  .currentIdBar { font-size: 14px; }
+
+  .axisLabelText { font-size: 14px; }
+  .axisSubLabelText { font-size: 10px; }
+  .axisArrow { font-size: 11px; }
+
+  .quadrantTitle { font-size: 18px; }
+  .quadrantSubtitle { font-size: 14px; }
+  .quadrantItem { font-size: 14px; }
+  .moreItems { font-size: 14px; }
+  .emptyHint { font-size: 16px; }
+
+  .modalSubtitle { font-size: 17px; }
+  .modalQuestion { font-size: 20px; }
+
+  .inputSection ion-input { font-size: 16px; }
+  .inputSection ion-textarea { font-size: 16px; }
+
+  .itemContent { font-size: 17px; }
+  .itemDate { font-size: 14px; }
+
+  .historyButton ion-icon { font-size: 32px; }
+}
