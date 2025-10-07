@@ -1,10 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
     IonPage,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
     IonButton,
     IonIcon,
     IonContent,
@@ -14,9 +10,10 @@ import {
     IonLabel,
     IonAlert,
 } from '@ionic/react';
-import { chevronBack, add, trash, create } from 'ionicons/icons';
+import { add, trash, create } from 'ionicons/icons';
 import AppSdk from '@morphixai/app-sdk';
 import { reportError } from '@morphixai/lib';
+import { PageHeader } from '@morphixai/components';
 import { useHistory, useParams, useResume } from 'react-router-dom';
 import styles from '../styles/HooksRecordTable.module.css';
 
@@ -212,16 +209,7 @@ export default function HooksRecordTable() {
 
     return (
         <IonPage>
-            <IonHeader>
-                <IonToolbar>
-                    <IonButtons slot="start">
-                        <IonButton onClick={goBack}>
-                            <IonIcon icon={chevronBack} /> 返回
-                        </IonButton>
-                    </IonButtons>
-                    <IonTitle>🪝 钩子记录表</IonTitle>
-                </IonToolbar>
-            </IonHeader>
+            <PageHeader title="🪝 钩子记录表" />
             <IonContent className={styles.content}>
                 {loading && (
                     <div className={styles.loadingContainer}>
