@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
+  IonPage,
   IonContent, 
   IonItem, 
   IonLabel, 
@@ -51,10 +52,11 @@ import {
   listOutline,
   informationCircleOutline
 } from 'ionicons/icons';
-import { Header } from '@morphicai/components';
+import { PageHeader } from '@morphixai/components';
 import { useParams, useHistory } from 'react-router-dom';
 
 import useStore from '../utils/store';
+import useLanguage from '../utils/useLanguage';
 import { createDefaultPlan, createNewExercise, generateId, deepClone } from '../utils/helpers';
 import LoadingSpinner from './LoadingSpinner';
 import { getAllCategories, getExercisesByCategory, searchExercisesByName } from '../utils/exerciseData';
@@ -62,6 +64,7 @@ import { getAllCategories, getExercisesByCategory, searchExercisesByName } from 
 const CreatePlan = () => {
   const { id } = useParams();
   const history = useHistory();
+  const { t } = useLanguage();
   const { 
     getPlanById, 
     createPlan, 
@@ -183,7 +186,7 @@ const CreatePlan = () => {
   const saveExercise = () => {
     // 验证必填字段
     if (!currentExercise.name) {
-      setToastMessage('请输入动作名称');
+      setToastMessage(t('createPlan.pleaseEnterName'));
       setShowToast(true);
       return;
     }
@@ -209,13 +212,13 @@ const CreatePlan = () => {
   const savePlan = async () => {
     // 验证必填字段
     if (!plan.name) {
-      setToastMessage('请输入计划名称');
+      setToastMessage(t('createPlan.pleaseEnterName'));
       setShowToast(true);
       return;
     }
     
     if (!plan.exercises || plan.exercises.length === 0) {
-      setToastMessage('请至少添加一个动作');
+      setToastMessage(t('createPlan.pleaseAddExercise'));
       setShowToast(true);
       return;
     }
@@ -261,7 +264,7 @@ const CreatePlan = () => {
   // 确认选择动作
   const confirmExerciseSelection = () => {
     if (!selectedExercise) {
-      setToastMessage('请选择一个动作');
+      setToastMessage(t('createPlan.exerciseName'));
       setShowToast(true);
       return;
     }
@@ -294,38 +297,45 @@ const CreatePlan = () => {
   };
   
   if (isLoading && editMode) {
-    return <LoadingSpinner message="加载计划数据..." />;
+    return (
+      <IonPage>
+        <PageHeader title={t(editMode ? 'headers.editPlan' : 'headers.createPlan')} />
+        <IonContent>
+          <LoadingSpinner message={t('loading.plans')} />
+        </IonContent>
+      </IonPage>
+    );
   }
   
   return (
-    <>
-      <Header title={editMode ? '编辑计划' : '创建计划'} />
+    <IonPage>
+      <PageHeader title={t(editMode ? 'headers.editPlan' : 'headers.createPlan')} />
       <IonContent>
         <IonCard className="workout-card">
           <IonCardContent>
             <IonItem className="form-group">
-              <IonLabel position="stacked">计划名称 *</IonLabel>
+              <IonLabel position="stacked">{t('createPlan.planName')} *</IonLabel>
               <IonInput
                 value={plan.name}
                 onIonInput={(e) => handleInputChange('name', e.detail.value)}
-                placeholder="例如：胸部训练、腿部日"
+                placeholder={t('createPlan.planNamePlaceholder')}
                 required
               />
             </IonItem>
             
             <IonItem className="form-group">
-              <IonLabel position="stacked">计划描述</IonLabel>
+              <IonLabel position="stacked">{t('createPlan.description')}</IonLabel>
               <IonTextarea
                 value={plan.description}
                 onIonInput={(e) => handleInputChange('description', e.detail.value)}
-                placeholder="添加计划描述（可选）"
+                placeholder={t('createPlan.descriptionPlaceholder')}
                 rows={3}
               />
             </IonItem>
           </IonCardContent>
         </IonCard>
         
-        <div className="section-title">动作列表</div>
+        <div className="section-title">{t('plans.exerciseList')}</div>
         
         {plan.exercises && plan.exercises.length > 0 ? (
           <IonReorderGroup disabled={false} onIonItemReorder={handleReorder}>
@@ -333,11 +343,11 @@ const CreatePlan = () => {
               <IonItemSliding key={exercise.id || index}>
                 <IonItem className="exercise-list-item">
                   <IonLabel onClick={() => editExercise(index)}>
-                    <h2>{exercise.name || '未命名动作'}</h2>
+                    <h2>{exercise.name || t('createPlan.exerciseName')}</h2>
                     <div className="exercise-detail">
-                      <span>{exercise.sets} 组 × {exercise.reps} 次</span>
+                      <span>{exercise.sets} {t('createPlan.sets')} × {exercise.reps} {t('createPlan.reps')}</span>
                       {exercise.weight > 0 && (
-                        <span> • {exercise.weight} kg</span>
+                        <span> • {exercise.weight} {t('createPlan.weightUnit')}</span>
                       )}
                     </div>
                   </IonLabel>
@@ -358,7 +368,7 @@ const CreatePlan = () => {
         ) : (
           <IonCard className="workout-card">
             <IonCardContent className="center-content" style={{ padding: '24px' }}>
-              <p>还没有添加动作</p>
+              <p>{t('createPlan.addExercise')}</p>
             </IonCardContent>
           </IonCard>
         )}
@@ -370,7 +380,7 @@ const CreatePlan = () => {
             onClick={addExercise}
           >
             <IonIcon slot="start" icon={addOutline} />
-            添加动作
+            {t('createPlan.addExercise')}
           </IonButton>
           
           <IonButton 
@@ -380,14 +390,14 @@ const CreatePlan = () => {
             style={{ marginTop: '16px' }}
           >
             <IonIcon slot="start" icon={saveOutline} />
-            保存计划
+            {editMode ? t('createPlan.updatePlan') : t('createPlan.savePlan')}
           </IonButton>
         </div>
         
         {/* 动作编辑模态框 */}
         <IonModal isOpen={showExerciseModal} onDidDismiss={() => setShowExerciseModal(false)}>
           <IonToolbar>
-            <IonTitle>{currentExerciseIndex === -1 ? '添加动作' : '编辑动作'}</IonTitle>
+            <IonTitle>{currentExerciseIndex === -1 ? t('createPlan.addExercise') : t('common.edit')}</IonTitle>
             <IonButtons slot="end">
               <IonButton onClick={() => setShowExerciseModal(false)}>
                 <IonIcon icon={closeOutline} />
@@ -399,17 +409,17 @@ const CreatePlan = () => {
             {currentExercise && (
               <IonList>
                 <IonItem className="form-group">
-                  <IonLabel position="stacked">动作名称 *</IonLabel>
+                  <IonLabel position="stacked">{t('createPlan.exerciseName')} *</IonLabel>
                   <IonInput
                     value={currentExercise.name}
                     onIonInput={(e) => handleExerciseChange('name', e.detail.value)}
-                    placeholder="例如：卧推、深蹲"
+                    placeholder={t('createPlan.exerciseNamePlaceholder')}
                     required
                   />
                 </IonItem>
                 
                 <IonItem className="form-group">
-                  <IonLabel position="stacked">组数</IonLabel>
+                  <IonLabel position="stacked">{t('createPlan.sets')}</IonLabel>
                   <IonGrid>
                     <IonRow>
                       <IonCol size="9">
@@ -433,7 +443,7 @@ const CreatePlan = () => {
                 </IonItem>
                 
                 <IonItem className="form-group">
-                  <IonLabel position="stacked">每组次数</IonLabel>
+                  <IonLabel position="stacked">{t('createPlan.reps')}</IonLabel>
                   <IonGrid>
                     <IonRow>
                       <IonCol size="9">
@@ -457,7 +467,7 @@ const CreatePlan = () => {
                 </IonItem>
                 
                 <IonItem className="form-group">
-                  <IonLabel position="stacked">重量 (kg)</IonLabel>
+                  <IonLabel position="stacked">{t('createPlan.weight')} ({t('createPlan.weightUnit')})</IonLabel>
                   <IonInput
                     type="number"
                     value={currentExercise.weight}
@@ -466,31 +476,31 @@ const CreatePlan = () => {
                 </IonItem>
                 
                 <IonItem className="form-group">
-                  <IonLabel position="stacked">组间休息时间 (秒)</IonLabel>
+                  <IonLabel position="stacked">{t('execution.rest')} ({t('common.seconds')})</IonLabel>
                   <IonSelect
                     value={currentExercise.restBetweenSets}
                     onIonChange={(e) => handleExerciseChange('restBetweenSets', e.detail.value)}
                   >
-                    <IonSelectOption value={30}>30秒</IonSelectOption>
-                    <IonSelectOption value={45}>45秒</IonSelectOption>
-                    <IonSelectOption value={60}>60秒</IonSelectOption>
-                    <IonSelectOption value={90}>90秒</IonSelectOption>
-                    <IonSelectOption value={120}>2分钟</IonSelectOption>
-                    <IonSelectOption value={180}>3分钟</IonSelectOption>
+                    <IonSelectOption value={30}>30{t('common.seconds')}</IonSelectOption>
+                    <IonSelectOption value={45}>45{t('common.seconds')}</IonSelectOption>
+                    <IonSelectOption value={60}>60{t('common.seconds')}</IonSelectOption>
+                    <IonSelectOption value={90}>90{t('common.seconds')}</IonSelectOption>
+                    <IonSelectOption value={120}>2{t('common.minutes')}</IonSelectOption>
+                    <IonSelectOption value={180}>3{t('common.minutes')}</IonSelectOption>
                   </IonSelect>
                 </IonItem>
                 
                 <IonItem className="form-group">
-                  <IonLabel position="stacked">动作后休息时间 (秒)</IonLabel>
+                  <IonLabel position="stacked">{t('execution.rest')} ({t('common.seconds')})</IonLabel>
                   <IonSelect
                     value={currentExercise.restAfterExercise}
                     onIonChange={(e) => handleExerciseChange('restAfterExercise', e.detail.value)}
                   >
-                    <IonSelectOption value={60}>60秒</IonSelectOption>
-                    <IonSelectOption value={90}>90秒</IonSelectOption>
-                    <IonSelectOption value={120}>2分钟</IonSelectOption>
-                    <IonSelectOption value={180}>3分钟</IonSelectOption>
-                    <IonSelectOption value={240}>4分钟</IonSelectOption>
+                    <IonSelectOption value={60}>60{t('common.seconds')}</IonSelectOption>
+                    <IonSelectOption value={90}>90{t('common.seconds')}</IonSelectOption>
+                    <IonSelectOption value={120}>2{t('common.minutes')}</IonSelectOption>
+                    <IonSelectOption value={180}>3{t('common.minutes')}</IonSelectOption>
+                    <IonSelectOption value={240}>4{t('common.minutes')}</IonSelectOption>
                   </IonSelect>
                 </IonItem>
               </IonList>
@@ -502,7 +512,7 @@ const CreatePlan = () => {
                 color="primary"
                 onClick={saveExercise}
               >
-                保存动作
+                {t('common.save')}
               </IonButton>
             </div>
           </IonContent>
@@ -512,7 +522,7 @@ const CreatePlan = () => {
         <IonModal isOpen={showExerciseSelector} onDidDismiss={() => setShowExerciseSelector(false)}>
           <IonHeader>
             <IonToolbar>
-              <IonTitle>选择健身动作</IonTitle>
+              <IonTitle>{t('createPlan.addExercise')}</IonTitle>
               <IonButtons slot="end">
                 <IonButton onClick={() => setShowExerciseSelector(false)}>
                   <IonIcon icon={closeOutline} />
@@ -525,11 +535,11 @@ const CreatePlan = () => {
               <IonSegment value={exerciseSelectorMode} onIonChange={e => setExerciseSelectorMode(e.detail.value)}>
                 <IonSegmentButton value="category">
                   <IonIcon icon={listOutline} />
-                  <IonLabel>分类浏览</IonLabel>
+                  <IonLabel>{t('createPlan.targetBodyParts')}</IonLabel>
                 </IonSegmentButton>
                 <IonSegmentButton value="search">
                   <IonIcon icon={searchOutline} />
-                  <IonLabel>搜索</IonLabel>
+                  <IonLabel>{t('common.search')}</IonLabel>
                 </IonSegmentButton>
               </IonSegment>
             </IonToolbar>
@@ -540,7 +550,7 @@ const CreatePlan = () => {
                 <IonSearchbar
                   value={exerciseSearchQuery}
                   onIonInput={e => handleSearch(e.detail.value)}
-                  placeholder="搜索动作名称..."
+                  placeholder={t('plans.searchPlaceholder')}
                   showCancelButton="never"
                 />
               </IonToolbar>
@@ -555,7 +565,7 @@ const CreatePlan = () => {
                 {!activeCategory && (
                   <IonList>
                     <IonListHeader>
-                      <IonLabel>选择部位</IonLabel>
+                      <IonLabel>{t('createPlan.targetBodyParts')}</IonLabel>
                     </IonListHeader>
                     {exerciseCategories.map(category => (
                       <IonItem 
@@ -578,26 +588,31 @@ const CreatePlan = () => {
                         fill="clear" 
                         onClick={() => setActiveCategory('')}
                       >
-                        返回分类
+                        {t('common.back')}
                       </IonButton>
                       <IonLabel>
-                        {exerciseCategories.find(c => c.id === activeCategory)?.name} 动作
+                        {exerciseCategories.find(c => c.id === activeCategory)?.name}
                       </IonLabel>
                     </IonItem>
-                    <IonRadioGroup value={selectedExercise?.name || ''}>
+                    <IonRadioGroup 
+                      value={selectedExercise?.name || ''} 
+                      onIonChange={e => {
+                        const selected = exerciseResults.find(ex => ex.name === e.detail.value);
+                        if (selected) handleExerciseSelect(selected);
+                      }}
+                    >
                       {exerciseResults.map(exercise => (
-                        <IonItem key={exercise.name}>
+                        <IonItem key={exercise.name} button>
                           <IonLabel>
                             <h2>{exercise.name}</h2>
                             <IonNote>
-                              {exercise.defaultSets} 组 × {exercise.defaultReps} 次
-                              {exercise.defaultWeight > 0 && ` • ${exercise.defaultWeight} kg`}
+                              {exercise.defaultSets} {t('createPlan.sets')} × {exercise.defaultReps} {t('createPlan.reps')}
+                              {exercise.defaultWeight > 0 && ` • ${exercise.defaultWeight} ${t('createPlan.weightUnit')}`}
                             </IonNote>
                           </IonLabel>
                           <IonRadio 
                             slot="end" 
                             value={exercise.name}
-                            onClick={() => handleExerciseSelect(exercise)}
                           />
                         </IonItem>
                       ))}
@@ -609,29 +624,34 @@ const CreatePlan = () => {
             
             {/* 搜索模式 */}
             {exerciseSelectorMode === 'search' && (
-              <IonRadioGroup value={selectedExercise?.name || ''}>
+              <IonRadioGroup 
+                value={selectedExercise?.name || ''}
+                onIonChange={e => {
+                  const selected = exerciseResults.find(ex => ex.name === e.detail.value);
+                  if (selected) handleExerciseSelect(selected);
+                }}
+              >
                 {exerciseResults.length > 0 ? (
                   exerciseResults.map(exercise => (
-                    <IonItem key={exercise.name}>
+                    <IonItem key={exercise.name} button>
                       <IonLabel>
                         <h2>{exercise.name}</h2>
                         <IonNote>
                           {exercise.category?.name} • 
-                          {exercise.defaultSets} 组 × {exercise.defaultReps} 次
-                          {exercise.defaultWeight > 0 && ` • ${exercise.defaultWeight} kg`}
+                          {exercise.defaultSets} {t('createPlan.sets')} × {exercise.defaultReps} {t('createPlan.reps')}
+                          {exercise.defaultWeight > 0 && ` • ${exercise.defaultWeight} ${t('createPlan.weightUnit')}`}
                         </IonNote>
                       </IonLabel>
                       <IonRadio 
                         slot="end" 
                         value={exercise.name}
-                        onClick={() => handleExerciseSelect(exercise)}
                       />
                     </IonItem>
                   ))
                 ) : (
                   <IonItem>
                     <IonLabel className="ion-text-center">
-                      {exerciseSearchQuery ? '没有找到匹配的动作' : '请输入搜索关键词'}
+                      {exerciseSearchQuery ? t('plans.noMatch') : t('plans.searchPlaceholder')}
                     </IonLabel>
                   </IonItem>
                 )}
@@ -645,7 +665,7 @@ const CreatePlan = () => {
                 onClick={confirmExerciseSelection}
                 disabled={!selectedExercise}
               >
-                选择此动作
+                {t('common.confirm')}
               </IonButton>
               
               <IonButton 
@@ -654,7 +674,7 @@ const CreatePlan = () => {
                 onClick={handleCustomExercise}
                 style={{ marginTop: '8px' }}
               >
-                创建自定义动作
+                {t('createPlan.addExercise')}
               </IonButton>
             </div>
           </IonContent>
@@ -663,16 +683,16 @@ const CreatePlan = () => {
         <IonAlert
           isOpen={showDeleteAlert}
           onDidDismiss={() => setShowDeleteAlert(false)}
-          header="确认删除"
-          message="确定要删除这个动作吗？"
+          header={t('plans.confirmDelete')}
+          message={t('plans.confirmDeleteMessage').replace('{name}', '')}
           buttons={[
             {
-              text: '取消',
+              text: t('common.cancel'),
               role: 'cancel',
               handler: () => setExerciseToDelete(null)
             },
             {
-              text: '删除',
+              text: t('common.delete'),
               role: 'destructive',
               handler: deleteExercise
             }
@@ -688,7 +708,7 @@ const CreatePlan = () => {
           color="danger"
         />
       </IonContent>
-    </>
+    </IonPage>
   );
 };
 
