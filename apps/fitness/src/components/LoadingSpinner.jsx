@@ -1,8 +1,11 @@
 import React from 'react';
 import { IonSpinner } from '@ionic/react';
+import useLanguage from '../utils/useLanguage';
 
 // 加载状态组件
-const LoadingSpinner = ({ message = '加载中...' }) => {
+const LoadingSpinner = ({ message }) => {
+  const { t } = useLanguage();
+  const displayMessage = message || t('common.loading');
   return (
     <div className="loading-container" style={{
       display: 'flex',
@@ -37,7 +40,7 @@ const LoadingSpinner = ({ message = '加载中...' }) => {
         margin: 0,
         fontWeight: '500'
       }}>
-        {message}
+        {displayMessage}
       </p>
     </div>
   );

@@ -34,12 +34,14 @@ import { useHistory } from 'react-router-dom';
 import dayjs from 'dayjs';
 
 import useStore from '../utils/store';
+import useLanguage from '../utils/useLanguage';
 import LoadingSpinner from './LoadingSpinner';
 import EmptyState from './EmptyState';
 
 const HomePage = ({ onAddPlan }) => {
   const history = useHistory();
   const { plans, workoutRecords, loadPlans, loadWorkoutRecords, isLoading } = useStore();
+  const { t, language } = useLanguage();
   const [recentWorkouts, setRecentWorkouts] = useState([]);
   const [todayStats, setTodayStats] = useState({
     completed: 0,
@@ -103,20 +105,42 @@ const HomePage = ({ onAddPlan }) => {
     history.push(`/plan/${planId}`);
   };
   
-  // 获取部位标签类名
+  // 获取部位标签类名和翻译
   const getBodyPartClass = (part) => {
     const partMap = {
       '胸部': 'chest',
       '背部': 'back',
       '腿部': 'legs',
       '肩部': 'shoulders',
-      '手臂': 'arms'
+      '手臂': 'arms',
+      'Chest': 'chest',
+      'Back': 'back',
+      'Legs': 'legs',
+      'Shoulders': 'shoulders',
+      'Arms': 'arms'
     };
     return partMap[part] || '';
   };
   
+  const translateBodyPart = (part) => {
+    const partKeyMap = {
+      '胸部': 'chest',
+      '背部': 'back',
+      '腿部': 'legs',
+      '肩部': 'shoulders',
+      '手臂': 'arms',
+      'Chest': 'chest',
+      'Back': 'back',
+      'Legs': 'legs',
+      'Shoulders': 'shoulders',
+      'Arms': 'arms'
+    };
+    const key = partKeyMap[part];
+    return key ? t(`bodyParts.${key}`) : part;
+  };
+  
   if (isLoading) {
-    return <LoadingSpinner message="加载健身数据..." />;
+    return <LoadingSpinner message={t('loading.fitnessData')} />;
   }
   
   return (
@@ -125,7 +149,7 @@ const HomePage = ({ onAddPlan }) => {
       <IonCard className="workout-card">
         <IonCardHeader style={{ paddingBottom: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <IonCardTitle>今日概览</IonCardTitle>
+            <IonCardTitle>{t('home.todayOverview')}</IonCardTitle>
             <div style={{ 
               marginLeft: 'auto', 
               fontSize: '13px', 
@@ -134,7 +158,7 @@ const HomePage = ({ onAddPlan }) => {
               alignItems: 'center'
             }}>
               <IonIcon icon={calendarOutline} style={{ marginRight: '4px' }} />
-              {dayjs().format('YYYY年MM月DD日')}
+              {dayjs().format(language === 'zh' ? 'YYYY年MM月DD日' : 'MMM D, YYYY')}
             </div>
           </div>
         </IonCardHeader>
@@ -203,14 +227,14 @@ const HomePage = ({ onAddPlan }) => {
                 <div className="data-card">
                   <IonIcon icon={barbellOutline} color="secondary" style={{ fontSize: '24px' }} />
                   <div className="data-value">{todayStats.planned}</div>
-                  <div className="data-label">计划总数</div>
+                  <div className="data-label">{t('home.totalPlans')}</div>
                 </div>
               </IonCol>
               <IonCol size="6">
                 <div className="data-card">
                   <IonIcon icon={flameOutline} color="tertiary" style={{ fontSize: '24px' }} />
                   <div className="data-value">{todayStats.streak}</div>
-                  <div className="data-label">连续天数</div>
+                  <div className="data-label">{t('home.streakDays')}</div>
                 </div>
               </IonCol>
             </IonRow>
@@ -219,7 +243,7 @@ const HomePage = ({ onAddPlan }) => {
       </IonCard>
 
       {/* 健身计划列表 */}
-      <div className="section-title">健身计划</div>
+      <div className="section-title">{t('home.workoutPlans')}</div>
       {plans.length > 0 ? (
         plans.map((plan, index) => (
           <IonCard 
@@ -256,7 +280,7 @@ const HomePage = ({ onAddPlan }) => {
                       fontWeight: '500'
                     }}>
                       <IonIcon icon={barbellOutline} style={{ marginRight: '4px' }} />
-                      {plan.exercises?.length || 0} 动作
+                      {plan.exercises?.length || 0} {t('home.exercises')}
                     </IonChip>
                     {plan.estimatedDuration && (
                       <IonChip style={{ 
@@ -268,7 +292,7 @@ const HomePage = ({ onAddPlan }) => {
                         fontWeight: '500'
                       }}>
                         <IonIcon icon={timeOutline} style={{ marginRight: '4px' }} />
-                        {plan.estimatedDuration} 分钟
+                        {plan.estimatedDuration} {t('common.minutes')}
                       </IonChip>
                     )}
                   </div>
@@ -305,7 +329,7 @@ const HomePage = ({ onAddPlan }) => {
                 <div style={{ marginTop: '12px', display: 'flex', flexWrap: 'wrap' }}>
                   {plan.bodyParts.map((part, idx) => (
                     <div key={idx} className={`body-part-tag ${getBodyPartClass(part)}`}>
-                      {part}
+                      {translateBodyPart(part)}
                     </div>
                   ))}
                 </div>
@@ -318,9 +342,9 @@ const HomePage = ({ onAddPlan }) => {
       ) : (
         <EmptyState 
           icon={barbellOutline}
-          message="还没有添加健身计划"
-          subMessage="创建您的第一个健身计划，开始健身之旅"
-          actionText="创建第一个计划"
+          message={t('home.noPlans')}
+          subMessage={t('home.createFirst')}
+          actionText={t('home.createFirstPlan')}
           onAction={onAddPlan}
         />
       )}
@@ -328,7 +352,7 @@ const HomePage = ({ onAddPlan }) => {
       {/* 最近健身记录 */}
       {recentWorkouts.length > 0 && (
         <>
-          <div className="section-title">最近健身</div>
+          <div className="section-title">{t('home.recentWorkouts')}</div>
           {recentWorkouts.map((workout, index) => (
             <IonCard 
               className="workout-card" 
@@ -352,7 +376,7 @@ const HomePage = ({ onAddPlan }) => {
                     <div>
                       <h2 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: 'bold' }}>{workout.planName}</h2>
                       <p style={{ margin: '0', color: 'var(--app-medium-text)', fontSize: '13px' }}>
-                        {dayjs(workout.completedAt).format('YYYY年MM月DD日 HH:mm')}
+                        {dayjs(workout.completedAt).format(language === 'zh' ? 'YYYY年MM月DD日 HH:mm' : 'MMM D, YYYY HH:mm')}
                       </p>
                     </div>
                   </div>
@@ -361,7 +385,7 @@ const HomePage = ({ onAddPlan }) => {
                     borderRadius: '50px',
                     padding: '4px 10px'
                   }}>
-                    已完成
+                    {t('common.completed')}
                   </IonBadge>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginTop: '12px' }}>
@@ -374,7 +398,7 @@ const HomePage = ({ onAddPlan }) => {
                     fontWeight: '500'
                   }}>
                     <IonIcon icon={barbellOutline} style={{ marginRight: '4px' }} />
-                    {workout.exercises?.length || 0} 动作
+                    {workout.exercises?.length || 0} {t('home.exercises')}
                   </IonChip>
                   {workout.duration && (
                     <IonChip style={{ 
@@ -386,7 +410,7 @@ const HomePage = ({ onAddPlan }) => {
                       fontWeight: '500'
                     }}>
                       <IonIcon icon={timeOutline} style={{ marginRight: '4px' }} />
-                      {workout.duration} 分钟
+                      {workout.duration} {t('common.minutes')}
                     </IonChip>
                   )}
                 </div>

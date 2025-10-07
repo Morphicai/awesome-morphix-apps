@@ -48,6 +48,7 @@ import { reportError } from '@morphixai/lib';
 
 import './styles/global.css';
 import useStore from './utils/store';
+import useLanguage from './utils/useLanguage';
 import CreatePlan from './components/CreatePlan';
 import LoadingSpinner from './components/LoadingSpinner';
 import HomePage from './components/HomePage';
@@ -61,6 +62,7 @@ const PlanDetail = () => {
   const history = useHistory();
   const { id } = useParams();
   const { getPlanById, loadPlans, isLoading, scheduleWorkout, scheduledWorkouts, loadScheduledWorkouts } = useStore();
+  const { t } = useLanguage();
   const [plan, setPlan] = useState(null);
   
   useEffect(() => {
@@ -105,24 +107,46 @@ const PlanDetail = () => {
   if (isLoading || !plan) {
     return (
       <IonPage>
-        <PageHeader title="计划详情" />
+        <PageHeader title={t('headers.planDetail')} />
         <IonContent>
-          <LoadingSpinner message="加载计划详情..." />
+          <LoadingSpinner message={t('loading.planDetails')} />
         </IonContent>
       </IonPage>
     );
   }
   
-  // 根据部位获取标签类名
+  // 根据部位获取标签类名和翻译
   const getBodyPartClass = (part) => {
     const partMap = {
       '胸部': 'chest',
       '背部': 'back',
       '腿部': 'legs',
       '肩部': 'shoulders',
-      '手臂': 'arms'
+      '手臂': 'arms',
+      'Chest': 'chest',
+      'Back': 'back',
+      'Legs': 'legs',
+      'Shoulders': 'shoulders',
+      'Arms': 'arms'
     };
     return partMap[part] || '';
+  };
+  
+  const translateBodyPart = (part) => {
+    const partKeyMap = {
+      '胸部': 'chest',
+      '背部': 'back',
+      '腿部': 'legs',
+      '肩部': 'shoulders',
+      '手臂': 'arms',
+      'Chest': 'chest',
+      'Back': 'back',
+      'Legs': 'legs',
+      'Shoulders': 'shoulders',
+      'Arms': 'arms'
+    };
+    const key = partKeyMap[part];
+    return key ? t(`bodyParts.${key}`) : part;
   };
   
   return (
@@ -140,7 +164,7 @@ const PlanDetail = () => {
               <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap' }}>
                 {plan.bodyParts.map((part, idx) => (
                   <div key={idx} className={`body-part-tag ${getBodyPartClass(part)}`}>
-                    {part}
+                    {translateBodyPart(part)}
                   </div>
                 ))}
               </div>
@@ -148,7 +172,7 @@ const PlanDetail = () => {
           </IonCardContent>
         </IonCard>
         
-        <div className="section-title">动作列表</div>
+        <div className="section-title">{t('plans.exerciseList')}</div>
         <IonList>
           {plan.exercises && plan.exercises.map((exercise, index) => (
             <IonItem key={exercise.id || index} className="exercise-list-item">
@@ -170,9 +194,9 @@ const PlanDetail = () => {
               <IonLabel>
                 <h2 style={{ fontWeight: '600' }}>{exercise.name}</h2>
                 <div className="exercise-detail">
-                  <span>{exercise.sets} 组 × {exercise.reps} 次</span>
+                  <span>{exercise.sets} {t('createPlan.sets')} × {exercise.reps} {t('createPlan.reps')}</span>
                   {exercise.weight > 0 && (
-                    <span style={{ marginLeft: '8px' }}>• {exercise.weight} kg</span>
+                    <span style={{ marginLeft: '8px' }}>• {exercise.weight} {t('createPlan.weightUnit')}</span>
                   )}
                 </div>
               </IonLabel>
@@ -187,7 +211,7 @@ const PlanDetail = () => {
             className="action-button"
             onClick={startWorkout}
           >
-            开始健身
+            {t('plans.startWorkout')}
           </IonButton>
         </div>
       </IonContent>
@@ -198,6 +222,7 @@ const PlanDetail = () => {
 // 主标签页组件
 function MainTabs() {
   const history = useHistory();
+  const { t } = useLanguage();
   
   const handleAddPlan = () => {
     history.push('/plan/create');
@@ -207,28 +232,28 @@ function MainTabs() {
     <IonTabs>
       <IonTab tab="home">
         <IonPage>
-          <PageHeader title="健身助手" />
+          <PageHeader title={t('headers.fitnessAssistant')} />
           <HomePage onAddPlan={handleAddPlan} />
         </IonPage>
       </IonTab>
       
       <IonTab tab="calendar">
         <IonPage>
-          <PageHeader title="健身日历" />
+          <PageHeader title={t('headers.fitnessCalendar')} />
           <WorkoutCalendar />
         </IonPage>
       </IonTab>
       
       <IonTab tab="plans">
         <IonPage>
-          <PageHeader title="健身计划" />
+          <PageHeader title={t('headers.fitnessPlans')} />
           <PlanLibrary onAddPlan={handleAddPlan} />
         </IonPage>
       </IonTab>
       
       <IonTab tab="stats">
         <IonPage>
-          <PageHeader title="健身统计" />
+          <PageHeader title={t('headers.fitnessStats')} />
           <StatsPage />
         </IonPage>
       </IonTab>
@@ -236,22 +261,22 @@ function MainTabs() {
       <IonTabBar slot="bottom">
         <IonTabButton tab="home">
           <IonIcon icon={home} />
-          <IonLabel>首页</IonLabel>
+          <IonLabel>{t('tabs.home')}</IonLabel>
         </IonTabButton>
         
         <IonTabButton tab="calendar">
           <IonIcon icon={calendar} />
-          <IonLabel>日历</IonLabel>
+          <IonLabel>{t('tabs.calendar')}</IonLabel>
         </IonTabButton>
         
         <IonTabButton tab="plans">
           <IonIcon icon={barbell} />
-          <IonLabel>计划</IonLabel>
+          <IonLabel>{t('tabs.plans')}</IonLabel>
         </IonTabButton>
         
         <IonTabButton tab="stats">
           <IonIcon icon={statsChart} />
-          <IonLabel>统计</IonLabel>
+          <IonLabel>{t('tabs.stats')}</IonLabel>
         </IonTabButton>
       </IonTabBar>
     </IonTabs>
@@ -260,6 +285,13 @@ function MainTabs() {
 
 // 主应用组件
 export default function App() {
+  const { initLanguage } = useLanguage();
+  
+  // 初始化语言
+  useEffect(() => {
+    initLanguage();
+  }, [initLanguage]);
+  
   return (
     <IonApp>
       <IonReactHashRouter>

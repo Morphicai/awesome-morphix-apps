@@ -37,12 +37,14 @@ import { Header } from '@morphicai/components';
 import { useHistory } from 'react-router-dom';
 
 import useStore from '../utils/store';
+import useLanguage from '../utils/useLanguage';
 import { calculatePlanDuration } from '../utils/helpers';
 import LoadingSpinner from './LoadingSpinner';
 import EmptyState from './EmptyState';
 
 const PlanLibrary = ({ onAddPlan }) => {
   const history = useHistory();
+  const { t } = useLanguage();
   const { 
     plans, 
     loadPlans, 
@@ -125,27 +127,49 @@ const PlanLibrary = ({ onAddPlan }) => {
     }
   };
   
-  // 获取部位标签类名
+  // 获取部位标签类名和翻译
   const getBodyPartClass = (part) => {
     const partMap = {
       '胸部': 'chest',
       '背部': 'back',
       '腿部': 'legs',
       '肩部': 'shoulders',
-      '手臂': 'arms'
+      '手臂': 'arms',
+      'Chest': 'chest',
+      'Back': 'back',
+      'Legs': 'legs',
+      'Shoulders': 'shoulders',
+      'Arms': 'arms'
     };
     return partMap[part] || '';
   };
   
+  const translateBodyPart = (part) => {
+    const partKeyMap = {
+      '胸部': 'chest',
+      '背部': 'back',
+      '腿部': 'legs',
+      '肩部': 'shoulders',
+      '手臂': 'arms',
+      'Chest': 'chest',
+      'Back': 'back',
+      'Legs': 'legs',
+      'Shoulders': 'shoulders',
+      'Arms': 'arms'
+    };
+    const key = partKeyMap[part];
+    return key ? t(`bodyParts.${key}`) : part;
+  };
+  
   if (isLoading && plans.length === 0) {
-    return <LoadingSpinner message="加载健身计划..." />;
+    return <LoadingSpinner message={t('loading.plans')} />;
   }
   
   return (
     <IonContent>
       <div style={{ padding: '10px 12px 0' }}>
         <IonSearchbar
-          placeholder="搜索健身计划"
+          placeholder={t('plans.searchPlaceholder')}
           value={searchText}
           onIonInput={handleSearch}
           showCancelButton="never"
@@ -195,10 +219,10 @@ const PlanLibrary = ({ onAddPlan }) => {
                             display: 'flex',
                             alignItems: 'center'
                           }}>
-                            <span>{plan.exercises?.length || 0} 个动作</span>
+                            <span>{plan.exercises?.length || 0} {t('home.exercises')}</span>
                             {estimatedDuration > 0 && (
                               <span style={{ marginLeft: '8px', display: 'flex', alignItems: 'center' }}>
-                                • <IonIcon icon={timeOutline} style={{ margin: '0 2px 0 4px' }} /> {estimatedDuration}分钟
+                                • <IonIcon icon={timeOutline} style={{ margin: '0 2px 0 4px' }} /> {estimatedDuration} {t('common.minutes')}
                               </span>
                             )}
                           </span>
@@ -226,7 +250,7 @@ const PlanLibrary = ({ onAddPlan }) => {
                       <div style={{ marginTop: '10px', display: 'flex', flexWrap: 'wrap' }}>
                         {plan.bodyParts.map((part, idx) => (
                           <div key={idx} className={`body-part-tag ${getBodyPartClass(part)}`}>
-                            {part}
+                            {translateBodyPart(part)}
                           </div>
                         ))}
                       </div>
@@ -247,7 +271,7 @@ const PlanLibrary = ({ onAddPlan }) => {
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       <IonIcon icon={createOutline} style={{ fontSize: '20px', marginBottom: '4px' }} />
-                      <small>编辑</small>
+                      <small>{t('common.edit')}</small>
                     </div>
                   </IonItemOption>
                   <IonItemOption 
@@ -260,7 +284,7 @@ const PlanLibrary = ({ onAddPlan }) => {
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       <IonIcon icon={copyOutline} style={{ fontSize: '20px', marginBottom: '4px' }} />
-                      <small>模板</small>
+                      <small>{t('plans.template')}</small>
                     </div>
                   </IonItemOption>
                   <IonItemOption 
@@ -273,7 +297,7 @@ const PlanLibrary = ({ onAddPlan }) => {
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       <IonIcon icon={trashOutline} style={{ fontSize: '20px', marginBottom: '4px' }} />
-                      <small>删除</small>
+                      <small>{t('common.delete')}</small>
                     </div>
                   </IonItemOption>
                 </IonItemOptions>
@@ -284,8 +308,8 @@ const PlanLibrary = ({ onAddPlan }) => {
       ) : (
         <EmptyState 
           icon={barbellOutline}
-          message={searchText ? "没有找到匹配的计划" : "还没有健身计划"}
-          actionText="创建计划"
+          message={searchText ? t('plans.noMatch') : t('plans.noPlan')}
+          actionText={t('plans.createPlan')}
           onAction={navigateToCreatePlan}
           hideAction={!!searchText}
         />
@@ -300,16 +324,16 @@ const PlanLibrary = ({ onAddPlan }) => {
       <IonAlert
         isOpen={showDeleteAlert}
         onDidDismiss={() => setShowDeleteAlert(false)}
-        header="确认删除"
-        message={`确定要删除"${planToDelete?.name}"吗？此操作无法撤销。`}
+        header={t('plans.confirmDelete')}
+        message={t('plans.confirmDeleteMessage', { name: planToDelete?.name || '' }).replace('{name}', planToDelete?.name || '')}
         buttons={[
           {
-            text: '取消',
+            text: t('common.cancel'),
             role: 'cancel',
             handler: () => setPlanToDelete(null)
           },
           {
-            text: '删除',
+            text: t('common.delete'),
             role: 'destructive',
             handler: handleDeletePlan
           }
