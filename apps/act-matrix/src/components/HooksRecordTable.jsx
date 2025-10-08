@@ -321,6 +321,7 @@ export default function HooksRecordTable() {
                                                     <span className={styles.hookIcon}>🪝</span>
                                                     <span className={styles.hookText}>{item.hook}</span>
                                                 </div>
+                                                <div className={styles.arrowSeparator}>→</div>
                                                 <div className={styles.behaviorDisplay}>
                                                     <span className={styles.behaviorIcon}>💭</span>
                                                     <span className={styles.behaviorText}>{item.behavior}</span>

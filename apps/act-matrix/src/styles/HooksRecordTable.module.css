@@ -249,7 +249,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 14px 16px;
+    padding: 14px 12px 14px 8px;
     border-bottom: 1px dashed var(--line-color);
     transition: background-color 0.2s ease;
 }
@@ -262,22 +262,44 @@
     border-bottom: none;
 }
 
-/* 内容区域 - 左右布局 */
+/* 内容区域 - 三列布局：钩子 | 箭头 | 行为 */
 .previewContent {
     flex: 1;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 0;
     min-width: 0;
 }
 
-.hookDisplay,
+.hookDisplay {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    padding-right: 8px;
+}
+
+/* 箭头分隔符 - 独立列 */
+.arrowSeparator {
+    font-size: 18px;
+    color: var(--accent-brown);
+    opacity: 0.6;
+    flex-shrink: 0;
+    font-weight: bold;
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .behaviorDisplay {
     flex: 1;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     min-width: 0;
+    padding-left: 8px;
 }
 
 .hookIcon,
