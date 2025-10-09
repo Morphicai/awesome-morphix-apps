@@ -1,0 +1,17 @@
+/* 主应用样式 */
+
+.content {
+  --padding: 0;
+  background: #ffffff;
+  min-height: 100vh;
+  color: #1f2937;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.2rem;
+  color: var(--ion-color-medium);
+}

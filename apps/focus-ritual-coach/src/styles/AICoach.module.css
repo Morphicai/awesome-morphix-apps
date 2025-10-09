@@ -1,0 +1,137 @@
+.container {
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.headerIcon {
+  font-size: 24px;
+  color: var(--ion-color-primary);
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+}
+
+.loadingText {
+  color: var(--ion-color-medium);
+  font-size: 14px;
+}
+
+.adviceSection {
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.motivationCard,
+.actionCard,
+.tipCard {
+  padding: 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.actionCard {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.tipCard {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.motivationLabel,
+.actionLabel,
+.tipLabel {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  opacity: 0.9;
+}
+
+.motivationText,
+.actionText,
+.tipText {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.tasksSection {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  margin-bottom: 12px;
+}
+
+.taskList {
+  margin-bottom: 16px;
+}
+
+.taskItem {
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+  --border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.taskText {
+  flex: 1;
+  font-size: 14px;
+}
+
+.removeIcon {
+  cursor: pointer;
+  color: var(--ion-color-medium);
+  font-size: 20px;
+}
+
+.removeIcon:hover {
+  color: var(--ion-color-danger);
+}
+
+.addTaskContainer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.taskInput {
+  flex: 1;
+  --background: #f8f9fa;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  border-radius: 8px;
+}
+
+.continueButton {
+  --border-radius: 12px;
+  height: 48px;
+  font-weight: 600;
+}
+

@@ -1,0 +1,129 @@
+.container {
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.timerDisplay {
+  display: flex;
+  justify-content: center;
+  margin: 40px 0;
+}
+
+.timerCircle {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.progressRing {
+  transform: rotate(-90deg);
+}
+
+.progressRingBackground {
+  fill: none;
+  stroke: #e0e0e0;
+  stroke-width: 8;
+}
+
+.progressRingProgress {
+  fill: none;
+  stroke: var(--ion-color-primary);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.timerText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.timeValue {
+  display: block;
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--ion-color-dark);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.timeLabel {
+  display: block;
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  font-weight: 500;
+}
+
+.controls {
+  margin: 32px 0;
+}
+
+.startButton,
+.pauseButton,
+.resumeButton {
+  --border-radius: 12px;
+  height: 56px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.pausedControls {
+  display: flex;
+  gap: 12px;
+}
+
+.pausedControls > * {
+  flex: 1;
+}
+
+.completeContainer {
+  text-align: center;
+  padding: 20px;
+}
+
+.completeIcon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.completeTitle {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--ion-color-dark);
+}
+
+.completeText {
+  font-size: 16px;
+  color: var(--ion-color-medium);
+  margin-bottom: 24px;
+}
+
+.finishButton {
+  --border-radius: 12px;
+  height: 48px;
+  font-weight: 600;
+}
+
+.tips {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.tipText {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  font-style: italic;
+}
+

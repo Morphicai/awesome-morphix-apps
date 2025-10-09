@@ -1,0 +1,143 @@
+.welcomeContainer {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+}
+
+.header {
+    margin-bottom: 3rem;
+}
+
+.icon {
+    margin: 0 auto 1.5rem;
+}
+
+.iconMain {
+    font-size: 80px;
+    color: var(--ion-color-primary);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.titleGradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.titleSubtext {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--ion-color-medium);
+    margin-top: 0.5rem;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: var(--ion-color-medium);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 3rem;
+}
+
+.featureCard {
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.featureCard:hover {
+    transform: translateY(-5px);
+}
+
+.featureIcon {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    color: white;
+    font-size: 24px;
+}
+
+.featureCard h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--ion-color-dark);
+}
+
+.featureCard p {
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+}
+
+.ctaSection {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 2rem;
+}
+
+.startButton {
+    --border-radius: 12px;
+    height: 56px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.hint {
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+    margin: 0;
+}
+
+.footer {
+    margin-top: auto;
+    padding-top: 2rem;
+}
+
+.footerText {
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+    max-width: 500px;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 2rem;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+    }
+}
