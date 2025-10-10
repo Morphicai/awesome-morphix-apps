@@ -1,0 +1,257 @@
+/* 历史记录（密码库）页面样式 */
+.vaultContainer {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a3d, #3a3a6d) !important;
+  padding: 20px 15px;
+  position: relative;
+  overflow: hidden;
+  color: #ffffff !important;
+  --background: transparent !important;
+}
+
+/* 能量场背景 */
+.energyField {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.starsBg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 50px 160px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 130px 80px, #ffffff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.4;
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+.energyParticles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, 
+    rgba(173, 216, 230, 0.1) 0%,
+    transparent 70%);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+/* 内容区域 */
+.contentBox {
+  position: relative;
+  z-index: 1;
+  max-width: 650px;
+  margin: 0 auto;
+  background-color: rgba(30, 25, 60, 0.9);
+  border-radius: 16px;
+  padding: 25px 20px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffffff !important;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #c0aaff;
+  margin-bottom: 10px;
+}
+
+.count {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* 历史记录列表 */
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.historyCard {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.historyCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.recordDate {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.recordSeq {
+  font-size: 14px;
+  color: #a18fff;
+  font-weight: bold;
+}
+
+.cardMain {
+  margin-bottom: 15px;
+}
+
+.typeDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
+.typeIcon {
+  font-size: 30px;
+}
+
+.typeText {
+  font-size: 20px;
+  font-weight: bold;
+  color: #d8c3ff;
+}
+
+.recordSummary {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.cardActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.actionButton {
+  background: rgba(120, 90, 200, 0.15);
+  color: #d8c3ff;
+  border: 1px solid rgba(120, 90, 200, 0.3);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.actionButton:hover {
+  background: rgba(120, 90, 200, 0.25);
+}
+
+.actionButton:active {
+  background-color: rgba(120, 90, 200, 0.3);
+  transform: scale(0.98);
+}
+
+.buttonIcon {
+  font-size: 15px;
+}
+
+/* 空状态 */
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.emptyIcon {
+  font-size: 60px;
+  margin-bottom: 20px;
+}
+
+.emptyText {
+  font-size: 18px;
+  color: #c0aaff;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.emptySubtext {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 30px;
+  display: block;
+}
+
+.startButton {
+  background: linear-gradient(135deg, #a18fff, #d8c3ff);
+  color: #1f133e;
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.startButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(161, 143, 255, 0.3);
+}
+
+.startButton:active {
+  opacity: 0.9;
+  transform: scale(0.98);
+}
+
+/* 动画 */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.1; }
+  50% { transform: scale(1.1); opacity: 0.2; }
+}
+

@@ -1,0 +1,96 @@
+/* 主应用样式 */
+.app {
+  height: 100vh;
+  background: linear-gradient(180deg, #0f0c29, #302b63, #24243e) !important;
+}
+
+/* 全局 Ionic 组件样式覆盖 */
+:global(ion-content) {
+  --background: transparent !important;
+}
+
+:global(ion-page) {
+  --background: transparent !important;
+}
+
+.content {
+  --background: transparent !important;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+/* Tab 导航样式 */
+.tabBar {
+  --background: rgba(30, 25, 60, 0.95);
+  --border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.tabButton {
+  --color: rgba(255, 255, 255, 0.5);
+  --color-selected: #a18fff;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+}
+
+.tabButton ion-icon {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.tabButton ion-label {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* 全局滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(161, 143, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(161, 143, 255, 0.5);
+}
+
+/* 确保所有页面都有正确的背景 */
+ion-page {
+  background: transparent;
+}
+
+/* 动画过渡 */
+.page-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 300ms, transform 300ms;
+}

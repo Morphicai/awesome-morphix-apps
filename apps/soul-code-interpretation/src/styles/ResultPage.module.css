@@ -1,0 +1,380 @@
+/* 结果页面样式 */
+.resultContainer {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0e0c26, #1a1a4a) !important;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  color: #ffffff !important;
+  --background: transparent !important;
+}
+
+/* 能量场背景 */
+.energyField {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.starsBg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 50px 160px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 130px 80px, #ffffff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.3;
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+.energyParticles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, 
+    rgba(161, 143, 255, 0.1) 0%,
+    transparent 70%);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.energyWaves {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 30% 50%, rgba(161, 143, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 50%, rgba(161, 143, 255, 0.1) 0%, transparent 50%);
+  animation: wave 8s ease-in-out infinite;
+}
+
+/* 灵魂觉醒仪式 */
+.ritualContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(14, 12, 38, 0.95);
+  z-index: 100;
+  animation: fadeOut 0.5s ease forwards;
+  animation-delay: 2s;
+}
+
+.ritualContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.ritualIcon {
+  font-size: 60px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.ritualText {
+  font-size: 24px;
+  color: #ffffff;
+  text-align: center;
+  animation: glow 2s ease-in-out infinite;
+}
+
+.ritualProgress {
+  width: 80%;
+  max-width: 300px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #a18fff, #d8c3ff);
+  transition: width 0.3s ease;
+}
+
+/* 结果卡片 */
+.resultCard {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 600px;
+  padding: 30px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 24px;
+  margin: 20px;
+  box-shadow: 0 0 20px rgba(153, 132, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s ease;
+}
+
+.showResult {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 灵魂画像 */
+.soulPortrait {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px;
+}
+
+.portraitCircle {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin-bottom: 20px;
+}
+
+.portraitIcon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 60px;
+  z-index: 2;
+}
+
+.portraitRing {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 3px solid rgba(161, 143, 255, 0.3);
+  border-radius: 50%;
+  animation: rotate 10s linear infinite;
+}
+
+.portraitGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center,
+    rgba(161, 143, 255, 0.2) 0%,
+    transparent 70%);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.portraitTitle {
+  font-size: 28px;
+  color: #ffffff;
+  margin-bottom: 8px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.portraitSubtitle {
+  font-size: 16px;
+  color: #ffffff !important;
+  text-align: center;
+  font-style: italic;
+  margin-bottom: 15px;
+}
+
+.portraitQuote {
+  font-size: 15px;
+  color: #a18fff;
+  text-align: center;
+  line-height: 1.6;
+  padding: 0 20px;
+}
+
+/* 能量统计 */
+.energyStats {
+  display: flex;
+  justify-content: space-around;
+  margin: 30px 0;
+  padding: 25px;
+  background: rgba(161, 143, 255, 0.05);
+  border-radius: 16px;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.statValue {
+  font-size: 36px;
+  color: #ffffff;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.statLabel {
+  font-size: 14px;
+  color: #ffffff !important;
+}
+
+/* 核心特质 */
+.traitsSection {
+  margin: 30px 0;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  color: #ffffff;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.traitsText {
+  font-size: 16px;
+  color: #e6e6e6;
+  line-height: 1.8;
+  text-align: center;
+  padding: 0 20px;
+}
+
+/* AI 洞察 */
+.aiInsightSection {
+  margin: 30px 0;
+  padding: 25px;
+  background: rgba(161, 143, 255, 0.08);
+  border-radius: 16px;
+  border: 1px solid rgba(161, 143, 255, 0.2);
+}
+
+.aiInsightText {
+  font-size: 15px;
+  color: #e6e6e6;
+  line-height: 1.8;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+.loadingText {
+  text-align: center;
+  color: #ffffff !important;
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* 成长引导 */
+.guidanceSection {
+  margin: 30px 0;
+  padding: 25px;
+  background: rgba(161, 143, 255, 0.05);
+  border-radius: 16px;
+  border-left: 4px solid #a18fff;
+}
+
+.guidanceText {
+  font-size: 15px;
+  color: #e6e6e6;
+  line-height: 1.8;
+  text-align: left;
+}
+
+/* 行动按钮 */
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 30px 0;
+}
+
+.btnPrimary, .btnSecondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  border-radius: 28px;
+  font-size: 16px;
+  font-weight: bold;
+  gap: 10px;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btnPrimary {
+  background: linear-gradient(135deg, #a18fff, #d8c3ff);
+  color: #1f133e;
+}
+
+.btnSecondary {
+  background: rgba(161, 143, 255, 0.15);
+  color: #ffffff;
+  border: 1px solid rgba(161, 143, 255, 0.3);
+}
+
+.btnPrimary:hover, .btnSecondary:hover {
+  transform: translateY(-2px);
+}
+
+.btnPrimary:active, .btnSecondary:active {
+  transform: scale(0.98);
+}
+
+.btnIcon {
+  font-size: 18px;
+}
+
+.btnText {
+  font-weight: 600;
+}
+
+/* 动画 */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.1; }
+  50% { transform: scale(1.1); opacity: 0.2; }
+}
+
+@keyframes wave {
+  0%, 100% { transform: scale(1); opacity: 0.1; }
+  50% { transform: scale(1.2); opacity: 0.2; }
+}
+
+@keyframes glow {
+  0%, 100% { text-shadow: 0 0 10px rgba(161, 143, 255, 0.5); }
+  50% { text-shadow: 0 0 20px rgba(161, 143, 255, 0.8); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; visibility: hidden; }
+}
+

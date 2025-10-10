@@ -1,0 +1,77 @@
+/* 全局样式覆盖 - 强制应用深紫色主题 */
+
+/* 强制覆盖 Ionic 默认背景 */
+ion-app,
+ion-page,
+ion-content,
+body,
+html,
+#root {
+  background: linear-gradient(180deg, #0f0c29, #302b63, #24243e) !important;
+  --background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* 强制覆盖所有文字颜色 */
+ion-app *,
+ion-page *,
+ion-content *,
+body *,
+html *,
+#root * {
+  color: #ffffff !important;
+}
+
+/* 特别针对探索页面的背景 */
+.explore-container,
+.test-container,
+.result-container,
+.vault-container {
+  background: linear-gradient(180deg, #0f0c29, #302b63, #24243e) !important;
+}
+
+/* 特定元素颜色覆盖 */
+h1, h2, h3, h4, h5, h6,
+.app-title,
+.app-subtitle,
+.card-title,
+.card-content,
+.zodiac-label,
+.zodiac-selector,
+button,
+ion-button {
+  color: #ffffff !important;
+}
+
+/* 确保卡片背景透明 */
+.daily-insight-card,
+.zodiac-card {
+  background: rgba(161, 143, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 按钮样式 */
+.start-button {
+  background: linear-gradient(135deg, #a18fff, #8b5cf6) !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+/* 下拉选择器 */
+.zodiac-selector {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+/* 强制移除任何白色背景 */
+* {
+  background-color: transparent !important;
+}
+
+/* 除了特定元素外的所有元素 */
+ion-app:not(.explore-container):not(.daily-insight-card):not(.zodiac-card),
+ion-page:not(.explore-container):not(.daily-insight-card):not(.zodiac-card),
+ion-content:not(.explore-container):not(.daily-insight-card):not(.zodiac-card) {
+  background: linear-gradient(180deg, #0f0c29, #302b63, #24243e) !important;
+}

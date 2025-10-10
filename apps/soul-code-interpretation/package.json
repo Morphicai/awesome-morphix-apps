@@ -1,0 +1,44 @@
+{
+  "name": "soul-code-interpretation",
+  "private": true,
+  "version": "1.0.0",
+  "description": "九型人格测试与灵魂密码解读应用 - 帮助用户探索内在特质和成长指引",
+  "type": "module",
+  "main": "app.jsx",
+  "scripts": {
+    "dev": "morphixai dev",
+    "build": "morphixai build",
+    "restore": "morphixai restore",
+    "prompts:check": "morphixai prompts check",
+    "prompts:update": "morphixai prompts update"
+  },
+  "keywords": [
+    "morphixai",
+    "react",
+    "ionic",
+    "enneagram",
+    "personality-test",
+    "soul-analysis",
+    "zodiac",
+    "psychology",
+    "self-discovery",
+    "ai-analysis"
+  ],
+  "author": "MorphixAI Community",
+  "license": "MIT",
+  "devDependencies": {
+    "@morphixai/code": "^1.1.10"
+  },
+  "morphixai": {
+    "version": "1.0.0",
+    "id": "abe7a818-76d2-4c2b-a2aa-d1a25056c10e",
+    "entry": "app.jsx",
+    "framework": "react-ionic",
+    "features": [
+      "css-modules",
+      "ionicons",
+      "morphixai-components"
+    ],
+    "minAppRunnerVersion": "1.0.0"
+  }
+}
