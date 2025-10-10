@@ -39,3 +39,4 @@ Thumbs.db
 # MorphixAI specific
 
 src/_dev/app-files.js
+.miniapp

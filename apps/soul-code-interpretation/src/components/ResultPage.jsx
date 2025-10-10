@@ -5,34 +5,58 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { getSoulTypeAnalysis } from '../utils/soulAnalysis';
 import { AIService } from '../services/AIService';
 import { DataService } from '../services/DataService';
+import { useTestStore } from '../stores/testStore';
 import styles from '../styles/ResultPage.module.css';
 
 export default function ResultPage() {
   const history = useHistory();
   const location = useLocation();
+  const getAndClearResult = useTestStore(state => state.getAndClearResult);
   const [showRitual, setShowRitual] = useState(true);
   const [ritualProgress, setRitualProgress] = useState(0);
   const [typeData, setTypeData] = useState(null);
+  const [testResult, setTestResult] = useState(null);
   const [aiInsight, setAiInsight] = useState('');
   const [loadingAI, setLoadingAI] = useState(true);
   const [energyValue, setEnergyValue] = useState(0);
   const [resonanceValue, setResonanceValue] = useState(0);
 
-  const testResult = location.state?.testResult;
-
   useEffect(() => {
-    console.log('结果页面接收到数据:', testResult);
+    // 使用 Zustand Store 读取测试结果（符合 DEVELOPMENT_GUIDE.md 规范）
+    // 只在组件挂载时读取一次，避免重复读取导致数据被清除
+    const getTestResultOnce = () => {
+      // 优先使用 Zustand Store
+      const storeResult = getAndClearResult();
+      if (storeResult) {
+        console.log('从 Zustand Store 读取测试结果');
+        return storeResult;
+      }
+      
+      // 回退到 location.state（兼容性）
+      if (location.state?.testResult) {
+        console.log('从 location.state 读取测试结果（回退模式）');
+        return location.state.testResult;
+      }
+      
+      return null;
+    };
+
+    const result = getTestResultOnce();
+    console.log('结果页面接收到数据:', result);
     console.log('location.state:', location.state);
     
-    if (!testResult) {
+    if (!result) {
       console.log('没有测试结果，返回首页');
       // 没有测试结果，返回首页
       history.replace('/');
       return;
     }
 
-    // 获取类型数据
-    const data = getSoulTypeAnalysis(testResult);
+    // 存储到组件 state 中
+    setTestResult(result);
+
+    // 获取类型数据（使用刚获取的 result，而不是 state）
+    const data = getSoulTypeAnalysis(result);
     console.log('获取到的类型数据:', data);
     setTypeData(data);
 
@@ -54,27 +78,27 @@ export default function ResultPage() {
     }, 30);
 
     // 生成 AI 洞察
-    generateAIInsight();
+    const generateAI = async () => {
+      try {
+        setLoadingAI(true);
+        const zodiac = DataService.getPreference('selectedZodiac', null);
+        const userInfo = zodiac ? { zodiac } : {};
+        
+        const insight = await AIService.generateDeepAnalysis(result, userInfo);
+        setAiInsight(insight);
+      } catch (error) {
+        console.error('生成 AI 洞察失败:', error);
+        // 使用默认分析
+        setAiInsight(AIService.getDefaultAnalysis(result));
+      } finally {
+        setLoadingAI(false);
+      }
+    };
+    generateAI();
 
     return () => clearInterval(interval);
-  }, [testResult, history]);
-
-  const generateAIInsight = async () => {
-    try {
-      setLoadingAI(true);
-      const zodiac = DataService.getPreference('selectedZodiac', null);
-      const userInfo = zodiac ? { zodiac } : {};
-      
-      const insight = await AIService.generateDeepAnalysis(testResult, userInfo);
-      setAiInsight(insight);
-    } catch (error) {
-      console.error('生成 AI 洞察失败:', error);
-      // 使用默认分析
-      setAiInsight(AIService.getDefaultAnalysis(testResult));
-    } finally {
-      setLoadingAI(false);
-    }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // 只在组件挂载时执行一次
 
   const handleBackHome = () => {
     history.push('/');
@@ -198,7 +222,7 @@ export default function ResultPage() {
           </div>
 
           {/* 得分详情 */}
-          {testResult.scorePercentages && (
+          {testResult && testResult.scorePercentages && (
             <div style={{ 
               textAlign: 'center', 
               color: 'rgba(255,255,255,0.5)', 

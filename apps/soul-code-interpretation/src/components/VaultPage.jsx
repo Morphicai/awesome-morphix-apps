@@ -4,10 +4,12 @@ import { PageHeader } from '@morphixai/components';
 import { useHistory } from 'react-router-dom';
 import { DataService } from '../services/DataService';
 import { getTypeIcon, getTypeName } from '../utils/soulAnalysis';
+import { useTestStore } from '../stores/testStore';
 import styles from '../styles/VaultPage.module.css';
 
 export default function VaultPage() {
   const history = useHistory();
+  const setTestResult = useTestStore(state => state.setTestResult);
   const [historyList, setHistoryList] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +55,9 @@ export default function VaultPage() {
 
   const viewResult = (record) => {
     if (record && record.resultData) {
-      history.push('/result', { testResult: record.resultData });
+      // 使用 Zustand Store 传递数据（符合 DEVELOPMENT_GUIDE.md 规范）
+      setTestResult(record.resultData);
+      history.push('/result');
     }
   };
 

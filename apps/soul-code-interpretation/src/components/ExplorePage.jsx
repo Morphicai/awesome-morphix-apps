@@ -80,7 +80,7 @@ export default function ExplorePage() {
           {/* 星座选择 */}
           <div className={styles.zodiacSection}>
             <div className={styles.sectionTitle}>选择你的星座</div>
-            <div style={{ position: 'relative', display: 'inline-block' }}>
+            <div className={styles.pickerContainer}>
               <div 
                 className={styles.pickerSelector}
                 onClick={() => setShowZodiacPicker(!showZodiacPicker)}
@@ -90,17 +90,24 @@ export default function ExplorePage() {
               </div>
               
               {showZodiacPicker && (
-                <div className={styles.pickerDropdown}>
-                  {zodiacs.map((zodiac) => (
-                    <div
-                      key={zodiac}
-                      className={styles.zodiacOption}
-                      onClick={() => handleZodiacChange(zodiac)}
-                    >
-                      {zodiac}
-                    </div>
-                  ))}
-                </div>
+                <>
+                  {/* 遮罩层：点击关闭下拉菜单 */}
+                  <div 
+                    className={styles.pickerOverlay}
+                    onClick={() => setShowZodiacPicker(false)}
+                  />
+                  <div className={styles.pickerDropdown}>
+                    {zodiacs.map((zodiac) => (
+                      <div
+                        key={zodiac}
+                        className={styles.zodiacOption}
+                        onClick={() => handleZodiacChange(zodiac)}
+                      >
+                        {zodiac}
+                      </div>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           </div>
