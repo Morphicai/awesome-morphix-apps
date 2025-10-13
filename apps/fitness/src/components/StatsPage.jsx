@@ -26,6 +26,7 @@ import {
   analyticsOutline
 } from 'ionicons/icons';
 import dayjs from 'dayjs';
+import Chart from 'chart.js/auto';
 
 import useStore from '../utils/store';
 import { calculateWorkoutStats, groupRecordsByDate, formatDate } from '../utils/helpers';
@@ -128,13 +129,10 @@ const StatsPage = () => {
     ctx.stroke();
   };
   
-  const prepareChartData = async (records) => {
+  const prepareChartData = (records) => {
     if (!records || records.length === 0) return;
     
     try {
-      // 动态导入图表库
-      const Chart = await remoteImport('chart.js/auto');
-      
       // 清除现有图表
       if (weightChart) {
         weightChart.destroy();
