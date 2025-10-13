@@ -22,6 +22,7 @@ export const useTimerStore = create((set, get) => ({
   completedPomodoros: 0,
   totalFocusTime: 0,
   currentReminderId: null,
+  onReminderError: null, // 提醒错误回调函数
   
   initializeTimer: async () => {
     try {
@@ -157,28 +158,45 @@ export const useTimerStore = create((set, get) => ({
     try {
       const { remainingTime, mode } = get();
       
-      const reminderResult = await createReminderSafely({
+      // 立即启动计时器，不等待提醒创建
+      set({ 
+        isRunning: true
+      });
+      
+      await get().saveTimerState();
+      
+      // 异步创建提醒，不阻塞计时器运行
+      createReminderSafely({
         message: mode === 'focus' ? '집중 시간이 끝났습니다!' : '휴식 시간이 끝났습니다!',
         start_time: Date.now() + (remainingTime * 1000),
         title: '자연 정원 뽀모도로',
         sub_title: mode === 'focus' ? '휴식을 취하세요' : '다시 집중할 시간입니다'
+      }).then(reminderResult => {
+        if (reminderResult.success) {
+          console.log('提醒创建成功:', reminderResult.reminder.id);
+          // 更新 reminderId
+          set({ currentReminderId: reminderResult.reminder.id });
+          get().saveTimerState();
+        } else {
+          console.warn('提醒创建失败，但计时器继续运行:', reminderResult.error);
+          // 通知 UI 层显示错误提示
+          if (get().onReminderError) {
+            get().onReminderError(reminderResult.error);
+          }
+        }
+      }).catch(error => {
+        console.error('提醒创建异常:', error);
+        if (get().onReminderError) {
+          get().onReminderError(error.message || '提醒创建失败');
+        }
       });
-      
-      if (reminderResult.success) {
-        set({ 
-          isRunning: true, 
-          currentReminderId: reminderResult.reminder.id 
-        });
-        
-        await get().saveTimerState();
-      } else {
-        throw new Error(reminderResult.error || '리마인더 생성에 실패했습니다.');
-      }
       
     } catch (error) {
       console.error('Failed to start timer:', error);
       await reportError(error, 'TimerStartError');
-      await handleReminderError(error, 'startTimer');
+      // 如果启动计时器本身失败，恢复状态
+      set({ isRunning: false });
+      throw error; // 向上抛出，让 UI 层处理
     }
   },
   
@@ -472,5 +490,10 @@ export const useTimerStore = create((set, get) => ({
     
     console.log('=== 디버깅 완료 ===');
     return cleanupResult;
+  },
+  
+  // 设置提醒错误回调
+  setReminderErrorCallback: (callback) => {
+    set({ onReminderError: callback });
   }
 }));

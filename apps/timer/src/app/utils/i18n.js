@@ -344,6 +344,8 @@ const translations = {
     // TimerTab 新增翻译
     focusingBackground: "집중 중 (백그라운드)",
     restingBackground: "휴식 중 (백그라운드)",
+    reminderCreateFailed: "리마인더 생성에 실패했지만 타이머는 정상 작동합니다",
+    timerStartFailed: "타이머 시작에 실패했습니다. 다시 시도해주세요",
     
     // 其他组件
     loadingTasksList: "할일 목록을 불러오는 중...",
@@ -761,6 +763,8 @@ const translations = {
     // TimerTab 新增翻译
     focusingBackground: "专注中 (后台)",
     restingBackground: "休息中 (后台)",
+    reminderCreateFailed: "提醒创建失败，但计时器正常运行",
+    timerStartFailed: "计时器启动失败，请重试",
     
     // 其他组件
     loadingTasksList: "正在加载任务列表...",

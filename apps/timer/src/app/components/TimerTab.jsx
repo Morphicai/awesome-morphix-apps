@@ -6,6 +6,7 @@ import { useTaskStore } from '../stores/taskStore';
 import FlowerAnimation from './FlowerAnimation';
 import GardenFairy from './GardenFairy';
 import { t, addLanguageListener } from '../utils/i18n';
+import { showErrorToast } from './ErrorToast';
 import styles from '../styles/TimerTab.module.css';
 
 export default function TimerTab() {
@@ -20,7 +21,8 @@ export default function TimerTab() {
     resetTimer,
     tick,
     restoreTimer,
-    skipBreak
+    skipBreak,
+    setReminderErrorCallback
   } = useTimerStore();
 
   const {
@@ -43,6 +45,13 @@ export default function TimerTab() {
     });
     return unsubscribe;
   }, []);
+
+  // 设置提醒错误回调
+  useEffect(() => {
+    setReminderErrorCallback((errorMessage) => {
+      showErrorToast(t('reminderCreateFailed') || '提醒创建失败，但计时器正常运行');
+    });
+  }, [setReminderErrorCallback]);
 
   // App visibility and lifecycle management
   useEffect(() => {
@@ -136,10 +145,15 @@ export default function TimerTab() {
   }, [remainingTime, isBreak, selectedTaskId]);
 
   const handleStartPause = async () => {
-    if (isRunning) {
-      await pauseTimer();
-    } else {
-      await startTimer();
+    try {
+      if (isRunning) {
+        await pauseTimer();
+      } else {
+        await startTimer();
+      }
+    } catch (error) {
+      console.error('Timer operation failed:', error);
+      showErrorToast(t('timerStartFailed') || '计时器启动失败，请重试');
     }
   };
 
