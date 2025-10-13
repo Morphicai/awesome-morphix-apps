@@ -357,17 +357,11 @@ const translations = {
     changeLanguageDescription: "언어를 변경하여 앱을 더 편리하게 사용하세요",
     
     // StatsTab 缺失翻译键
-    plantedSeeds: "심은 씨앗",
-    focusedTime: "집중한 시간",
-    completedTodos: "완료한 할일", 
     noSeedsPlantedTitle: "아직 심어진 씨앗이 없어요",
     startTimerPlantFirstSeed: "타이머를 시작해서 첫 번째 씨앗을 심어보세요!",
     beautifulGardenGrows: "집중할 때마다 아름다운 정원이 자라날 거예요.",
     
     // GardenFairy 翻译键
-    gardenFairyChat: "정원 요정과 대화하기",
-    gardenFairyChatTitle: "정원 요정과의 대화",
-    quickQuestions: "빠른 질문",
     fairyMessagePlaceholder: "정원 요정에게 메시지를 보내세요...",
     focusHelpRequest: "집중 도움 요청",
     taskOrganizationHelp: "할일 정리 도움",
@@ -397,10 +391,7 @@ const translations = {
     fairySystemPrompt: "당신은 친근한 정원 요정입니다. 사용자의 집중과 할일 관리를 도와주는 역할을 합니다.",
     currentSituation: "현재 상황:",
     timerStatus: "타이머 상태",
-    completedPomodoros: "완료한 뽀모도로",
-    currentTask: "현재 작업",
     selectedTaskNone: "선택된 작업 없음",
-    remainingTime: "남은 시간",
     fairyMood: "요정 기분",
     personalityAndTone: "성격과 말투:",
     naturalWarmTone: "항상 자연스럽고 따뜻한 말투로 대화",
@@ -416,9 +407,7 @@ const translations = {
     counseling: "고민 상담: 자연의 지혜로 조언 제공",
     focusing: "집중 중",
     resting: "휴식 중",
-    stopped: "정지됨",
-    minutes: "분",
-    count: "개"
+    stopped: "정지됨"
   },
   
   zh: {
@@ -776,17 +765,11 @@ const translations = {
     changeLanguageDescription: "更改语言以更方便地使用应用",
     
     // StatsTab 缺失翻译键
-    plantedSeeds: "播种的种子",
-    focusedTime: "专注时间",
-    completedTodos: "完成的任务", 
     noSeedsPlantedTitle: "还没有播种呢",
     startTimerPlantFirstSeed: "启动计时器来种下第一颗种子吧!",
     beautifulGardenGrows: "每次专注都会让美丽的花园成长。",
     
     // GardenFairy 翻译键
-    gardenFairyChat: "与花园精灵对话",
-    gardenFairyChatTitle: "与花园精灵的对话",
-    quickQuestions: "快速提问",
     fairyMessagePlaceholder: "给花园精灵发送消息...",
     focusHelpRequest: "专注帮助请求",
     taskOrganizationHelp: "任务整理帮助",
@@ -816,10 +799,7 @@ const translations = {
     fairySystemPrompt: "你是一个友善的花园精灵。你的角色是帮助用户专注和管理任务。",
     currentSituation: "当前状况:",
     timerStatus: "计时器状态",
-    completedPomodoros: "完成的番茄钟",
-    currentTask: "当前任务",
     selectedTaskNone: "未选择任务",
-    remainingTime: "剩余时间",
     fairyMood: "精灵心情",
     personalityAndTone: "性格和语调:",
     naturalWarmTone: "始终以自然温暖的语调对话",
