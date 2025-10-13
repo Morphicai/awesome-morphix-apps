@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { IonButton, IonIcon, IonToggle, IonRange, IonItem, IonLabel, IonPage, IonContent, IonModal } from '@ionic/react';
-import { notifications, volume, download, trash, informationCircle, close } from 'ionicons/icons';
+import { notifications, download, trash, informationCircle, close } from 'ionicons/icons';
 import { PageHeader } from '@morphixai/components';
 import { useTimerStore } from '../stores/timerStore';
 import { useTaskStore } from '../stores/taskStore';
