@@ -1,13 +1,14 @@
 {
-  "name": "timer",
+  "name": "apps/todo",
   "private": true,
   "version": "1.0.0",
-  "description": "A Pomodoro timer MorphixAI application with gamification elements",
+  "description": "A MorphixAI application",
   "type": "module",
   "main": "app.jsx",
   "scripts": {
     "dev": "morphixai dev",
     "build": "morphixai build",
+    "restore": "morphixai restore",
     "prompts:check": "morphixai prompts check",
     "prompts:update": "morphixai prompts update"
   },
@@ -15,19 +16,17 @@
     "morphixai",
     "react",
     "ionic",
-    "mobile",
-    "timer",
-    "pomodoro"
+    "mobile"
   ],
   "author": "MorphixAI Developer",
   "license": "MIT",
   "devDependencies": {
-    "@morphixai/code": "^1.1.8"
+    "@morphixai/code": "^1.1.10"
   },
   "morphixai": {
     "version": "1.0.0",
-    "id": "0b514682-e1ef-4ba5-bc3e-0235de3b7f2d",
-    "entry": "app/app.jsx",
+    "id": "a46b48c9-0587-4296-a537-67cc058521e3",
+    "entry": "app.jsx",
     "framework": "react-ionic",
     "features": [
       "css-modules",
