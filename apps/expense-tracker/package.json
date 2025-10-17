@@ -6,7 +6,7 @@
   "type": "module",
   "main": "app.jsx",
   "scripts": {
-    "dev": "morphixai dev",
+    "dev": "morphixai dev ",
     "build": "morphixai build",
     "restore": "morphixai restore",
     "prompts:check": "morphixai prompts check",
@@ -25,7 +25,7 @@
   },
   "morphixai": {
     "version": "1.0.0",
-    "id": "d3536d24-4d3d-4220-b805-7f0fc6679e87",
+    "id": "fd2de519-fb5a-44f5-b751-1b86410dc647",
     "entry": "app.jsx",
     "framework": "react-ionic",
     "features": [
