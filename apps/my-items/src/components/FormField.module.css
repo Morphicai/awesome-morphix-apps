@@ -1,0 +1,38 @@
+.formField {
+  --background: var(--ion-item-background);
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
+  --min-height: 50px;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+}
+
+.label {
+  font-weight: 500;
+  color: var(--ion-text-color);
+}
+
+.valueContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.value {
+  color: var(--ion-color-medium);
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .formField {
+    --background: var(--ion-color-dark);
+    border-bottom: 1px solid var(--ion-color-dark-tint);
+  }
+  
+  .label {
+    color: var(--ion-color-light);
+  }
+  
+  .value {
+    color: var(--ion-color-light-shade);
+  }
+}

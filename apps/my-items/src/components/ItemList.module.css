@@ -1,0 +1,92 @@
+.itemList {
+  background: transparent;
+  padding: 0 16px;
+}
+
+.item {
+  --background: #ffffff;
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+}
+
+.itemContent {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+}
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.itemName {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.itemMeta {
+  font-size: 13px;
+  color: #888;
+}
+
+.itemValue {
+  text-align: right;
+}
+
+.itemDays {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+.demoItem {
+  opacity: 0.8;
+}
+
+.demoTip {
+  padding: 16px;
+  text-align: center;
+}
+
+.demoTip ion-text {
+  font-size: 14px;
+  color: #999;
+}
+
+.optimisticItem {
+  opacity: 0.7;
+  background: #f8f9fa !important;
+}
+
+.optimisticItem .itemContent {
+  position: relative;
+}
+
+.optimisticItem .itemContent::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -8px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--ion-color-primary);
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translateY(-50%) rotate(0deg); }
+  100% { transform: translateY(-50%) rotate(360deg); }
+}

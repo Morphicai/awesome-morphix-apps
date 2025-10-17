@@ -1,0 +1,29 @@
+.buttonContainer {
+  padding: 16px;
+  position: sticky;
+  bottom: 0;
+  background: var(--ion-background-color);
+  border-top: 1px solid var(--ion-color-light-shade);
+}
+
+.button {
+  height: 48px;
+  --border-radius: 24px;
+  font-weight: bold;
+  text-transform: none;
+  --background: var(--ion-color-primary);
+  --color: white;
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .buttonContainer {
+    background: var(--ion-color-dark);
+    border-top: 1px solid var(--ion-color-dark-tint);
+  }
+  
+  .button {
+    --background: var(--ion-color-primary);
+    --color: var(--ion-color-primary-contrast);
+  }
+}

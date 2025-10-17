@@ -1,0 +1,810 @@
+/* 全局样式 - Ionic原生风格 */
+
+/* 基础样式 */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+/* 安全区域支持 */
+:root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+}
+
+/* PageHeader 容器安全区域 */
+.page-header-container {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* FAB 按钮安全区域 */
+.add-task-fab {
+  margin-bottom: calc(16px + var(--safe-area-bottom));
+}
+
+/* 底部按钮安全区域 */
+.edit-footer-safe,
+.modal-footer-safe,
+.category-footer-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.edit-footer-safe .footer-buttons-container,
+.modal-footer-safe .footer-buttons-container,
+.category-footer-safe .footer-buttons-container {
+  padding: 8px 16px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
+}
+
+
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 70vh;
+  padding: 0 16px;
+}
+
+.empty-state ion-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.empty-state p {
+  margin: 0 0 24px;
+  font-size: 16px;
+  opacity: 0.7;
+}
+
+/* 初始加载状态 */
+.initial-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  opacity: 0.7;
+}
+
+.initial-loading ion-spinner {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+}
+
+.initial-loading p {
+  font-size: 16px;
+  margin: 0;
+  color: var(--ion-color-medium);
+}
+
+/* 任务项自定义样式 */
+.todo-item {
+  --padding-start: 16px;
+  --padding-end: 8px;
+  --inner-padding-end: 0;
+  transition: background-color 0.2s ease;
+  touch-action: pan-y;
+  cursor: pointer;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  --background: rgba(var(--ion-color-light-rgb), 0.5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --min-height: 72px;
+}
+
+.todo-item.completed .todo-content {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.todo-content {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 10px 0;
+}
+
+.todo-title-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.todo-title {
+  font-weight: 500;
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.priority-star {
+  margin-left: 6px;
+  font-size: 18px;
+}
+
+.todo-details-row {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+}
+
+.category-badge {
+  font-size: 11px;
+  font-weight: normal;
+  padding: 3px 8px;
+  border-radius: 10px;
+  margin-right: 8px;
+  text-transform: none;
+}
+
+.todo-reminder {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  color: var(--ion-color-medium);
+}
+
+.todo-reminder ion-icon {
+  margin-right: 4px;
+  font-size: 14px;
+}
+
+.todo-actions {
+  display: flex;
+}
+
+.todo-actions ion-button {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  margin: 0;
+  height: 36px;
+}
+
+/* 已完成标题 */
+.completed-header {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ion-color-medium);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--ion-color-light-shade);
+  margin-top: 16px;
+}
+
+.completed-header ion-icon {
+  margin-right: 8px;
+  transition: transform 0.3s ease;
+}
+
+.completed-header ion-icon.expanded {
+  transform: rotate(90deg);
+}
+
+/* 模态框表单 */
+.form-field {
+  margin-bottom: 16px;
+}
+
+.form-field ion-label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 优先级切换按钮组 */
+.priority-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+/* 日期选择器 */
+.custom-datetime {
+  border: 1px solid var(--ion-border-color);
+  border-radius: 4px;
+  padding: 8px;
+  width: 100%;
+  font-size: 16px;
+  background: var(--ion-background-color);
+  color: var(--ion-text-color);
+}
+
+/* 任务项动画 */
+.task-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.task-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.task-exit {
+  opacity: 1;
+}
+
+.task-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+/* 修复Ionic组件样式 */
+ion-item {
+  --border-color: var(--ion-border-color, rgba(0, 0, 0, 0.1));
+}
+
+ion-segment-button {
+  --color-checked: var(--ion-color-primary);
+  font-size: 15px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+}
+
+ion-checkbox {
+  --size: 20px;
+  margin-right: 16px;
+}
+
+ion-fab-button {
+  --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+  .todo-item {
+    --background: rgba(var(--ion-color-dark-tint-rgb), 0.7);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+  
+  .completed-header {
+    background: var(--ion-color-dark-tint);
+  }
+
+  .app-sidebar {
+    background: var(--ion-color-dark);
+  }
+
+  .category-item.active {
+    background: var(--ion-color-dark-tint);
+  }
+  
+  .category-filter {
+    background: var(--ion-color-dark);
+  }
+  
+  .category-tab {
+    background: rgba(var(--ion-color-dark-rgb), 0.6);
+  }
+  
+  .category-tab:hover {
+    background: rgba(var(--ion-color-dark-rgb), 0.8);
+  }
+  
+  .category-tab.active {
+    background: var(--ion-color-primary);
+  }
+  
+  .categories-dropdown {
+    background: var(--ion-color-dark);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+  
+  .dropdown-item:hover {
+    background: rgba(var(--ion-color-dark-tint-rgb), 0.6);
+  }
+  
+  .dropdown-divider {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .reorder-hint {
+    background: rgba(var(--ion-color-dark-tint-rgb), 0.7);
+  }
+  
+  .modal-header {
+    background: var(--ion-color-dark);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .modal-header-custom {
+    background: var(--ion-color-dark);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* 拖动排序相关样式 */
+.reorder-handle {
+  cursor: grab;
+  min-width: 44px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(var(--ion-color-medium-rgb), 0.15);
+  border-radius: 0 8px 8px 0;
+  margin-left: 8px;
+  position: relative;
+}
+
+.reorder-handle:active {
+  cursor: grabbing;
+}
+
+.reorder-handle ion-icon {
+  font-size: 24px;
+  color: var(--ion-color-medium);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.item-reorder-selected {
+  box-shadow: 0 0 10px rgba(var(--ion-color-primary-rgb), 0.3);
+}
+
+/* 筛选器和排序按钮区域 */
+.filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.filter-header ion-segment {
+  flex: 1;
+}
+
+.category-filter {
+  padding: 12px 16px 4px;
+  background: var(--ion-color-light);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.reorder-button {
+  margin-left: 8px;
+  font-weight: 500;
+}
+
+/* 拖动时的视觉反馈 */
+ion-reorder-group .reorder-selected {
+  background: var(--ion-color-light-shade);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 编辑页面底部按钮 */
+.edit-footer-buttons {
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px;
+}
+
+.edit-footer-buttons ion-button {
+  flex: 1;
+}
+
+/* 拖动排序提示 */
+.reorder-hint {
+  text-align: center;
+  padding: 8px;
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  background: rgba(var(--ion-color-light-rgb), 0.8);
+  margin: 0;
+  border-radius: 8px 8px 0 0;
+}
+
+.reorder-hint ion-icon {
+  margin-right: 4px;
+  vertical-align: middle;
+  font-size: 18px;
+}
+
+/* 路由页面过渡动画 */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* 编辑页面样式增强 */
+.edit-page-content {
+  padding-bottom: 70px;
+}
+
+/* 自适应布局 - 双栏视图 */
+.app-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.app-sidebar {
+  display: none;
+  width: 250px;
+  background: var(--ion-color-light);
+  overflow-y: auto;
+  border-right: 1px solid var(--ion-border-color);
+}
+
+.app-main {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.sidebar-header {
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--ion-border-color);
+}
+
+.category-list {
+  padding: 8px 0;
+}
+
+.category-item {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.category-item:hover {
+  background: rgba(var(--ion-color-primary-rgb), 0.1);
+}
+
+.category-item.active {
+  background: rgba(var(--ion-color-primary-rgb), 0.15);
+  font-weight: 500;
+}
+
+.category-item ion-icon {
+  margin-right: 12px;
+  font-size: 20px;
+}
+
+.category-count {
+  margin-left: auto;
+  background: rgba(var(--ion-color-medium-rgb), 0.2);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/* 自适应布局 - 宽屏显示双栏 */
+@media (min-width: 768px) {
+  .app-sidebar {
+    display: block;
+  }
+  
+  .mobile-category-filter {
+    display: none;
+  }
+}
+
+/* 移动端显示单栏 */
+@media (max-width: 767px) {
+  .app-sidebar {
+    display: none;
+  }
+  
+  .mobile-category-filter {
+    display: block;
+  }
+}
+
+/* 拖拽相关样式增强 */
+.draggable-item {
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-drag: element;
+}
+
+.dragging {
+  opacity: 0.7;
+  transform: scale(1.02);
+  z-index: 999;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.drag-over {
+  border-bottom: 2px solid var(--ion-color-primary);
+}
+
+/* 任务项拖动时的效果 */
+.todo-item.dragging {
+  background: rgba(var(--ion-color-primary-rgb), 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+
+/* 页面容器 */
+.todo-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-top: 0;
+}
+
+.todo-page-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* 分类选择器 */
+.category-selector {
+  padding: 8px 0;
+  background: var(--ion-background-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.category-tabs {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
+.category-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.category-tab {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  margin: 0 4px;
+  border-radius: 20px;
+  background: rgba(var(--ion-color-medium-rgb), 0.1);
+  color: var(--ion-color-dark);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.category-tab:hover {
+  background: rgba(var(--ion-color-medium-rgb), 0.2);
+}
+
+.category-tab.active {
+  background: var(--ion-color-primary);
+  color: white;
+}
+
+.category-icon {
+  margin-right: 6px;
+  font-size: 16px;
+}
+
+.category-name {
+  margin-right: 6px;
+}
+
+.category-count {
+  background: rgba(255, 255, 255, 0.3);
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.category-tab.active .category-count {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.more-categories-wrapper {
+  position: relative;
+}
+
+.more-button {
+  padding-right: 8px;
+}
+
+.dropdown-icon {
+  margin-left: 4px;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-icon.open {
+  transform: rotate(180deg);
+}
+
+.categories-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  min-width: 200px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: rgba(var(--ion-color-light-rgb), 0.7);
+}
+
+.dropdown-item.active {
+  background: rgba(var(--ion-color-primary-rgb), 0.1);
+  color: var(--ion-color-primary);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 4px 0;
+}
+
+.manage-item {
+  color: var(--ion-color-primary);
+  font-weight: 500;
+}
+
+.manage-button {
+  width: 40px;
+  padding: 0;
+  justify-content: center;
+}
+
+/* 分类管理 */
+.modal-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--ion-background-color);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.category-add-form {
+  padding: 16px;
+  border-bottom: 1px solid var(--ion-border-color);
+}
+
+.category-input-item {
+  --padding-start: 16px;
+  --inner-padding-end: 8px;
+  --border-color: transparent;
+  --background: rgba(var(--ion-color-light-rgb), 0.5);
+  border-radius: 8px;
+  margin-bottom: 0;
+}
+
+.category-list-container {
+  padding: 8px 0;
+}
+
+.category-usage-count {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  margin-right: 16px;
+}
+
+.default-badge {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(var(--ion-color-success-rgb), 0.1);
+  color: var(--ion-color-success);
+}
+
+/* 分类管理模态框 */
+.category-modal {
+  --height: 100%;
+  --width: 100%;
+}
+
+/* 自定义模态标题栏 */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: var(--ion-background-color);
+  border-bottom: 1px solid var(--ion-border-color);
+}
+
+.modal-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.header-left h2 {
+  margin-left: 8px;
+}
+
+.modal-header ion-button {
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+/* 主内容区 */
+.main-content {
+  padding: 0 16px 16px;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+/* 任务列表容器 */
+.todo-list {
+  background: transparent;
+  padding: 0;
+}
+
+/* 编辑页面容器 */
+.edit-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

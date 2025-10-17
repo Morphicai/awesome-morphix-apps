@@ -1,0 +1,18 @@
+.fab {
+  margin-bottom: 16px;
+}
+
+.fabButton {
+  --background: #5d58e0;
+  --background-activated: #4c47d0;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 120px;
+  height: 48px;
+  --border-radius: 24px;
+}
+
+.buttonText {
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+}

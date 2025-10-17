@@ -1,20 +1,28 @@
 import React from 'react';
-import { IonPage, IonContent } from '@ionic/react';
-import Welcome from './components/Welcome';
-import styles from './styles/App.module.css';
+import { IonApp, IonRouterOutlet } from '@ionic/react';
+import { IonReactHashRouter } from '@ionic/react-router';
+import { Route, Switch, Redirect } from 'react-router-dom';
 
-/**
- * 主应用组件
- * 
- * 当前使用 Welcome 组件作为演示页面
- * 在实际开发中，请替换 Welcome 组件为您的应用内容
- */
-export default function App() {
-    return (
-        <IonPage>
-            <IonContent className={styles.content}>
-                <Welcome />
-            </IonContent>
-        </IonPage>
-    );
-}
+import HomePage from './pages/HomePage';
+import AddPage from './pages/AddPage';
+
+import './styles/global.css';
+
+const App = () => {
+  return (
+    <IonApp>
+      <IonReactHashRouter>
+        <IonRouterOutlet>
+          <Switch>
+            <Route path="/home" component={HomePage} exact={true} />
+            <Route path="/add" component={AddPage} exact={true} />
+            <Route path="/edit/:id" component={AddPage} exact={true} />
+            <Redirect from="/" to="/home" exact={true} />
+          </Switch>
+        </IonRouterOutlet>
+      </IonReactHashRouter>
+    </IonApp>
+  );
+};
+
+export default App;

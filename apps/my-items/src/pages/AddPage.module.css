@@ -1,0 +1,53 @@
+/* 状态选择器深色模式适配 */
+.statusSegment {
+  --background: transparent;
+}
+
+.statusSegment ion-segment-button {
+  --color: var(--ion-color-medium);
+  --color-checked: white;
+  --indicator-color: var(--ion-color-primary);
+  --background-checked: var(--ion-color-primary);
+  --background: transparent;
+  border-radius: 8px;
+  margin: 2px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.statusSegment ion-segment-button:hover {
+  --background: var(--ion-color-light-shade);
+}
+
+/* 切换开关深色模式适配 */
+.toggleField ion-toggle {
+  --background: var(--ion-color-light-shade);
+  --background-checked: var(--ion-color-primary);
+  --handle-background: var(--ion-item-background);
+  --handle-background-checked: var(--ion-color-primary-contrast);
+}
+
+/* 输入框深色模式适配 */
+.inputField ion-input {
+  --background: transparent;
+  --color: var(--ion-text-color);
+  --placeholder-color: var(--ion-color-medium);
+}
+
+/* 深色模式特殊处理 */
+@media (prefers-color-scheme: dark) {
+  .statusSegment ion-segment-button {
+    --color: var(--ion-color-light-shade);
+    --color-checked: white;
+    --background-checked: var(--ion-color-primary);
+  }
+  
+  .statusSegment ion-segment-button:hover {
+    --background: var(--ion-color-dark-tint);
+  }
+  
+  .toggleField ion-toggle {
+    --background: var(--ion-color-dark-tint);
+    --handle-background: var(--ion-color-light);
+  }
+}

@@ -25,7 +25,7 @@
   },
   "morphixai": {
     "version": "1.0.0",
-    "id": "a46b48c9-0587-4296-a537-67cc058521e3",
+    "id": "dd086770-f36f-4996-b9b3-99f70329c1df",
     "entry": "app.jsx",
     "framework": "react-ionic",
     "features": [
