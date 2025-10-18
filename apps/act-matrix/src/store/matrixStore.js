@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import AppSdk from '@morphixai/app-sdk';
 // 矩阵状态管理
 export const STORAGE_KEY = 'act_matrix_current_id';
+export const GUIDED_RECORD_ID_KEY = 'guided_form_current_record_id';
 
 // 使用 useState 管理状态，移除 reducer
 
@@ -15,6 +16,19 @@ export function MatrixProvider({ children }) {
     return id;
   });
   const [matrices, setMatrices] = useState(() => new Map());
+  
+  // 引导表单当前记录 ID（只存 ID，不存完整数据）
+  const [currentGuidedRecordId, _setCurrentGuidedRecordId] = useState(() => {
+    try {
+      const saved = localStorage.getItem(GUIDED_RECORD_ID_KEY);
+      return saved || null;
+    } catch {
+      return null;
+    }
+  });
+
+  // 临时存储当前表单数据（用于总结页面显示）
+  const [currentFormData, setCurrentFormData] = useState(null);
 
   // 生成新的矩阵ID
   const generateNewMatrixId = () => {
@@ -100,10 +114,30 @@ export function MatrixProvider({ children }) {
     return newMatrixId;
   };
 
+  // 引导表单相关方法（只管理 recordId）
+  const setCurrentGuidedRecordId = (recordId) => {
+    _setCurrentGuidedRecordId(recordId);
+    try {
+      if (recordId) {
+        localStorage.setItem(GUIDED_RECORD_ID_KEY, recordId);
+      } else {
+        localStorage.removeItem(GUIDED_RECORD_ID_KEY);
+      }
+    } catch (error) {
+      console.warn('Failed to persist guided record ID:', error);
+    }
+  };
+
+  const clearCurrentGuidedRecordId = () => {
+    setCurrentGuidedRecordId(null);
+  };
+
   const value = {
     // 状态
     currentMatrixId,
     matrices,
+    currentGuidedRecordId,
+    currentFormData,
 
     // Actions
     setCurrentMatrix,
@@ -111,6 +145,11 @@ export function MatrixProvider({ children }) {
     clearMatrixData,
     getCurrentMatrixData,
     createNewMatrix,
+    
+    // 引导表单 Actions
+    setCurrentGuidedRecordId,
+    clearCurrentGuidedRecordId,
+    setCurrentFormData,
   };
 
   return (

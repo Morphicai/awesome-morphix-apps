@@ -779,6 +779,7 @@ export default function ActMatrixForm() {
                 <button
                     className={`${styles.floatingButton} ${styles.historyButton}`}
                     onClick={handleShowHistory}
+                    title="历史记录"
                 >
                     <IonIcon icon={time} />
                 </button>

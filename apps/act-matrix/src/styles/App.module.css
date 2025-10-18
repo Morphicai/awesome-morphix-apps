@@ -11,3 +11,24 @@
   --ion-text-color: var(--ink-black);
   --ion-border-color: var(--line-color); */
 }
+
+/* Tab Bar 样式 */
+.tabBar {
+  --background: var(--paper-cream, #faf8f5);
+  --border: 1px solid var(--line-color, #e5dfd4);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tabBar ion-tab-button {
+  --color: var(--muted-ink, #8b7355);
+  --color-selected: var(--accent-brown, #7a6c5d);
+}
+
+.tabBar ion-tab-button ion-icon {
+  font-size: 24px;
+}
+
+.tabBar ion-tab-button ion-label {
+  font-size: 12px;
+  font-weight: 500;
+}

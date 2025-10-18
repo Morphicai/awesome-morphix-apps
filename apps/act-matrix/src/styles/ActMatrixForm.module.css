@@ -552,13 +552,13 @@
   margin: 0;
 }
 
-/* 浮动历史记录按钮 - 使用全局主题 */
+/* 浮动历史记录按钮 */
 .floatingButton {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
@@ -567,6 +567,7 @@
   transition: all 0.3s ease;
   cursor: pointer;
   z-index: 1000;
+  font-size: 20px;
 }
 
 .historyButton {

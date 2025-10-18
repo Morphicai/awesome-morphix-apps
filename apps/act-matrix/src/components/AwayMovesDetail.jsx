@@ -186,15 +186,17 @@ export default function AwayMovesDetail() {
                         </div>
                     </div>
                 )}
+            </IonContent>
 
-                <IonModal
-                    isOpen={!!scoreModalOpen}
-                    onDidDismiss={() => setScoreModalOpen(false)}
-                    presentingElement={presentingEl}
-                    canDismiss={true}
-                    showBackdrop={true}
-                >
-                    <ScoreEditor
+            {/* 评分模态框 */}
+            <IonModal
+                isOpen={!!scoreModalOpen}
+                onDidDismiss={() => setScoreModalOpen(false)}
+                presentingElement={presentingEl}
+                canDismiss={true}
+                showBackdrop={true}
+            >
+                <ScoreEditor
                         target={activeScoreTarget}
                         onClose={() => setScoreModalOpen(false)}
                         onSave={async ({ primary, secondaryEnabled, secondary }) => {
@@ -245,16 +247,17 @@ export default function AwayMovesDetail() {
                             }
                         }}
                     />
-                </IonModal>
+            </IonModal>
 
-                <IonModal
-                    isOpen={addModalOpen}
-                    onDidDismiss={() => setAddModalOpen(false)}
-                    presentingElement={presentingEl}
-                    canDismiss={true}
-                    showBackdrop={true}
-                >
-                    <IonPage>
+            {/* 新增行为模态框 */}
+            <IonModal
+                isOpen={addModalOpen}
+                onDidDismiss={() => setAddModalOpen(false)}
+                presentingElement={presentingEl}
+                canDismiss={true}
+                showBackdrop={true}
+            >
+                <IonPage>
                         <IonHeader>
                             <IonToolbar>
                                 <IonTitle>新增远离行为</IonTitle>
@@ -329,10 +332,7 @@ export default function AwayMovesDetail() {
                             </div>
                         </IonContent>
                     </IonPage>
-                </IonModal>
-
-                {/* 删除功能已移除 */}
-            </IonContent>
+            </IonModal>
         </IonPage>
     );
 }
