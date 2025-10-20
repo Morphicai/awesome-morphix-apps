@@ -4,7 +4,6 @@ import { play, pause, refresh, leaf, checkmarkCircle, chevronDown } from 'ionico
 import { useTimerStore } from '../stores/timerStore';
 import { useTaskStore } from '../stores/taskStore';
 import FlowerAnimation from './FlowerAnimation';
-import GardenFairy from './GardenFairy';
 import { t, addLanguageListener } from '../utils/i18n';
 import { showErrorToast } from './ErrorToast';
 import styles from '../styles/TimerTab.module.css';
@@ -272,17 +271,9 @@ export default function TimerTab() {
     <IonContent style={{ '--background': '#FFFFFF' }}>
       <div className={styles.container}>
         {showAnimation && <FlowerAnimation />}
-        
+
         {getTimerStatusMessage()}
-        
-        <GardenFairy
-          isTimerRunning={isRunning}
-          isBreak={isBreak}
-          completedPomodoros={completedPomodoros}
-          selectedTask={selectedTask}
-          timeLeft={remainingTime}
-        />
-        
+
         <div className={styles.gardenBackground}>
           <div className={styles.taskSelection}>
             <h3 className={styles.taskSelectionTitle}>
