@@ -2,7 +2,6 @@ import React from 'react';
 import { IonButton, IonIcon, IonSpinner } from '@ionic/react';
 import { refreshOutline, alertCircleOutline, sparklesOutline } from 'ionicons/icons';
 import { reportError } from '@morphixai/lib';
-import AIService from '../services/AIService';
 import styles from '../styles/ErrorBoundary.module.css';
 
 /**
@@ -126,14 +125,14 @@ export default class ErrorBoundary extends React.Component {
                         )}
 
                         {/* AI修复结果 */}
-                        {this.state.fixResult && (
+                        {this.props.isAIAvailable && this.state.fixResult && (
                             <div className={this.state.fixResult.success ? styles.fixSuccess : styles.fixError}>
                                 <p>{this.state.fixResult.explanation}</p>
                             </div>
                         )}
 
                         <div className={styles.errorActions}>
-                            {this.props.onAIFix && (
+                            {this.props.isAIAvailable && this.props.onAIFix && (
                                 <IonButton 
                                     onClick={this.handleAIFix}
                                     fill="solid"
@@ -184,4 +183,3 @@ export default class ErrorBoundary extends React.Component {
         return this.props.children;
     }
 }
-

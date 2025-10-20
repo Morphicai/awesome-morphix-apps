@@ -44,6 +44,7 @@ export default function HomePage() {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [showAIGenerate, setShowAIGenerate] = useState(false);
     const [showAIFix, setShowAIFix] = useState(false);
+    const [isAIAvailable, setIsAIAvailable] = useState(false);
     const [showDownloadOptions, setShowDownloadOptions] = useState(false);
     const previewRef = useRef(null);
     const renderIdRef = useRef(0);
@@ -105,6 +106,8 @@ export default function HomePage() {
     // Initialize
     useEffect(() => {
         const init = async () => {
+            const aiEnabled = window?.APP_CONFIG?.AI_ENABLED;
+            setIsAIAvailable(aiEnabled === true);
             // Try to get code from URL first
             const urlCode = getCodeFromURL();
             
@@ -675,7 +678,7 @@ export default function HomePage() {
                         {!isFullscreen && (
                             <div className={styles.editorPanel}>
                                 {/* AI fix button - top right */}
-                                {showAIFix && (
+                                {isAIAvailable && showAIFix && (
                                     <IonButton
                                         className={styles.editorAIFixButton}
                                         onClick={handleAIFixClick}
@@ -703,6 +706,7 @@ export default function HomePage() {
                         <ErrorBoundary 
                             name="PreviewPanel"
                             title="Preview render failed"
+                            isAIAvailable={isAIAvailable}
                             onReset={() => {
                                 // Clear preview area on reset
                                 if (previewRef.current) {
@@ -826,20 +830,25 @@ export default function HomePage() {
                 </ErrorBoundary>
 
                 {/* AI generate flowchart modal */}
-                <AIGenerateModal
-                    isOpen={showAIGenerate}
-                    onClose={() => setShowAIGenerate(false)}
-                    onGenerate={handleAIGenerate}
-                />
+                {isAIAvailable && (
+                    <AIGenerateModal
+                        isOpen={showAIGenerate}
+                        onClose={() => setShowAIGenerate(false)}
+                        onGenerate={handleAIGenerate}
+                        disabled={!isAIAvailable}
+                    />
+                )}
 
                 {/* AI floating button */}
-                <IonButton
-                    className={styles.aiFab}
-                    onClick={() => setShowAIGenerate(true)}
-                    title="AI Generate Flowchart"
-                >
-                    <IonIcon icon={sparklesOutline} />
-                </IonButton>
+                {isAIAvailable && (
+                    <IonButton
+                        className={styles.aiFab}
+                        onClick={() => setShowAIGenerate(true)}
+                        title="AI Generate Flowchart"
+                    >
+                        <IonIcon icon={sparklesOutline} />
+                    </IonButton>
+                )}
 
                 <IonToast
                     isOpen={showToast}
@@ -880,4 +889,3 @@ export default function HomePage() {
         </IonPage>
     );
 }
-

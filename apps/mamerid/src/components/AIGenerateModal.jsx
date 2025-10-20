@@ -6,7 +6,7 @@ import styles from '../styles/AIGenerateModal.module.css';
 /**
  * AI Generate Flowchart Modal
  */
-export default function AIGenerateModal({ isOpen, onClose, onGenerate }) {
+export default function AIGenerateModal({ isOpen, onClose, onGenerate, disabled }) {
     const [prompt, setPrompt] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
 
@@ -67,7 +67,7 @@ export default function AIGenerateModal({ isOpen, onClose, onGenerate }) {
                             placeholder="e.g.: Create a user registration flowchart including filling information, email verification, password setup, etc..."
                             rows={6}
                             autoGrow={true}
-                            disabled={isGenerating}
+                            disabled={isGenerating || disabled}
                         />
                     </div>
 
@@ -89,7 +89,7 @@ export default function AIGenerateModal({ isOpen, onClose, onGenerate }) {
                             expand="block"
                             size="large"
                             onClick={handleGenerate}
-                            disabled={!prompt.trim() || isGenerating}
+                            disabled={!prompt.trim() || isGenerating || disabled}
                             className={styles.generateButton}
                         >
                             {isGenerating ? (
@@ -110,4 +110,3 @@ export default function AIGenerateModal({ isOpen, onClose, onGenerate }) {
         </IonModal>
     );
 }
-
