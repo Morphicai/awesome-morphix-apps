@@ -187,7 +187,7 @@ class ImageService {
   }
 
   /**
-   * 绘制优惠券内容
+   * 绘制优惠券内容（优化布局）
    * @param {CanvasRenderingContext2D} ctx - Canvas上下文
    * @param {Object} coupon - 优惠券对象
    * @param {Object} config - 图片配置
@@ -195,77 +195,137 @@ class ImageService {
    * @private
    */
   async _drawCouponContent(ctx, coupon, config) {
+    const centerX = config.width / 2;
+    const padding = 40;
+
+    // === 主内容（居中显示） ===
     ctx.fillStyle = config.textColor;
     ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    ctx.textBaseline = 'top';
 
-    const centerX = config.width / 2;
-    let currentY = 60;
+    // 计算起始Y位置，让内容整体居中
+    let contentHeight = 0;
 
-    // 绘制公司名称（如果有）
+    // 计算总高度
+    if (coupon.companyName) contentHeight += 50;
+    contentHeight += 45; // "优惠券"标题
+    contentHeight += 90; // 金额/折扣
+    if (coupon.note) {
+      const lines = this._wrapText(ctx, coupon.note, config.width - padding * 2);
+      contentHeight += lines.length * 28 + 20;
+    }
+    contentHeight += 50; // 编码
+    if (coupon.expiryDate) contentHeight += 35; // 有效期
+
+    // 从垂直居中位置开始
+    let currentY = (config.height - contentHeight) / 2;
+    currentY = Math.max(50, currentY); // 最小上边距
+
+    // 公司名称（如果有）
     if (coupon.companyName) {
-      ctx.font = `600 ${config.fontSize.label + 4}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
+      ctx.font = `600 ${config.fontSize.label + 6}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
       ctx.fillText(coupon.companyName, centerX, currentY);
-      currentY += 45;
-    } else {
-      currentY += 15;
+      currentY += 50;
     }
 
-    // 绘制"优惠券"标题
+    // "优惠券"标题
     ctx.font = `${config.fontSize.label}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
     ctx.fillText('优惠券', centerX, currentY);
-    currentY += 50;
+    currentY += 45;
 
-    // 绘制金额或折扣
-    ctx.font = `bold ${config.fontSize.amount + 12}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
+    // 金额或折扣（大字显示）
+    ctx.fillStyle = config.textColor;
+    ctx.font = `bold ${config.fontSize.amount + 20}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
     if (coupon.type === 'discount') {
       ctx.fillText(`${coupon.discount}折`, centerX, currentY);
     } else {
       ctx.fillText(`¥${coupon.amount}`, centerX, currentY);
     }
-    currentY += 65;
+    currentY += 90;
 
-    // 绘制备注（如果有）
+    // 备注（如果有）
     if (coupon.note) {
-      ctx.font = `${config.fontSize.label - 2}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.font = `${config.fontSize.label - 1}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
 
-      // 处理长文本换行
-      const maxWidth = config.width - 100;
-      const words = coupon.note;
-      const lines = this._wrapText(ctx, words, maxWidth);
+      // 处理长文本换行，限制宽度避免与二维码重叠
+      const maxWidth = config.width - padding * 2 - 100; // 留出二维码空间
+      const lines = this._wrapText(ctx, coupon.note, maxWidth);
 
       lines.forEach((line, index) => {
-        ctx.fillText(line, centerX, currentY + (index * 26));
+        ctx.fillText(line, centerX, currentY + (index * 28));
       });
 
-      currentY += lines.length * 26 + 30;
-      ctx.fillStyle = config.textColor;
-    } else {
-      currentY += 15;
+      currentY += lines.length * 28 + 20;
     }
 
-    // 绘制二维码（替代条形码）
-    const qrCodeY = currentY;
-    await this._drawQRCode(ctx, coupon.code, centerX, qrCodeY, config);
-    currentY += 180;
-
-    // 绘制编码文字（白色不透明，加粗）
-    ctx.font = `bold ${config.fontSize.label + 2}px 'Courier New', monospace`;
+    // 编码文字
+    ctx.font = `bold ${config.fontSize.label + 4}px 'Courier New', monospace`;
     ctx.fillStyle = '#FFFFFF';
     ctx.fillText(coupon.code, centerX, currentY);
-    currentY += 35;
+    currentY += 50;
 
-    // 绘制有效期（如果有）
+    // 有效期（如果有）
     if (coupon.expiryDate) {
-      ctx.font = `${config.fontSize.label - 4}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.font = `${config.fontSize.label - 3}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
       ctx.fillText(`有效期至：${coupon.expiryDate}`, centerX, currentY);
     }
+
+    // === 二维码（右下角，在50%基础上放大10%） ===
+    const originalQrSize = 160;
+    const qrSize = originalQrSize * 0.65; // 50% * 1.1 = 55%
+    const qrPadding = 40;
+    const qrX = config.width - qrSize - qrPadding;
+    const qrY = config.height - qrSize - qrPadding;
+
+    await this._drawQRCode(ctx, coupon.code, qrX + qrSize / 2, qrY, qrSize);
 
     // 如果已使用，添加水印
     if (coupon.isUsed) {
       this._drawUsedWatermark(ctx, config);
+    }
+  }
+
+  /**
+   * 生成二维码 URL
+   * @param {string} code - 优惠券编码
+   * @returns {Promise<string>} 二维码 URL
+   * @private
+   */
+  async _generateQRCodeUrl(code) {
+    try {
+      // 1. 获取当前页面的 origin（不包含路径）
+      const origin = window.location.origin;
+
+      // 2. 尝试获取 app 信息
+      let remoteId = null;
+      try {
+        const appInfo = await AppSdk.app.getAppInfo();
+        if (appInfo && appInfo.remoteId) {
+          remoteId = appInfo.remoteId;
+        }
+      } catch (error) {
+        console.warn('获取 app 信息失败:', error);
+      }
+
+      // 3. 生成最终 URL
+      let qrCodeUrl;
+      if (remoteId) {
+        // 有 remoteId，使用完整路径
+        qrCodeUrl = `${origin}/app/${remoteId}?code=${code}`;
+      } else {
+        // 没有 remoteId，直接使用 code
+        qrCodeUrl = code;
+      }
+
+      console.log('生成二维码 URL:', qrCodeUrl);
+      return qrCodeUrl;
+    } catch (error) {
+      console.error('生成二维码 URL 失败:', error);
+      // 失败时返回 code
+      return code;
     }
   }
 
@@ -275,24 +335,21 @@ class ImageService {
    * @param {string} code - 优惠券编码
    * @param {number} x - 中心X坐标
    * @param {number} y - Y坐标
-   * @param {Object} config - 图片配置
+   * @param {number} size - 二维码尺寸
    * @returns {Promise<void>}
    * @private
    */
-  async _drawQRCode(ctx, code, x, y, config) {
+  async _drawQRCode(ctx, code, x, y, size = 160) {
     try {
       // 动态导入 qrcode 库
       const QRCode = await import('qrcode');
 
-      // 生成二维码 URL（当前 URL + code 参数）
-      const baseUrl = window.location.origin + window.location.pathname;
-      const qrCodeUrl = `${baseUrl}?code=${code}`;
-
-      console.log('生成二维码 URL:', qrCodeUrl);
+      // 生成二维码 URL
+      const qrCodeUrl = await this._generateQRCodeUrl(code);
 
       // 生成二维码为 Data URL
       const qrDataUrl = await QRCode.default.toDataURL(qrCodeUrl, {
-        width: 160,
+        width: size,
         margin: 1,
         color: {
           dark: '#000000',
@@ -309,23 +366,20 @@ class ImageService {
       });
 
       // 绘制白色背景
-      const qrSize = 160;
       const bgPadding = 10;
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(
-        x - qrSize / 2 - bgPadding,
+        x - size / 2 - bgPadding,
         y - bgPadding,
-        qrSize + bgPadding * 2,
-        qrSize + bgPadding * 2
+        size + bgPadding * 2,
+        size + bgPadding * 2
       );
 
       // 绘制二维码
-      ctx.drawImage(qrImage, x - qrSize / 2, y, qrSize, qrSize);
+      ctx.drawImage(qrImage, x - size / 2, y, size, size);
 
     } catch (error) {
       console.error('绘制二维码失败:', error);
-      // 如果二维码生成失败，回退到条形码
-      this._drawBarcode(ctx, code, x, y, config);
     }
   }
 

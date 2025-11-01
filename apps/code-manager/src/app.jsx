@@ -21,6 +21,7 @@ import CouponDetailModal from './components/CouponDetailModal';
 import CouponResultModal from './components/CouponResultModal';
 import BatchCouponResultModal from './components/BatchCouponResultModal';
 import ValidationResultModal from './components/ValidationResultModal';
+import ImagePreviewModal from './components/ImagePreviewModal';
 import ErrorBoundary from './components/ErrorBoundary';
 import ToastManager from './components/ToastManager';
 import { IonAlert } from '@ionic/react';
@@ -45,6 +46,9 @@ export default function App() {
     const [validationResult, setValidationResult] = useState(null);
     const [showReceiveAlert, setShowReceiveAlert] = useState(false);
     const [receiveCouponCode, setReceiveCouponCode] = useState(null);
+    const [showImagePreview, setShowImagePreview] = useState(false);
+    const [previewImageData, setPreviewImageData] = useState(null);
+    const [previewCoupon, setPreviewCoupon] = useState(null);
     
     const { 
         coupons,
@@ -204,11 +208,43 @@ export default function App() {
     };
 
     /**
-     * 处理保存图片
+     * 处理保存图片（先预览）
      */
     const handleSaveImage = async (coupon) => {
+        // 生成图片
         const result = await withLoading(async () => {
-            const saveResult = await generateAndSave(coupon);
+            const ImageService = (await import('./services/ImageService')).default;
+            const imageService = new ImageService();
+            const imageData = await imageService.generateCouponImage(coupon);
+            
+            if (!imageData) {
+                throw new Error('生成图片失败');
+            }
+            
+            return imageData;
+        }, '生成图片失败，请重试');
+
+        if (result.success) {
+            // 显示预览
+            setPreviewImageData(result.data);
+            setPreviewCoupon(coupon);
+            setShowImagePreview(true);
+        } else {
+            handleImageError(result.error);
+        }
+    };
+
+    /**
+     * 确认保存图片到相册
+     */
+    const handleConfirmSave = async () => {
+        if (!previewImageData || !previewCoupon) return;
+
+        const result = await withLoading(async () => {
+            const ImageService = (await import('./services/ImageService')).default;
+            const imageService = new ImageService();
+            const filename = `coupon_${previewCoupon.code}_${Date.now()}.png`;
+            const saveResult = await imageService.saveImageToAlbum(previewImageData, filename);
             
             if (!saveResult.success) {
                 throw new Error(saveResult.error || '保存图片失败');
@@ -219,6 +255,9 @@ export default function App() {
 
         if (result.success) {
             showToast('优惠券图片已保存到相册', 'success');
+            setShowImagePreview(false);
+            setPreviewImageData(null);
+            setPreviewCoupon(null);
         } else {
             handleImageError(result.error);
         }
@@ -350,6 +389,20 @@ export default function App() {
                 }}
                 onUseCoupon={handleUseCoupon}
                 isUsing={isCouponLoading}
+            />
+
+            {/* 图片预览 Modal */}
+            <ImagePreviewModal
+                isOpen={showImagePreview}
+                imageData={previewImageData}
+                coupon={previewCoupon}
+                onClose={() => {
+                    setShowImagePreview(false);
+                    setPreviewImageData(null);
+                    setPreviewCoupon(null);
+                }}
+                onSave={handleConfirmSave}
+                isSaving={isImageGenerating}
             />
 
             {/* 全局 Toast 管理 */}
