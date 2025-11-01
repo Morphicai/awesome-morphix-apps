@@ -173,15 +173,6 @@ const CouponDetailModal = ({
                   </IonText>
                 </div>
               )}
-
-              {coupon.source && (
-                <div className={styles.infoItem}>
-                  <IonText className={styles.infoLabel}>来源</IonText>
-                  <IonBadge color={coupon.source === 'created' ? 'primary' : 'secondary'}>
-                    {coupon.source === 'created' ? '我创建的' : '我收到的'}
-                  </IonBadge>
-                </div>
-              )}
             </div>
 
             {/* 操作按钮 */}

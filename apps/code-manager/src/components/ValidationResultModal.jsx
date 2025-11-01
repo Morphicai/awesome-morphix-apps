@@ -3,7 +3,7 @@
  * 显示优惠券验证结果，支持验券操作
  */
 
-import { 
+import {
   IonModal,
   IonHeader,
   IonToolbar,
@@ -16,7 +16,7 @@ import {
   IonBadge,
   IonAlert
 } from '@ionic/react';
-import { 
+import {
   close,
   checkmarkCircleOutline,
   closeCircleOutline,
@@ -26,9 +26,9 @@ import {
 import { useState } from 'react';
 import styles from '../styles/ValidationResultModal.module.css';
 
-const ValidationResultModal = ({ 
-  isOpen, 
-  result, 
+const ValidationResultModal = ({
+  isOpen,
+  result,
   onClose,
   onUseCoupon,
   isUsing
@@ -63,20 +63,23 @@ const ValidationResultModal = ({
             </IonButtons>
           </IonToolbar>
         </IonHeader>
-        
+
         <IonContent className={styles.content}>
           {result.isValid ? (
             <div className={styles.resultContainer}>
               {/* 验证成功 */}
               <div className={styles.successHeader}>
-                <IonIcon icon={checkmarkCircleOutline} className={styles.successIcon} />
-                <IonText className={styles.successText}>
-                  <h2>优惠券有效</h2>
+                <IonIcon 
+                  icon={result.coupon.isUsed ? closeCircleOutline : checkmarkCircleOutline} 
+                  className={result.coupon.isUsed ? styles.usedIcon : styles.successIcon} 
+                />
+                <IonText className={result.coupon.isUsed ? styles.usedText : styles.successText}>
+                  <h2>{result.coupon.isUsed ? '优惠券已被使用' : '优惠券有效'}</h2>
                 </IonText>
               </div>
 
               {/* 优惠券信息 */}
-              <div className={styles.couponCard}>
+              <div className={`${styles.couponCard} ${result.coupon.isUsed ? styles.usedCouponCard : ''}`}>
                 {result.coupon.companyName && (
                   <div className={styles.companySection}>
                     <IonText className={styles.companyName}>{result.coupon.companyName}</IonText>
@@ -113,24 +116,26 @@ const ValidationResultModal = ({
                   </div>
                 )}
 
-                <div className={styles.statusSection}>
-                  <IonText className={styles.statusLabel}>使用状态</IonText>
-                  <IonBadge 
-                    color={result.coupon.isUsed ? 'medium' : 'success'}
-                    className={styles.statusBadge}
-                  >
-                    <IonIcon 
-                      icon={result.coupon.isUsed ? closeCircleOutline : checkmarkCircleOutline}
-                      className={styles.statusIcon}
-                    />
-                    {result.coupon.isUsed ? '已使用' : '未使用'}
-                  </IonBadge>
-                </div>
+                {!result.coupon.isUsed && (
+                  <div className={styles.statusSection}>
+                    <IonText className={styles.statusLabel}>使用状态</IonText>
+                    <IonBadge
+                      color="success"
+                      className={styles.statusBadge}
+                    >
+                      <IonIcon
+                        icon={checkmarkCircleOutline}
+                        className={styles.statusIcon}
+                      />
+                      未使用
+                    </IonBadge>
+                  </div>
+                )}
               </div>
 
               {/* 提示信息 */}
               <div className={styles.messageSection}>
-                <IonText 
+                <IonText
                   color={result.canUse ? 'success' : 'medium'}
                   className={styles.messageText}
                 >

@@ -9,7 +9,7 @@ import CouponService from '../services/CouponService';
 const useCouponManager = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [coupons, setCoupons] = useState([]);
+  const [coupons, setCoupons] = useState({ created: [], received: [] });
   const [currentCoupon, setCurrentCoupon] = useState(null);
 
   // 创建优惠券服务实例
@@ -29,7 +29,10 @@ const useCouponManager = () => {
       setCurrentCoupon(coupon);
       
       // 更新优惠券列表
-      setCoupons(prev => [coupon, ...prev]);
+      setCoupons(prev => ({
+        created: [coupon, ...prev.created],
+        received: prev.received
+      }));
       
       return coupon;
     } catch (err) {
@@ -74,11 +77,18 @@ const useCouponManager = () => {
       
       if (success) {
         // 更新本地状态中的优惠券
-        setCoupons(prev => prev.map(coupon => 
-          coupon.code === code 
-            ? { ...coupon, isUsed: true, usedAt: new Date() }
-            : coupon
-        ));
+        setCoupons(prev => ({
+          created: prev.created.map(coupon => 
+            coupon.code === code 
+              ? { ...coupon, isUsed: true, usedAt: new Date() }
+              : coupon
+          ),
+          received: prev.received.map(coupon => 
+            coupon.code === code 
+              ? { ...coupon, isUsed: true, usedAt: new Date() }
+              : coupon
+          )
+        }));
       }
       
       return success;

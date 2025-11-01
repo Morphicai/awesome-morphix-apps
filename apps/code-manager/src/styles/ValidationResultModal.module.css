@@ -5,10 +5,10 @@
 /* Ionic 会自动处理深色模式 */
 
 .resultContainer {
-  padding: 32px 20px;
+  padding: 24px 20px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
   align-items: center;
 }
 
@@ -26,6 +26,11 @@
   color: var(--ion-color-success);
 }
 
+.usedIcon {
+  font-size: 64px;
+  color: var(--ion-color-medium);
+}
+
 .errorIcon {
   font-size: 64px;
   color: var(--ion-color-danger);
@@ -38,6 +43,13 @@
   color: var(--ion-color-success);
 }
 
+.usedText h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ion-color-medium);
+}
+
 .errorText h2 {
   margin: 0;
   font-size: 24px;
@@ -45,36 +57,33 @@
   color: var(--ion-color-danger);
 }
 
-.successText h2 {
-  color: var(--ion-color-success);
-}
-
-.errorText h2 {
-  color: var(--ion-color-danger);
-}
-
 .couponCard {
   width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
-  padding: 32px 24px;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+  max-width: 400px;
+  background: linear-gradient(135deg, #DC2626 0%, #EF4444 50%, #F87171 100%);
+  border-radius: 12px;
+  padding: 20px 16px;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 12px;
+}
+
+.usedCouponCard {
+  background: linear-gradient(135deg, #6B7280 0%, #9CA3AF 50%, #D1D5DB 100%);
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
 }
 
 .amountSection {
   text-align: center;
-  padding-bottom: 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 12px;
 }
 
 .amountLabel {
   display: block;
-  font-size: 14px;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .amountDisplay {
@@ -85,69 +94,67 @@
 }
 
 .currency {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 600;
   color: white;
 }
 
 .amount {
-  font-size: 56px;
+  font-size: 36px;
   font-weight: 700;
   color: white;
 }
 
 .companySection {
   text-align: center;
-  padding-bottom: 16px;
+  padding-bottom: 8px;
 }
 
 .companyName {
   display: block;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 600;
   color: white;
 }
 
 .noteSection {
   text-align: center;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 8px;
 }
 
 .noteLabel {
   display: block;
-  font-size: 14px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .noteValue {
   display: block;
-  font-size: 14px;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.95);
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .codeSection {
   text-align: center;
-  padding-bottom: 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 12px;
 }
 
 .codeLabel {
   display: block;
-  font-size: 14px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 }
 
 .codeValue {
   display: block;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 700;
   color: white;
   font-family: 'Courier New', monospace;
-  letter-spacing: 4px;
+  letter-spacing: 3px;
 }
 
 .statusSection {
@@ -156,21 +163,21 @@
 
 .statusLabel {
   display: block;
-  font-size: 14px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 }
 
 .statusBadge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 8px 16px;
-  font-size: 14px;
+  padding: 6px 12px;
+  font-size: 12px;
 }
 
 .statusIcon {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .messageSection {
