@@ -341,14 +341,11 @@ class ImageService {
    */
   async _drawQRCode(ctx, code, x, y, size = 160) {
     try {
-      // 动态导入 qrcode 库
-      const QRCode = await import('qrcode');
-
       // 生成二维码 URL
       const qrCodeUrl = await this._generateQRCodeUrl(code);
 
-      // 生成二维码为 Data URL
-      const qrDataUrl = await QRCode.default.toDataURL(qrCodeUrl, {
+      // 生成二维码为 Data URL（使用顶层导入的 QRCode）
+      const qrDataUrl = await QRCode.toDataURL(qrCodeUrl, {
         width: size,
         margin: 1,
         color: {

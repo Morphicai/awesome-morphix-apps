@@ -28,6 +28,9 @@ import { IonAlert } from '@ionic/react';
 import useCouponManager from './hooks/useCouponManager';
 import useImageGenerator from './hooks/useImageGenerator';
 import useErrorHandler from './hooks/useErrorHandler';
+import StorageService from './services/StorageService';
+import CouponService from './services/CouponService';
+import ImageService from './services/ImageService';
 import styles from './styles/App.module.css';
 
 /**
