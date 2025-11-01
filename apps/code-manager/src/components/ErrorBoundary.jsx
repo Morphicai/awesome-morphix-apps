@@ -39,19 +39,19 @@ class ErrorBoundary extends React.Component {
     }
   }
 
-  handleReload = () => {
+  handleReload() {
     // 重新加载页面
     window.location.reload();
-  };
+  }
 
-  handleReset = () => {
+  handleReset() {
     // 重置错误状态
     this.setState({ 
       hasError: false, 
       error: null, 
       errorInfo: null 
     });
-  };
+  }
 
   render() {
     if (this.state.hasError) {
@@ -85,7 +85,7 @@ class ErrorBoundary extends React.Component {
                   <IonButton 
                     fill="solid" 
                     color="primary"
-                    onClick={this.handleReload}
+                    onClick={() => this.handleReload()}
                     className={styles.reloadButton}
                   >
                     <IonIcon icon={refreshOutline} slot="start" />
@@ -95,7 +95,7 @@ class ErrorBoundary extends React.Component {
                   <IonButton 
                     fill="outline" 
                     color="medium"
-                    onClick={this.handleReset}
+                    onClick={() => this.handleReset()}
                     className={styles.resetButton}
                   >
                     重试

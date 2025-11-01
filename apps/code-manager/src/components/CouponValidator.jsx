@@ -6,11 +6,11 @@
  */
 
 import React, { useState } from 'react';
-import { 
-  IonButton, 
-  IonInput, 
-  IonItem, 
-  IonLabel, 
+import {
+  IonButton,
+  IonInput,
+  IonItem,
+  IonLabel,
   IonSpinner,
   IonCard,
   IonCardContent,
@@ -21,9 +21,9 @@ import {
   IonIcon,
   IonActionSheet
 } from '@ionic/react';
-import { 
-  alertCircleOutline, 
-  checkmarkCircleOutline, 
+import {
+  alertCircleOutline,
+  checkmarkCircleOutline,
   closeCircleOutline,
   searchOutline,
   cameraOutline,
@@ -41,11 +41,11 @@ const CouponValidator = ({ onValidationSuccess }) => {
   const [inputCode, setInputCode] = useState('');
   const [codeError, setCodeError] = useState('');
   const [showImageOptions, setShowImageOptions] = useState(false);
-  
-  const { 
-    validateCoupon, 
-    isLoading, 
-    error: serviceError, 
+
+  const {
+    validateCoupon,
+    isLoading,
+    error: serviceError,
     clearError
   } = useCouponManager();
 
@@ -57,7 +57,7 @@ const CouponValidator = ({ onValidationSuccess }) => {
     clearError: clearRecognitionError
   } = useImageRecognition();
 
-  const { 
+  const {
     handleValidationError,
     handleStorageError,
     withLoading,
@@ -70,7 +70,7 @@ const CouponValidator = ({ onValidationSuccess }) => {
   const handleCodeChange = (e) => {
     const value = e.detail.value.toUpperCase(); // 转换为大写
     setInputCode(value);
-    
+
     // 清除之前的错误
     if (codeError) {
       setCodeError('');
@@ -90,14 +90,14 @@ const CouponValidator = ({ onValidationSuccess }) => {
       handleValidationError(errorMessage);
       return false;
     }
-    
+
     if (!validateCouponCode(inputCode)) {
       const errorMessage = '请输入6位有效编码（字母和数字）';
       setCodeError(errorMessage);
       handleValidationError(errorMessage);
       return false;
     }
-    
+
     return true;
   };
 
@@ -111,18 +111,18 @@ const CouponValidator = ({ onValidationSuccess }) => {
 
     const result = await withLoading(async () => {
       const validationResult = await validateCoupon(inputCode);
-      
+
       if (!validationResult) {
         throw new Error(serviceError || '查询优惠券失败');
       }
-      
+
       return validationResult;
     }, '查询优惠券失败，请重试');
 
     if (result.success) {
       setCodeError('');
       setInputCode('');
-      
+
       // 通知父组件显示验证结果
       if (onValidationSuccess) {
         onValidationSuccess(result.data);
@@ -144,13 +144,13 @@ const CouponValidator = ({ onValidationSuccess }) => {
    */
   const handleCameraCapture = async () => {
     setShowImageOptions(false);
-    
+
     const result = await captureAndRecognize();
-    
+
     if (result.success && result.code) {
       setInputCode(result.code);
       showToast(`识别成功：${result.code}（${result.method === 'barcode' ? '条形码' : 'AI'}识别）`, 'success');
-      
+
       // 清除之前的错误
       if (codeError) {
         setCodeError('');
@@ -168,13 +168,13 @@ const CouponValidator = ({ onValidationSuccess }) => {
    */
   const handleGallerySelect = async () => {
     setShowImageOptions(false);
-    
+
     const result = await selectAndRecognize();
-    
+
     if (result.success && result.code) {
       setInputCode(result.code);
       showToast(`识别成功：${result.code}（${result.method === 'barcode' ? '条形码' : 'AI'}识别）`, 'success');
-      
+
       // 清除之前的错误
       if (codeError) {
         setCodeError('');
@@ -206,7 +206,7 @@ const CouponValidator = ({ onValidationSuccess }) => {
                 className={codeError ? styles.inputError : ''}
               />
             </IonItem>
-            
+
             {codeError && (
               <IonText color="danger" className={styles.errorText}>
                 <p>
@@ -215,7 +215,7 @@ const CouponValidator = ({ onValidationSuccess }) => {
                 </p>
               </IonText>
             )}
-            
+
             {serviceError && (
               <IonText color="danger" className={styles.errorText}>
                 <p>
@@ -224,7 +224,7 @@ const CouponValidator = ({ onValidationSuccess }) => {
                 </p>
               </IonText>
             )}
-            
+
             <div className={styles.buttonGroup}>
               <IonButton
                 expand="block"
