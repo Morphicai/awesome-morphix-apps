@@ -1,0 +1,38 @@
+{
+  "name": "code-manager",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A MorphixAI application",
+  "type": "module",
+  "main": "app.jsx",
+  "scripts": {
+    "dev": "morphixai dev",
+    "build": "morphixai build",
+    "restore": "morphixai restore",
+    "prompts:check": "morphixai prompts check",
+    "prompts:update": "morphixai prompts update"
+  },
+  "keywords": [
+    "morphixai",
+    "react",
+    "ionic",
+    "mobile"
+  ],
+  "author": "MorphixAI Developer",
+  "license": "MIT",
+  "devDependencies": {
+    "@morphixai/code": "^1.1.10"
+  },
+  "morphixai": {
+    "version": "1.0.0",
+    "id": "0a6a00bc-64ad-45fa-9ff8-154d7c696e85",
+    "entry": "app.jsx",
+    "framework": "react-ionic",
+    "features": [
+      "css-modules",
+      "ionicons",
+      "morphixai-components"
+    ],
+    "minAppRunnerVersion": "1.0.0"
+  }
+}
