@@ -17,23 +17,23 @@ const useCouponManager = () => {
 
   /**
    * 创建新优惠券
-   * @param {number} amount - 优惠券金额
+   * @param {Object} couponData - 优惠券数据对象
    * @returns {Promise<Object|null>} 创建的优惠券对象
    */
-  const createCoupon = useCallback(async (amount) => {
+  const createCoupon = useCallback(async (couponData) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      const coupon = await couponService.createCoupon(amount);
+      const coupon = await couponService.createCoupon(couponData);
       setCurrentCoupon(coupon);
-      
+
       // 更新优惠券列表
       setCoupons(prev => ({
         created: [coupon, ...prev.created],
         received: prev.received
       }));
-      
+
       return coupon;
     } catch (err) {
       setError(err.message);
@@ -51,7 +51,7 @@ const useCouponManager = () => {
   const validateCoupon = useCallback(async (code) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const result = await couponService.validateCoupon(code);
       return result;
@@ -71,26 +71,26 @@ const useCouponManager = () => {
   const useCoupon = useCallback(async (code) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const success = await couponService.useCoupon(code);
-      
+
       if (success) {
         // 更新本地状态中的优惠券
         setCoupons(prev => ({
-          created: prev.created.map(coupon => 
-            coupon.code === code 
+          created: prev.created.map(coupon =>
+            coupon.code === code
               ? { ...coupon, isUsed: true, usedAt: new Date() }
               : coupon
           ),
-          received: prev.received.map(coupon => 
-            coupon.code === code 
+          received: prev.received.map(coupon =>
+            coupon.code === code
               ? { ...coupon, isUsed: true, usedAt: new Date() }
               : coupon
           )
         }));
       }
-      
+
       return success;
     } catch (err) {
       setError(err.message);
@@ -108,7 +108,7 @@ const useCouponManager = () => {
   const getCoupon = useCallback(async (code) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const coupon = await couponService.getCoupon(code);
       return coupon;
@@ -127,7 +127,7 @@ const useCouponManager = () => {
   const getAllCoupons = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const allCoupons = await couponService.getAllCoupons();
       setCoupons(allCoupons);
@@ -160,7 +160,7 @@ const useCouponManager = () => {
     error,
     coupons,
     currentCoupon,
-    
+
     // 操作方法
     createCoupon,
     validateCoupon,

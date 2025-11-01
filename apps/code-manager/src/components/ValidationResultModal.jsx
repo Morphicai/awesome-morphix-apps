@@ -69,9 +69,9 @@ const ValidationResultModal = ({
             <div className={styles.resultContainer}>
               {/* 验证成功 */}
               <div className={styles.successHeader}>
-                <IonIcon 
-                  icon={result.coupon.isUsed ? closeCircleOutline : checkmarkCircleOutline} 
-                  className={result.coupon.isUsed ? styles.usedIcon : styles.successIcon} 
+                <IonIcon
+                  icon={result.coupon.isUsed ? closeCircleOutline : checkmarkCircleOutline}
+                  className={result.coupon.isUsed ? styles.usedIcon : styles.successIcon}
                 />
                 <IonText className={result.coupon.isUsed ? styles.usedText : styles.successText}>
                   <h2>{result.coupon.isUsed ? '优惠券已被使用' : '优惠券有效'}</h2>
@@ -113,6 +113,13 @@ const ValidationResultModal = ({
                   <div className={styles.noteSection}>
                     <IonText className={styles.noteLabel}>备注</IonText>
                     <IonText className={styles.noteValue}>{result.coupon.note}</IonText>
+                  </div>
+                )}
+
+                {result.coupon.expiryDate && (
+                  <div className={styles.expirySection}>
+                    <IonText className={styles.expiryLabel}>有效期至</IonText>
+                    <IonText className={styles.expiryValue}>{result.coupon.expiryDate}</IonText>
                   </div>
                 )}
 

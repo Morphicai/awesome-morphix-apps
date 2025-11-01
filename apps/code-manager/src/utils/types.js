@@ -40,6 +40,7 @@ export const CouponType = {
  * @param {number} [couponData.discount] - 折扣值 (0-100)
  * @param {string} [couponData.note] - 备注信息
  * @param {string} [couponData.companyName] - 公司名称
+ * @param {string} [couponData.expiryDate] - 有效期 (YYYY-MM-DD)
  * @param {boolean} couponData.isUsed - 使用状态
  * @param {Date} couponData.createdAt - 创建时间
  * @param {Date} [couponData.usedAt] - 使用时间
@@ -53,6 +54,7 @@ export function createCoupon({
   discount = null,
   note = '',
   companyName = '',
+  expiryDate = null,
   isUsed = false, 
   createdAt = new Date(), 
   usedAt = null 
@@ -65,6 +67,7 @@ export function createCoupon({
     discount,
     note,
     companyName,
+    expiryDate,
     isUsed,
     createdAt,
     usedAt

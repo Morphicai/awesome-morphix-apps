@@ -136,6 +136,25 @@
   line-height: 1.5;
 }
 
+.expirySection {
+  text-align: center;
+  padding-top: 8px;
+}
+
+.expiryLabel {
+  display: block;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 4px;
+}
+
+.expiryValue {
+  display: block;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+}
+
 .codeSection {
   text-align: center;
   padding-bottom: 12px;
