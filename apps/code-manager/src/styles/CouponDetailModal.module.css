@@ -1,0 +1,137 @@
+.content {
+  --background: var(--ion-background-color, #f5f5f5);
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .content {
+    --background: var(--ion-background-color, #1a1a1a);
+  }
+
+  .infoSection {
+    background: var(--ion-card-background, #1e1e1e);
+    border: 1px solid var(--ion-border-color, #2d2d2d);
+  }
+
+  .infoItem {
+    border-bottom-color: var(--ion-border-color, #2d2d2d);
+  }
+
+  .infoValue {
+    color: var(--ion-text-color, #ffffff);
+  }
+}
+
+.detailContainer {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.amountCard {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.amountLabel {
+  display: block;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 12px;
+}
+
+.amountDisplay {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+}
+
+.currency {
+  font-size: 28px;
+  font-weight: 600;
+  color: white;
+}
+
+.amount {
+  font-size: 48px;
+  font-weight: 700;
+  color: white;
+}
+
+.infoSection {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.infoItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.infoLabel {
+  font-size: 13px;
+  color: var(--ion-color-medium);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.labelIcon {
+  font-size: 14px;
+}
+
+.infoValue {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ion-color-dark);
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+  align-self: flex-start;
+}
+
+.statusIcon {
+  font-size: 16px;
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.saveButton,
+.deleteButton {
+  --border-radius: 12px;
+  height: 48px;
+  font-weight: 500;
+}
+
+.saveButton {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}

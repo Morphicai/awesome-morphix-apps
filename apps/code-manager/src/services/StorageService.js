@@ -3,6 +3,7 @@
  * 基于AppSdk.appData实现优惠券数据的云端存储
  */
 
+import AppSdk from '@morphixai/app-sdk';
 import { STORAGE_COLLECTION_NAME } from '../utils/constants';
 
 class StorageService {
@@ -18,16 +19,16 @@ class StorageService {
   async saveCoupon(coupon) {
     try {
       // 使用优惠券编码作为记录ID
-      const result = await AppSdk.appData.setRecord(
-        this.collectionName,
-        coupon.code,
-        {
+      const result = await AppSdk.appData.createData({
+        collection: this.collectionName,
+        data: {
+          id: coupon.code, // 使用优惠券编码作为固定ID
           ...coupon,
           // 确保日期对象被正确序列化
           createdAt: coupon.createdAt.toISOString(),
           usedAt: coupon.usedAt ? coupon.usedAt.toISOString() : null
         }
-      );
+      });
       
       return this._deserializeCoupon(result);
     } catch (error) {
@@ -43,7 +44,10 @@ class StorageService {
    */
   async getCoupon(code) {
     try {
-      const result = await AppSdk.appData.getRecord(this.collectionName, code);
+      const result = await AppSdk.appData.getData({
+        collection: this.collectionName,
+        id: code
+      });
       return result ? this._deserializeCoupon(result) : null;
     } catch (error) {
       console.error('Error getting coupon:', error);
@@ -57,7 +61,11 @@ class StorageService {
    */
   async getAllCoupons() {
     try {
-      const result = await AppSdk.appData.getRecords(this.collectionName);
+      // 查询所有优惠券（不设置查询条件返回所有数据）
+      const result = await AppSdk.appData.queryData({
+        collection: this.collectionName,
+        query: []
+      });
       return result.map(record => this._deserializeCoupon(record));
     } catch (error) {
       console.error('Error getting all coupons:', error);
@@ -78,23 +86,21 @@ class StorageService {
         return null;
       }
 
-      const updatedCoupon = {
-        ...existingCoupon,
-        ...updates
-      };
+      // 准备更新数据（序列化日期）
+      const updateData = {};
+      for (const [key, value] of Object.entries(updates)) {
+        if (value instanceof Date) {
+          updateData[key] = value.toISOString();
+        } else {
+          updateData[key] = value;
+        }
+      }
 
-      // 如果更新包含日期，确保正确序列化
-      const serializedUpdates = {
-        ...updatedCoupon,
-        createdAt: updatedCoupon.createdAt.toISOString(),
-        usedAt: updatedCoupon.usedAt ? updatedCoupon.usedAt.toISOString() : null
-      };
-
-      const result = await AppSdk.appData.setRecord(
-        this.collectionName,
-        code,
-        serializedUpdates
-      );
+      const result = await AppSdk.appData.updateData({
+        collection: this.collectionName,
+        id: code,
+        data: updateData
+      });
 
       return this._deserializeCoupon(result);
     } catch (error) {
@@ -110,8 +116,11 @@ class StorageService {
    */
   async deleteCoupon(code) {
     try {
-      await AppSdk.appData.deleteRecord(this.collectionName, code);
-      return true;
+      const result = await AppSdk.appData.deleteData({
+        collection: this.collectionName,
+        id: code
+      });
+      return result.success;
     } catch (error) {
       console.error('Error deleting coupon:', error);
       return false;

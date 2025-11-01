@@ -2,10 +2,17 @@
 
 .content {
   --padding: 16px;
-  background: #ffffff;
-  min-height: 100vh;
-  color: #1f2937;
-  position: relative;
+  --background: var(--ion-background-color, #f5f5f5);
+}
+
+.tabBar {
+  border-top: 1px solid var(--ion-border-color, #e0e0e0);
+  background: var(--ion-background-color, #ffffff);
+}
+
+.tabButton {
+  --color: var(--ion-color-medium);
+  --color-selected: var(--ion-color-primary);
 }
 
 /* Tab 内容区域样式 */

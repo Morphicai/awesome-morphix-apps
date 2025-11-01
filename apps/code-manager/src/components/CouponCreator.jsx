@@ -27,7 +27,7 @@ import useErrorHandler from '../hooks/useErrorHandler';
 import LoadingSpinner from './LoadingSpinner';
 import styles from '../styles/CouponCreator.module.css';
 
-const CouponCreator = () => {
+const CouponCreator = ({ onCouponCreated }) => {
   const [amount, setAmount] = useState('');
   const [amountError, setAmountError] = useState('');
   
@@ -35,22 +35,12 @@ const CouponCreator = () => {
     createCoupon, 
     isLoading: isCouponLoading, 
     error: couponError, 
-    currentCoupon,
-    clearError,
-    clearCurrentCoupon
+    clearError
   } = useCouponManager();
-  
-  const {
-    generateAndSave,
-    isGenerating: isImageGenerating,
-    error: imageError
-  } = useImageGenerator();
 
   const { 
-    showToast, 
     handleValidationError,
     handleStorageError,
-    handleImageError,
     withLoading
   } = useErrorHandler();
 
@@ -112,184 +102,72 @@ const CouponCreator = () => {
     }, '创建优惠券失败，请重试');
 
     if (result.success) {
-      // 创建成功，清空输入
+      // 创建成功，清空输入并通知父组件
       setAmount('');
       setAmountError('');
-      showToast('优惠券创建成功！', 'success');
+      if (onCouponCreated) {
+        onCouponCreated(result.data);
+      }
     } else {
       handleStorageError(result.error);
     }
   };
 
-  /**
-   * 处理保存图片
-   */
-  const handleSaveImage = async () => {
-    if (!currentCoupon) {
-      return;
-    }
-
-    const result = await withLoading(async () => {
-      const saveResult = await generateAndSave(currentCoupon);
-      
-      if (!saveResult.success) {
-        throw new Error(saveResult.error || imageError || '保存图片失败');
-      }
-      
-      return saveResult;
-    }, '保存图片失败，请重试');
-
-    if (result.success) {
-      showToast('优惠券图片已保存到相册', 'success');
-    } else {
-      handleImageError(result.error);
-    }
-  };
-
-  /**
-   * 创建新优惠券（清除当前显示的优惠券）
-   */
-  const handleCreateNew = () => {
-    clearCurrentCoupon();
-    setAmount('');
-    setAmountError('');
-  };
-
   return (
     <div className={styles.container}>
-      {!currentCoupon ? (
-        // 创建优惠券表单
-        <div className={styles.createForm}>
-          <IonCard className={styles.formCard}>
-            <IonCardHeader>
-              <IonCardTitle>创建优惠券</IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent>
-              <IonItem className={styles.inputItem}>
-                <IonLabel position="stacked">优惠券金额 (元)</IonLabel>
-                <IonInput
-                  type="number"
-                  placeholder="请输入金额"
-                  value={amount}
-                  onIonInput={handleAmountChange}
-                  className={amountError ? styles.inputError : ''}
-                />
-              </IonItem>
-              
-              {amountError && (
-                <IonText color="danger" className={styles.errorText}>
-                  <p>
-                    <IonIcon icon={alertCircleOutline} className={styles.errorIcon} />
-                    {amountError}
-                  </p>
-                </IonText>
+      <div className={styles.createForm}>
+        <IonCard className={styles.formCard}>
+          <IonCardHeader>
+            <IonCardTitle>创建优惠券</IonCardTitle>
+          </IonCardHeader>
+          <IonCardContent>
+            <IonItem className={styles.inputItem}>
+              <IonLabel position="stacked">优惠券金额 (元)</IonLabel>
+              <IonInput
+                type="number"
+                placeholder="请输入金额"
+                value={amount}
+                onIonInput={handleAmountChange}
+                className={amountError ? styles.inputError : ''}
+              />
+            </IonItem>
+            
+            {amountError && (
+              <IonText color="danger" className={styles.errorText}>
+                <p>
+                  <IonIcon icon={alertCircleOutline} className={styles.errorIcon} />
+                  {amountError}
+                </p>
+              </IonText>
+            )}
+            
+            {couponError && (
+              <IonText color="danger" className={styles.errorText}>
+                <p>
+                  <IonIcon icon={alertCircleOutline} className={styles.errorIcon} />
+                  {couponError}
+                </p>
+              </IonText>
+            )}
+            
+            <IonButton
+              expand="block"
+              onClick={handleCreateCoupon}
+              disabled={isCouponLoading}
+              className={`${styles.createButton} ${isCouponLoading ? styles.buttonLoading : ''}`}
+            >
+              {isCouponLoading ? (
+                <>
+                  <IonSpinner name="crescent" />
+                  <span className={styles.buttonText}>创建中...</span>
+                </>
+              ) : (
+                '创建优惠券'
               )}
-              
-              {couponError && (
-                <IonText color="danger" className={styles.errorText}>
-                  <p>
-                    <IonIcon icon={alertCircleOutline} className={styles.errorIcon} />
-                    {couponError}
-                  </p>
-                </IonText>
-              )}
-              
-              <IonButton
-                expand="block"
-                onClick={handleCreateCoupon}
-                disabled={isCouponLoading}
-                className={`${styles.createButton} ${isCouponLoading ? styles.buttonLoading : ''}`}
-              >
-                {isCouponLoading ? (
-                  <>
-                    <IonSpinner name="crescent" />
-                    <span className={styles.buttonText}>创建中...</span>
-                  </>
-                ) : (
-                  '创建优惠券'
-                )}
-              </IonButton>
-            </IonCardContent>
-          </IonCard>
-        </div>
-      ) : (
-        // 显示生成的优惠券
-        <div className={styles.couponDisplay}>
-          <div className={styles.successMessage}>
-            <IonText className={styles.successText}>
-              <p>
-                <IonIcon icon={checkmarkCircleOutline} />
-                优惠券创建成功！
-              </p>
-            </IonText>
-          </div>
-          
-          <IonCard className={styles.couponCard}>
-            <IonCardHeader>
-              <IonCardTitle>优惠券信息</IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent>
-              <div className={styles.couponInfo}>
-                <div className={styles.amountSection}>
-                  <IonText className={styles.amountLabel}>
-                    <p>优惠金额</p>
-                  </IonText>
-                  <IonText className={styles.amountValue}>
-                    <h2>¥{currentCoupon.amount}</h2>
-                  </IonText>
-                </div>
-                
-                <div className={styles.codeSection}>
-                  <IonText className={styles.codeLabel}>
-                    <p>优惠券编码</p>
-                  </IonText>
-                  <IonText className={styles.codeValue}>
-                    <h3>{currentCoupon.code}</h3>
-                  </IonText>
-                </div>
-              </div>
-              
-              <div className={styles.actionButtons}>
-                <IonButton
-                  expand="block"
-                  fill="solid"
-                  onClick={handleSaveImage}
-                  disabled={isImageGenerating}
-                  className={`${styles.saveButton} ${isImageGenerating ? styles.buttonLoading : ''}`}
-                >
-                  {isImageGenerating ? (
-                    <>
-                      <IonSpinner name="crescent" />
-                      <span className={styles.buttonText}>保存中...</span>
-                    </>
-                  ) : (
-                    '保存图片到相册'
-                  )}
-                </IonButton>
-                
-                <IonButton
-                  expand="block"
-                  fill="outline"
-                  onClick={handleCreateNew}
-                  className={styles.newButton}
-                >
-                  创建新优惠券
-                </IonButton>
-              </div>
-            </IonCardContent>
-          </IonCard>
-        </div>
-      )}
-      
-      {/* 加载遮罩 */}
-      {(isCouponLoading || isImageGenerating) && (
-        <div className={styles.loadingOverlay}>
-          <LoadingSpinner 
-            message={isCouponLoading ? '正在创建优惠券...' : '正在保存图片...'}
-            size="medium"
-          />
-        </div>
-      )}
+            </IonButton>
+          </IonCardContent>
+        </IonCard>
+      </div>
     </div>
   );
 };
