@@ -18,6 +18,10 @@ import {
 import styles from '../styles/CouponList.module.css';
 
 const CouponList = ({ coupons, onCouponClick }) => {
+  // coupons 现在是 { created: [], received: [] } 结构
+  const createdCoupons = coupons?.created || [];
+  const receivedCoupons = coupons?.received || [];
+
   /**
    * 加密显示优惠券码（显示前2位和后2位，中间用*代替）
    */
@@ -62,7 +66,76 @@ const CouponList = ({ coupons, onCouponClick }) => {
     });
   };
 
-  if (!coupons || coupons.length === 0) {
+  const renderCouponCard = (coupon) => (
+    <IonCard 
+      key={coupon.code} 
+      className={styles.couponItem}
+      onClick={() => onCouponClick(coupon)}
+      button
+    >
+      <IonCardContent className={styles.cardContent}>
+        <div className={styles.leftSection}>
+          <div className={styles.amountSection}>
+            {coupon.type === 'discount' ? (
+              <>
+                <IonText className={styles.amount}>{coupon.discount}</IonText>
+                <IonText className={styles.discountLabel}>折</IonText>
+              </>
+            ) : (
+              <>
+                <IonText className={styles.currency}>¥</IonText>
+                <IonText className={styles.amount}>{coupon.amount}</IonText>
+              </>
+            )}
+          </div>
+          {coupon.companyName && (
+            <div className={styles.companyName}>
+              <IonText className={styles.companyText}>{coupon.companyName}</IonText>
+            </div>
+          )}
+        </div>
+        
+        <div className={styles.rightSection}>
+          <div className={styles.codeSection}>
+            <IonText className={styles.codeLabel}>编码</IonText>
+            <IonText className={styles.codeValue}>
+              {maskCouponCode(coupon.code)}
+            </IonText>
+          </div>
+          
+          {coupon.note && (
+            <div className={styles.noteSection}>
+              <IonText className={styles.noteText}>
+                {coupon.note.length > 20 ? `${coupon.note.substring(0, 20)}...` : coupon.note}
+              </IonText>
+            </div>
+          )}
+          
+          <div className={styles.statusSection}>
+            <IonBadge 
+              color={coupon.isUsed ? 'medium' : 'success'}
+              className={styles.statusBadge}
+            >
+              <IonIcon 
+                icon={coupon.isUsed ? closeCircleOutline : checkmarkCircleOutline}
+                className={styles.statusIcon}
+              />
+              {coupon.isUsed ? '已使用' : '未使用'}
+            </IonBadge>
+          </div>
+          
+          <div className={styles.dateSection}>
+            <IonIcon icon={timeOutline} className={styles.dateIcon} />
+            <IonText className={styles.dateText}>
+              {formatDate(coupon.createdAt)}
+            </IonText>
+          </div>
+        </div>
+      </IonCardContent>
+    </IonCard>
+  );
+
+  if (createdCoupons.length === 0 && receivedCoupons.length === 0) {
     return (
       <div className={styles.emptyState}>
         <IonText color="medium">
@@ -72,78 +145,32 @@ const CouponList = ({ coupons, onCouponClick }) => {
     );
   }
 
-  const sortedCoupons = sortCoupons(coupons);
+  const sortedCreated = sortCoupons(createdCoupons);
+  const sortedReceived = sortCoupons(receivedCoupons);
 
   return (
     <div className={styles.listContainer}>
-      {sortedCoupons.map((coupon) => (
-        <IonCard 
-          key={coupon.code} 
-          className={styles.couponItem}
-          onClick={() => onCouponClick(coupon)}
-          button
-        >
-          <IonCardContent className={styles.cardContent}>
-            <div className={styles.leftSection}>
-              <div className={styles.amountSection}>
-                {coupon.type === 'discount' ? (
-                  <>
-                    <IonText className={styles.amount}>{coupon.discount}</IonText>
-                    <IonText className={styles.discountLabel}>折</IonText>
-                  </>
-                ) : (
-                  <>
-                    <IonText className={styles.currency}>¥</IonText>
-                    <IonText className={styles.amount}>{coupon.amount}</IonText>
-                  </>
-                )}
-              </div>
-              {coupon.companyName && (
-                <div className={styles.companyName}>
-                  <IonText className={styles.companyText}>{coupon.companyName}</IonText>
-                </div>
-              )}
-            </div>
-            
-            <div className={styles.rightSection}>
-              <div className={styles.codeSection}>
-                <IonText className={styles.codeLabel}>编码</IonText>
-                <IonText className={styles.codeValue}>
-                  {maskCouponCode(coupon.code)}
-                </IonText>
-              </div>
-              
-              {coupon.note && (
-                <div className={styles.noteSection}>
-                  <IonText className={styles.noteText}>
-                    {coupon.note.length > 20 ? `${coupon.note.substring(0, 20)}...` : coupon.note}
-                  </IonText>
-                </div>
-              )}
-              
-              <div className={styles.statusSection}>
-                <IonBadge 
-                  color={coupon.isUsed ? 'medium' : 'success'}
-                  className={styles.statusBadge}
-                >
-                  <IonIcon 
-                    icon={coupon.isUsed ? closeCircleOutline : checkmarkCircleOutline}
-                    className={styles.statusIcon}
-                  />
-                  {coupon.isUsed ? '已使用' : '未使用'}
-                </IonBadge>
-              </div>
-              
-              <div className={styles.dateSection}>
-                <IonIcon icon={timeOutline} className={styles.dateIcon} />
-                <IonText className={styles.dateText}>
-                  {formatDate(coupon.createdAt)}
-                </IonText>
-              </div>
-            </div>
-          </IonCardContent>
-        </IonCard>
-      ))}
+      {/* 我创建的优惠券 */}
+      {sortedCreated.length > 0 && (
+        <div className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <IonText className={styles.sectionTitle}>我创建的</IonText>
+            <IonBadge color="primary">{sortedCreated.length}</IonBadge>
+          </div>
+          {sortedCreated.map(renderCouponCard)}
+        </div>
+      )}
+
+      {/* 我收到的优惠券 */}
+      {sortedReceived.length > 0 && (
+        <div className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <IonText className={styles.sectionTitle}>我收到的</IonText>
+            <IonBadge color="secondary">{sortedReceived.length}</IonBadge>
+          </div>
+          {sortedReceived.map(renderCouponCard)}
+        </div>
+      )}
     </div>
   );
 };

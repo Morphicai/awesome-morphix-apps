@@ -52,6 +52,7 @@ const CouponCreatorEnhanced = ({ onCouponCreated, onBatchCreated }) => {
   const [quantity, setQuantity] = useState('1');
   const [saveAsTemplate, setSaveAsTemplate] = useState(false);
   const [templateName, setTemplateName] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
   
   // 错误状态
   const [errors, setErrors] = useState({});
@@ -193,6 +194,17 @@ const CouponCreatorEnhanced = ({ onCouponCreated, onBatchCreated }) => {
       newErrors.quantity = '请输入有效的数量（1-100）';
     }
 
+    if (!expiryDate.trim()) {
+      newErrors.expiryDate = '请选择有效期';
+    } else {
+      const selectedDate = new Date(expiryDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (selectedDate < today) {
+        newErrors.expiryDate = '有效期不能早于今天';
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -207,7 +219,8 @@ const CouponCreatorEnhanced = ({ onCouponCreated, onBatchCreated }) => {
       amount: couponType === CouponType.AMOUNT ? parseFloat(amount) : 0,
       discount: couponType === CouponType.DISCOUNT ? parseFloat(discount) : null,
       note,
-      companyName
+      companyName,
+      expiryDate
     };
 
     const numQuantity = parseInt(quantity);
@@ -260,6 +273,7 @@ const CouponCreatorEnhanced = ({ onCouponCreated, onBatchCreated }) => {
     setDiscount('');
     setNote('');
     setQuantity('1');
+    setExpiryDate('');
     setErrors({});
     if (!saveAsTemplate) {
       setCompanyName('');
@@ -379,6 +393,23 @@ const CouponCreatorEnhanced = ({ onCouponCreated, onBatchCreated }) => {
           {errors.note && (
             <IonText color="danger" className={styles.errorText}>
               <p><IonIcon icon={alertCircleOutline} /> {errors.note}</p>
+            </IonText>
+          )}
+
+          {/* 有效期 */}
+          <IonItem className={styles.inputItem}>
+            <IonLabel position="stacked">有效期 *</IonLabel>
+            <IonInput
+              type="date"
+              value={expiryDate}
+              onIonInput={(e) => setExpiryDate(e.detail.value)}
+              className={errors.expiryDate ? styles.inputError : ''}
+            />
+          </IonItem>
+
+          {errors.expiryDate && (
+            <IonText color="danger" className={styles.errorText}>
+              <p><IonIcon icon={alertCircleOutline} /> {errors.expiryDate}</p>
             </IonText>
           )}
 

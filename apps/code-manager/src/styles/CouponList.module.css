@@ -3,6 +3,24 @@
   margin: 0;
 }
 
+.section {
+  margin-bottom: 32px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 16px 8px 16px;
+  padding: 0 8px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
 .emptyState {
   display: flex;
   justify-content: center;

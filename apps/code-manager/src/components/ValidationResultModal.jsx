@@ -140,7 +140,7 @@ const ValidationResultModal = ({
 
               {/* 操作按钮 */}
               <div className={styles.actionButtons}>
-                {result.canUse && (
+                {result.canUse && result.coupon.source === 'created' && (
                   <IonButton
                     expand="block"
                     fill="solid"
@@ -152,6 +152,14 @@ const ValidationResultModal = ({
                     <IonIcon icon={checkmarkDoneOutline} slot="start" />
                     {isUsing ? '验券中...' : '验券使用'}
                   </IonButton>
+                )}
+
+                {result.canUse && result.coupon.source === 'received' && (
+                  <div className={styles.warningSection}>
+                    <IonText color="warning">
+                      <p>收到的优惠券不支持验券操作</p>
+                    </IonText>
+                  </div>
                 )}
 
                 <IonButton

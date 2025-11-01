@@ -14,6 +14,8 @@ export const COUPON_TYPES = {
 
 // 存储相关常量
 export const STORAGE_COLLECTION_NAME = 'coupons';
+export const STORAGE_CREATED_COUPONS = 'created_coupons';  // 我创建的优惠券
+export const STORAGE_RECEIVED_COUPONS = 'received_coupons'; // 我收到的优惠券
 
 // 图片生成相关常量
 export const DEFAULT_IMAGE_CONFIG = {

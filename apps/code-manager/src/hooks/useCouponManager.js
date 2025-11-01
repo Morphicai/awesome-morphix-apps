@@ -111,8 +111,8 @@ const useCouponManager = () => {
   }, []);
 
   /**
-   * 获取所有优惠券
-   * @returns {Promise<Array>} 优惠券列表
+   * 获取所有优惠券（分离的创建和收到）
+   * @returns {Promise<Object>} { created: [], received: [] }
    */
   const getAllCoupons = useCallback(async () => {
     setIsLoading(true);
@@ -124,7 +124,7 @@ const useCouponManager = () => {
       return allCoupons;
     } catch (err) {
       setError(err.message);
-      return [];
+      return { created: [], received: [] };
     } finally {
       setIsLoading(false);
     }

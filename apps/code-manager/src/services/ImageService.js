@@ -250,10 +250,18 @@ class ImageService {
     await this._drawQRCode(ctx, coupon.code, centerX, qrCodeY, config);
     currentY += 180;
 
-    // 绘制编码文字（白色30%透明度，加粗）
+    // 绘制编码文字（白色不透明，加粗）
     ctx.font = `bold ${config.fontSize.label + 2}px 'Courier New', monospace`;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.fillStyle = '#FFFFFF';
     ctx.fillText(coupon.code, centerX, currentY);
+    currentY += 35;
+
+    // 绘制有效期（如果有）
+    if (coupon.expiryDate) {
+      ctx.font = `${config.fontSize.label - 4}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.fillText(`有效期至：${coupon.expiryDate}`, centerX, currentY);
+    }
 
     // 如果已使用，添加水印
     if (coupon.isUsed) {

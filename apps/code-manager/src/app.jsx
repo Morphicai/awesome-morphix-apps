@@ -23,6 +23,7 @@ import BatchCouponResultModal from './components/BatchCouponResultModal';
 import ValidationResultModal from './components/ValidationResultModal';
 import ErrorBoundary from './components/ErrorBoundary';
 import ToastManager from './components/ToastManager';
+import { IonAlert } from '@ionic/react';
 import useCouponManager from './hooks/useCouponManager';
 import useImageGenerator from './hooks/useImageGenerator';
 import useErrorHandler from './hooks/useErrorHandler';
@@ -42,6 +43,8 @@ export default function App() {
     const [showBatchResultModal, setShowBatchResultModal] = useState(false);
     const [showValidationModal, setShowValidationModal] = useState(false);
     const [validationResult, setValidationResult] = useState(null);
+    const [showReceiveAlert, setShowReceiveAlert] = useState(false);
+    const [receiveCouponCode, setReceiveCouponCode] = useState(null);
     
     const { 
         coupons,
@@ -68,10 +71,69 @@ export default function App() {
     // 加载优惠券列表
     useEffect(() => {
         loadCoupons();
+        checkUrlForCoupon();
     }, []);
 
     const loadCoupons = async () => {
         await getAllCoupons();
+    };
+
+    /**
+     * 检查 URL 中的 code 参数
+     */
+    const checkUrlForCoupon = async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        
+        if (code) {
+            // 检查是否已经拥有这个优惠券
+            const StorageService = (await import('./services/StorageService')).default;
+            const storageService = new StorageService();
+            const existingCoupon = await storageService.getCoupon(code);
+            
+            if (!existingCoupon) {
+                // 不存在，提示领取
+                setReceiveCouponCode(code);
+                setShowReceiveAlert(true);
+            } else if (existingCoupon.source === 'created') {
+                // 是自己创建的，不提示
+                showToast('这是您创建的优惠券', 'warning');
+            } else {
+                // 已经在收到的列表中
+                showToast('您已经领取过这张优惠券了', 'warning');
+            }
+        }
+    };
+
+    /**
+     * 确认领取优惠券
+     */
+    const handleReceiveCoupon = async () => {
+        if (!receiveCouponCode) return;
+
+        const result = await withLoading(async () => {
+            const CouponService = (await import('./services/CouponService')).default;
+            const couponService = new CouponService();
+            const coupon = await couponService.receiveCoupon(receiveCouponCode);
+            
+            if (!coupon) {
+                throw new Error('领取优惠券失败');
+            }
+            
+            return coupon;
+        }, '领取优惠券失败，请重试');
+
+        if (result.success) {
+            showToast('优惠券领取成功！', 'success');
+            setShowReceiveAlert(false);
+            setReceiveCouponCode(null);
+            loadCoupons(); // 刷新列表
+            
+            // 清除 URL 参数
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } else {
+            handleStorageError(result.error);
+        }
     };
 
     /**
@@ -294,6 +356,27 @@ export default function App() {
             <ToastManager 
                 toasts={toasts} 
                 onRemoveToast={removeToast} 
+            />
+
+            {/* 领取优惠券确认 */}
+            <IonAlert
+                isOpen={showReceiveAlert}
+                onDidDismiss={() => {
+                    setShowReceiveAlert(false);
+                    setReceiveCouponCode(null);
+                }}
+                header="领取优惠券"
+                message={`发现优惠券 ${receiveCouponCode}，是否领取？`}
+                buttons={[
+                    {
+                        text: '取消',
+                        role: 'cancel'
+                    },
+                    {
+                        text: '领取',
+                        handler: handleReceiveCoupon
+                    }
+                ]}
             />
         </ErrorBoundary>
     );

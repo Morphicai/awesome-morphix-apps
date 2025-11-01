@@ -33,7 +33,7 @@ class CouponService {
    * @throws {Error} 当数据无效时抛出错误
    */
   async createCoupon(couponData) {
-    const { type = 'amount', amount, discount, note = '', companyName = '' } = couponData;
+    const { type = 'amount', amount, discount, note = '', companyName = '', expiryDate } = couponData;
 
     // 验证金额或折扣
     if (type === 'amount' && !validateAmount(amount)) {
@@ -66,11 +66,12 @@ class CouponService {
       discount: type === 'discount' ? Number(discount) : null,
       note,
       companyName,
+      expiryDate,
       isUsed: false,
       createdAt: new Date()
     });
 
-    return await this.storageService.saveCoupon(coupon);
+    return await this.storageService.saveCreatedCoupon(coupon);
   }
 
   /**
@@ -175,15 +176,42 @@ class CouponService {
   }
 
   /**
-   * 获取所有优惠券
-   * @returns {Promise<Array>} 优惠券列表
+   * 获取所有优惠券（分离的创建和收到）
+   * @returns {Promise<Object>} { created: [], received: [] }
    */
   async getAllCoupons() {
     try {
       return await this.storageService.getAllCoupons();
     } catch (error) {
       console.error('Error getting all coupons:', error);
-      return [];
+      return { created: [], received: [] };
+    }
+  }
+
+  /**
+   * 领取优惠券（保存到收到的列表）
+   * @param {string} code - 优惠券编码
+   * @returns {Promise<Object|null>} 领取的优惠券对象
+   */
+  async receiveCoupon(code) {
+    try {
+      // 先验证优惠券是否存在（从创建的列表中查找）
+      const existingCoupon = await this.storageService.getCoupon(code);
+      
+      if (!existingCoupon) {
+        throw new Error('Coupon not found');
+      }
+
+      // 如果已经在收到的列表中，不重复添加
+      if (existingCoupon.source === 'received') {
+        return existingCoupon;
+      }
+
+      // 保存到收到的列表
+      return await this.storageService.saveReceivedCoupon(existingCoupon);
+    } catch (error) {
+      console.error('Error receiving coupon:', error);
+      return null;
     }
   }
 
