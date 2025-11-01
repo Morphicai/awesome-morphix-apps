@@ -2,25 +2,7 @@
   --background: var(--ion-background-color, #f5f5f5);
 }
 
-/* 深色模式支持 */
-@media (prefers-color-scheme: dark) {
-  .content {
-    --background: var(--ion-background-color, #1a1a1a);
-  }
-
-  .infoSection {
-    background: var(--ion-card-background, #1e1e1e);
-    border: 1px solid var(--ion-border-color, #2d2d2d);
-  }
-
-  .infoItem {
-    border-bottom-color: var(--ion-border-color, #2d2d2d);
-  }
-
-  .infoValue {
-    color: var(--ion-text-color, #ffffff);
-  }
-}
+/* Ionic 会自动处理深色模式，无需额外样式 */
 
 .detailContainer {
   padding: 20px;
@@ -64,7 +46,7 @@
 }
 
 .infoSection {
-  background: white;
+  background: var(--ion-card-background);
   border-radius: 12px;
   padding: 16px;
   display: flex;
@@ -77,7 +59,7 @@
   flex-direction: column;
   gap: 8px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--ion-border-color);
 }
 
 .infoItem:last-child {
@@ -100,7 +82,7 @@
 .infoValue {
   font-size: 16px;
   font-weight: 500;
-  color: var(--ion-color-dark);
+  color: var(--ion-text-color);
   font-family: 'Courier New', monospace;
   letter-spacing: 1px;
 }

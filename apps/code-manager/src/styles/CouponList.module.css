@@ -14,15 +14,12 @@
 .emptyState p {
   font-size: 16px;
   margin: 0;
-  color: var(--ion-color-medium);
 }
 
 .couponItem {
   margin: 12px 16px;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  background: var(--ion-card-background, #ffffff);
-  border: 1px solid var(--ion-border-color, #e0e0e0);
 }
 
 .couponItem:hover {
@@ -93,7 +90,7 @@
   font-weight: 600;
   font-family: 'Courier New', monospace;
   letter-spacing: 2px;
-  color: var(--ion-text-color, #000000);
+  color: var(--ion-text-color);
 }
 
 .statusSection {
@@ -129,18 +126,4 @@
   color: var(--ion-color-medium);
 }
 
-/* 深色模式支持 */
-@media (prefers-color-scheme: dark) {
-  .couponItem {
-    background: var(--ion-card-background, #1e1e1e);
-    border-color: var(--ion-border-color, #2d2d2d);
-  }
-
-  .couponItem:hover {
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
-  }
-
-  .codeValue {
-    color: var(--ion-text-color, #ffffff);
-  }
-}
+/* Ionic 会自动处理深色模式 */

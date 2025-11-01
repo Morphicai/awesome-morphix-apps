@@ -81,10 +81,17 @@ class StorageService {
    */
   async updateCoupon(code, updates) {
     try {
+      // 先获取现有数据
       const existingCoupon = await this.getCoupon(code);
       if (!existingCoupon) {
         return null;
       }
+
+      // 合并更新数据
+      const mergedData = {
+        ...existingCoupon,
+        ...updates
+      };
 
       // 准备更新数据（序列化日期）
       const updateData = {};
@@ -96,13 +103,16 @@ class StorageService {
         }
       }
 
-      const result = await AppSdk.appData.updateData({
+      // 执行更新
+      await AppSdk.appData.updateData({
         collection: this.collectionName,
         id: code,
         data: updateData
       });
 
-      return this._deserializeCoupon(result);
+      // 更新后重新获取完整数据，确保数据完整性
+      const updatedCoupon = await this.getCoupon(code);
+      return updatedCoupon;
     } catch (error) {
       console.error('Error updating coupon:', error);
       return null;

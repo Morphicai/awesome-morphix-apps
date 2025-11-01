@@ -43,8 +43,18 @@ const CouponDetailModal = ({
    */
   const formatDate = (date) => {
     if (!date) return '';
-    const d = new Date(date);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+    try {
+      const d = new Date(date);
+      // 检查日期是否有效
+      if (isNaN(d.getTime())) {
+        console.error('Invalid date:', date);
+        return '日期无效';
+      }
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return '日期错误';
+    }
   };
 
   const handleDelete = () => {

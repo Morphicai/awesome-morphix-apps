@@ -2,16 +2,7 @@
   --background: var(--ion-background-color, #f5f5f5);
 }
 
-/* 深色模式支持 */
-@media (prefers-color-scheme: dark) {
-  .content {
-    --background: var(--ion-background-color, #1a1a1a);
-  }
-
-  .successText h2 {
-    color: var(--ion-text-color, #ffffff);
-  }
-}
+/* Ionic 会自动处理深色模式 */
 
 .resultContainer {
   padding: 32px 20px;
@@ -38,7 +29,7 @@
   margin: 0;
   font-size: 24px;
   font-weight: 600;
-  color: var(--ion-color-dark);
+  color: var(--ion-text-color);
 }
 
 .couponCard {
