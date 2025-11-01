@@ -18,16 +18,21 @@ import {
   IonCardTitle,
   IonText,
   IonAlert,
-  IonIcon
+  IonIcon,
+  IonActionSheet
 } from '@ionic/react';
 import { 
   alertCircleOutline, 
   checkmarkCircleOutline, 
   closeCircleOutline,
-  searchOutline 
+  searchOutline,
+  cameraOutline,
+  imagesOutline,
+  scanOutline
 } from 'ionicons/icons';
 import { validateCouponCode } from '../utils/validators';
 import useCouponManager from '../hooks/useCouponManager';
+import useImageRecognition from '../hooks/useImageRecognition';
 import useErrorHandler from '../hooks/useErrorHandler';
 import LoadingSpinner from './LoadingSpinner';
 import styles from '../styles/CouponValidator.module.css';
@@ -35,6 +40,7 @@ import styles from '../styles/CouponValidator.module.css';
 const CouponValidator = ({ onValidationSuccess }) => {
   const [inputCode, setInputCode] = useState('');
   const [codeError, setCodeError] = useState('');
+  const [showImageOptions, setShowImageOptions] = useState(false);
   
   const { 
     validateCoupon, 
@@ -43,10 +49,19 @@ const CouponValidator = ({ onValidationSuccess }) => {
     clearError
   } = useCouponManager();
 
+  const {
+    isRecognizing,
+    error: recognitionError,
+    captureAndRecognize,
+    selectAndRecognize,
+    clearError: clearRecognitionError
+  } = useImageRecognition();
+
   const { 
     handleValidationError,
     handleStorageError,
-    withLoading
+    withLoading,
+    showToast
   } = useErrorHandler();
 
   /**
@@ -117,6 +132,61 @@ const CouponValidator = ({ onValidationSuccess }) => {
     }
   };
 
+  /**
+   * 显示图片识别选项
+   */
+  const handleImageRecognition = () => {
+    setShowImageOptions(true);
+  };
+
+  /**
+   * 处理拍照识别
+   */
+  const handleCameraCapture = async () => {
+    setShowImageOptions(false);
+    
+    const result = await captureAndRecognize();
+    
+    if (result.success && result.code) {
+      setInputCode(result.code);
+      showToast(`识别成功：${result.code}（${result.method === 'barcode' ? '条形码' : 'AI'}识别）`, 'success');
+      
+      // 清除之前的错误
+      if (codeError) {
+        setCodeError('');
+      }
+      if (serviceError) {
+        clearError();
+      }
+    } else {
+      showToast(result.error || '识别失败，请手动输入', 'warning');
+    }
+  };
+
+  /**
+   * 处理相册选择识别
+   */
+  const handleGallerySelect = async () => {
+    setShowImageOptions(false);
+    
+    const result = await selectAndRecognize();
+    
+    if (result.success && result.code) {
+      setInputCode(result.code);
+      showToast(`识别成功：${result.code}（${result.method === 'barcode' ? '条形码' : 'AI'}识别）`, 'success');
+      
+      // 清除之前的错误
+      if (codeError) {
+        setCodeError('');
+      }
+      if (serviceError) {
+        clearError();
+      }
+    } else {
+      showToast(result.error || '识别失败，请手动输入', 'warning');
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.queryForm}>
@@ -155,27 +225,72 @@ const CouponValidator = ({ onValidationSuccess }) => {
               </IonText>
             )}
             
-            <IonButton
-              expand="block"
-              onClick={handleValidateCoupon}
-              disabled={isLoading}
-              className={`${styles.queryButton} ${isLoading ? styles.buttonLoading : ''}`}
-            >
-              {isLoading ? (
-                <>
-                  <IonSpinner name="crescent" />
-                  <span className={styles.buttonText}>查询中...</span>
-                </>
-              ) : (
-                <>
-                  <IonIcon icon={searchOutline} />
-                  <span className={styles.buttonText}>查询优惠券</span>
-                </>
-              )}
-            </IonButton>
+            <div className={styles.buttonGroup}>
+              <IonButton
+                expand="block"
+                onClick={handleValidateCoupon}
+                disabled={isLoading || isRecognizing}
+                className={`${styles.queryButton} ${isLoading ? styles.buttonLoading : ''}`}
+              >
+                {isLoading ? (
+                  <>
+                    <IonSpinner name="crescent" />
+                    <span className={styles.buttonText}>查询中...</span>
+                  </>
+                ) : (
+                  <>
+                    <IonIcon icon={searchOutline} />
+                    <span className={styles.buttonText}>查询优惠券</span>
+                  </>
+                )}
+              </IonButton>
+
+              <IonButton
+                expand="block"
+                fill="outline"
+                onClick={handleImageRecognition}
+                disabled={isLoading || isRecognizing}
+                className={styles.scanButton}
+              >
+                {isRecognizing ? (
+                  <>
+                    <IonSpinner name="crescent" />
+                    <span className={styles.buttonText}>识别中...</span>
+                  </>
+                ) : (
+                  <>
+                    <IonIcon icon={scanOutline} />
+                    <span className={styles.buttonText}>扫码/拍照识别</span>
+                  </>
+                )}
+              </IonButton>
+            </div>
           </IonCardContent>
         </IonCard>
       </div>
+
+      {/* 图片识别选项 */}
+      <IonActionSheet
+        isOpen={showImageOptions}
+        onDidDismiss={() => setShowImageOptions(false)}
+        header="选择识别方式"
+        buttons={[
+          {
+            text: '拍照识别',
+            icon: cameraOutline,
+            handler: handleCameraCapture
+          },
+          {
+            text: '从相册选择',
+            icon: imagesOutline,
+            handler: handleGallerySelect
+          },
+          {
+            text: '取消',
+            role: 'cancel'
+          }
+        ]}
+      />
     </div>
   );
 };

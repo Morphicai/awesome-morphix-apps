@@ -2,12 +2,12 @@
 
 .content {
   --padding: 16px;
-  --background: var(--ion-background-color, #f5f5f5);
+  /* --background: var(--ion-background-color, #f5f5f5); */
 }
 
 .tabBar {
-  border-top: 1px solid var(--ion-border-color, #e0e0e0);
-  background: var(--ion-background-color, #ffffff);
+  border-top: none;
+  /* background: var(--ion-background-color, #ffffff); */
 }
 
 .tabButton {
