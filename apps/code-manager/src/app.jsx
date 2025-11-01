@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
-import { 
-    IonTabs,
-    IonTab,
-    IonTabBar,
-    IonTabButton,
-    IonIcon,
-    IonLabel,
-    IonPage, 
-    IonContent,
-    IonHeader,
-    IonToolbar,
-    IonTitle
+import {
+  IonTabs,
+  IonTab,
+  IonTabBar,
+  IonTabButton,
+  IonIcon,
+  IonLabel,
+  IonPage,
+  IonContent,
+  IonHeader,
+  IonToolbar,
+  IonTitle
 } from '@ionic/react';
 import { addCircleOutline, listOutline, checkmarkCircleOutline } from 'ionicons/icons';
 import { PageHeader } from '@morphixai/components';
@@ -40,400 +40,396 @@ import styles from './styles/App.module.css';
  * 使用底部 Tab 布局实现无刷新切换
  */
 export default function App() {
-    const [selectedCoupon, setSelectedCoupon] = useState(null);
-    const [batchCoupons, setBatchCoupons] = useState([]);
-    const [showDetailModal, setShowDetailModal] = useState(false);
-    const [showResultModal, setShowResultModal] = useState(false);
-    const [showBatchResultModal, setShowBatchResultModal] = useState(false);
-    const [showValidationModal, setShowValidationModal] = useState(false);
-    const [validationResult, setValidationResult] = useState(null);
-    const [showReceiveAlert, setShowReceiveAlert] = useState(false);
-    const [receiveCouponCode, setReceiveCouponCode] = useState(null);
-    const [showImagePreview, setShowImagePreview] = useState(false);
-    const [previewImageData, setPreviewImageData] = useState(null);
-    const [previewCoupon, setPreviewCoupon] = useState(null);
-    
-    const { 
-        coupons,
-        getAllCoupons,
-        useCoupon,
-        isLoading: isCouponLoading
-    } = useCouponManager();
-    
-    const {
-        generateAndSave,
-        isGenerating: isImageGenerating
-    } = useImageGenerator();
-    
-    const { 
-        toasts, 
-        removeToast, 
-        addError,
-        showToast,
-        handleImageError,
-        handleStorageError,
-        withLoading
-    } = useErrorHandler();
+  const [selectedCoupon, setSelectedCoupon] = useState(null);
+  const [batchCoupons, setBatchCoupons] = useState([]);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [showBatchResultModal, setShowBatchResultModal] = useState(false);
+  const [showValidationModal, setShowValidationModal] = useState(false);
+  const [validationResult, setValidationResult] = useState(null);
+  const [showReceiveAlert, setShowReceiveAlert] = useState(false);
+  const [receiveCouponCode, setReceiveCouponCode] = useState(null);
+  const [showImagePreview, setShowImagePreview] = useState(false);
+  const [previewImageData, setPreviewImageData] = useState(null);
+  const [previewCoupon, setPreviewCoupon] = useState(null);
 
-    // 加载优惠券列表
-    useEffect(() => {
-        loadCoupons();
-        checkUrlForCoupon();
-    }, []);
+  const {
+    coupons,
+    getAllCoupons,
+    useCoupon,
+    isLoading: isCouponLoading
+  } = useCouponManager();
 
-    const loadCoupons = async () => {
-        await getAllCoupons();
-    };
+  const {
+    generateAndSave,
+    isGenerating: isImageGenerating
+  } = useImageGenerator();
 
-    /**
-     * 检查 URL 中的 code 参数
-     */
-    const checkUrlForCoupon = async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        
-        if (code) {
-            // 检查是否已经拥有这个优惠券
-            const StorageService = (await import('./services/StorageService')).default;
-            const storageService = new StorageService();
-            const existingCoupon = await storageService.getCoupon(code);
-            
-            if (!existingCoupon) {
-                // 不存在，提示领取
-                setReceiveCouponCode(code);
-                setShowReceiveAlert(true);
-            } else if (existingCoupon.source === 'created') {
-                // 是自己创建的，不提示
-                showToast('这是您创建的优惠券', 'warning');
-            } else {
-                // 已经在收到的列表中
-                showToast('您已经领取过这张优惠券了', 'warning');
-            }
-        }
-    };
+  const {
+    toasts,
+    removeToast,
+    addError,
+    showToast,
+    handleImageError,
+    handleStorageError,
+    withLoading
+  } = useErrorHandler();
 
-    /**
-     * 确认领取优惠券
-     */
-    const handleReceiveCoupon = async () => {
-        if (!receiveCouponCode) return;
+  // 加载优惠券列表
+  useEffect(() => {
+    loadCoupons();
+    checkUrlForCoupon();
+  }, []);
 
-        const result = await withLoading(async () => {
-            const CouponService = (await import('./services/CouponService')).default;
-            const couponService = new CouponService();
-            const coupon = await couponService.receiveCoupon(receiveCouponCode);
-            
-            if (!coupon) {
-                throw new Error('领取优惠券失败');
-            }
-            
-            return coupon;
-        }, '领取优惠券失败，请重试');
+  const loadCoupons = async () => {
+    await getAllCoupons();
+  };
 
-        if (result.success) {
-            showToast('优惠券领取成功！', 'success');
-            setShowReceiveAlert(false);
-            setReceiveCouponCode(null);
-            loadCoupons(); // 刷新列表
-            
-            // 清除 URL 参数
-            window.history.replaceState({}, document.title, window.location.pathname);
-        } else {
-            handleStorageError(result.error);
-        }
-    };
+  /**
+   * 检查 URL 中的 code 参数
+   */
+  const checkUrlForCoupon = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
 
-    /**
-     * 处理全局错误
-     */
-    const handleGlobalError = (error, errorInfo) => {
-        console.error('全局错误:', error, errorInfo);
-        addError('应用发生意外错误，请刷新页面重试', 'critical');
-    };
+    if (code) {
+      // 检查是否已经拥有这个优惠券
+      const storageService = new StorageService();
+      const existingCoupon = await storageService.getCoupon(code);
 
-    /**
-     * 处理优惠券创建成功
-     */
-    const handleCouponCreated = (coupon) => {
-        setSelectedCoupon(coupon);
-        setShowResultModal(true);
-        loadCoupons(); // 刷新列表
-    };
+      if (!existingCoupon) {
+        // 不存在，提示领取
+        setReceiveCouponCode(code);
+        setShowReceiveAlert(true);
+      } else if (existingCoupon.source === 'created') {
+        // 是自己创建的，不提示
+        showToast('这是您创建的优惠券', 'warning');
+      } else {
+        // 已经在收到的列表中
+        showToast('您已经领取过这张优惠券了', 'warning');
+      }
+    }
+  };
 
-    /**
-     * 处理批量创建成功
-     */
-    const handleBatchCreated = (coupons) => {
-        setBatchCoupons(coupons);
-        setShowBatchResultModal(true);
-        loadCoupons(); // 刷新列表
-    };
+  /**
+   * 确认领取优惠券
+   */
+  const handleReceiveCoupon = async () => {
+    if (!receiveCouponCode) return;
 
-    /**
-     * 处理验证成功
-     */
-    const handleValidationSuccess = (result) => {
-        setValidationResult(result);
-        setShowValidationModal(true);
-    };
+    const result = await withLoading(async () => {
+      const couponService = new CouponService();
+      const coupon = await couponService.receiveCoupon(receiveCouponCode);
 
-    /**
-     * 处理优惠券点击
-     */
-    const handleCouponClick = (coupon) => {
-        setSelectedCoupon(coupon);
-        setShowDetailModal(true);
-    };
+      if (!coupon) {
+        throw new Error('领取优惠券失败');
+      }
 
-    /**
-     * 处理删除优惠券
-     */
-    const handleDeleteCoupon = async (code) => {
-        const result = await withLoading(async () => {
-            const storageService = new (await import('./services/StorageService')).default();
-            const success = await storageService.deleteCoupon(code);
-            
-            if (!success) {
-                throw new Error('删除优惠券失败');
-            }
-            
-            return success;
-        }, '删除优惠券失败，请重试');
+      return coupon;
+    }, '领取优惠券失败，请重试');
 
-        if (result.success) {
-            showToast('优惠券已删除', 'success');
-            setShowDetailModal(false);
-            setSelectedCoupon(null);
-            loadCoupons(); // 刷新列表
-        } else {
-            handleStorageError(result.error);
-        }
-    };
+    if (result.success) {
+      showToast('优惠券领取成功！', 'success');
+      setShowReceiveAlert(false);
+      setReceiveCouponCode(null);
+      loadCoupons(); // 刷新列表
 
-    /**
-     * 处理保存图片（先预览）
-     */
-    const handleSaveImage = async (coupon) => {
-        // 生成图片
-        const result = await withLoading(async () => {
-            const ImageService = (await import('./services/ImageService')).default;
-            const imageService = new ImageService();
-            const imageData = await imageService.generateCouponImage(coupon);
-            
-            if (!imageData) {
-                throw new Error('生成图片失败');
-            }
-            
-            return imageData;
-        }, '生成图片失败，请重试');
+      // 清除 URL 参数
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else {
+      handleStorageError(result.error);
+    }
+  };
 
-        if (result.success) {
-            // 显示预览
-            setPreviewImageData(result.data);
-            setPreviewCoupon(coupon);
-            setShowImagePreview(true);
-        } else {
-            handleImageError(result.error);
-        }
-    };
+  /**
+   * 处理全局错误
+   */
+  const handleGlobalError = (error, errorInfo) => {
+    console.error('全局错误:', error, errorInfo);
+    addError('应用发生意外错误，请刷新页面重试', 'critical');
+  };
 
-    /**
-     * 确认保存图片到相册
-     */
-    const handleConfirmSave = async () => {
-        if (!previewImageData || !previewCoupon) return;
+  /**
+   * 处理优惠券创建成功
+   */
+  const handleCouponCreated = (coupon) => {
+    setSelectedCoupon(coupon);
+    setShowResultModal(true);
+    loadCoupons(); // 刷新列表
+  };
 
-        const result = await withLoading(async () => {
-            const ImageService = (await import('./services/ImageService')).default;
-            const imageService = new ImageService();
-            const filename = `coupon_${previewCoupon.code}_${Date.now()}.png`;
-            const saveResult = await imageService.saveImageToAlbum(previewImageData, filename);
-            
-            if (!saveResult.success) {
-                throw new Error(saveResult.error || '保存图片失败');
-            }
-            
-            return saveResult;
-        }, '保存图片失败，请重试');
+  /**
+   * 处理批量创建成功
+   */
+  const handleBatchCreated = (coupons) => {
+    setBatchCoupons(coupons);
+    setShowBatchResultModal(true);
+    loadCoupons(); // 刷新列表
+  };
 
-        if (result.success) {
-            showToast('优惠券图片已保存到相册', 'success');
-            setShowImagePreview(false);
-            setPreviewImageData(null);
-            setPreviewCoupon(null);
-        } else {
-            handleImageError(result.error);
-        }
-    };
+  /**
+   * 处理验证成功
+   */
+  const handleValidationSuccess = (result) => {
+    setValidationResult(result);
+    setShowValidationModal(true);
+  };
 
-    /**
-     * 处理验券
-     */
-    const handleUseCoupon = async (code) => {
-        const result = await withLoading(async () => {
-            const success = await useCoupon(code);
-            
-            if (!success) {
-                throw new Error('验券失败');
-            }
-            
-            return success;
-        }, '验券失败，请重试');
+  /**
+   * 处理优惠券点击
+   */
+  const handleCouponClick = (coupon) => {
+    setSelectedCoupon(coupon);
+    setShowDetailModal(true);
+  };
 
-        if (result.success) {
-            showToast('验券成功！优惠券已使用', 'success');
-            setShowValidationModal(false);
-            setValidationResult(null);
-            loadCoupons(); // 刷新列表
-        } else {
-            handleStorageError(result.error);
-        }
-    };
+  /**
+   * 处理删除优惠券
+   */
+  const handleDeleteCoupon = async (code) => {
+    const result = await withLoading(async () => {
+      const storageService = new StorageService();
+      const success = await storageService.deleteCoupon(code);
 
-    return (
-        <ErrorBoundary onError={handleGlobalError}>
-            <IonTabs>
-                {/* 创建优惠券 Tab */}
-                <IonTab tab="create">
-                    <IonPage>
-                        <PageHeader title="创建优惠券" />
-                        <IonContent className={styles.content}>
-                            <CouponCreatorEnhanced 
-                                onCouponCreated={handleCouponCreated}
-                                onBatchCreated={handleBatchCreated}
-                            />
-                        </IonContent>
-                    </IonPage>
-                </IonTab>
+      if (!success) {
+        throw new Error('删除优惠券失败');
+      }
 
-                {/* 优惠券列表 Tab */}
-                <IonTab tab="list">
-                    <IonPage>
-                        <PageHeader title="优惠券列表" />
-                        <IonContent className={styles.content}>
-                            <CouponList 
-                                coupons={coupons} 
-                                onCouponClick={handleCouponClick}
-                            />
-                        </IonContent>
-                    </IonPage>
-                </IonTab>
+      return success;
+    }, '删除优惠券失败，请重试');
 
-                {/* 验券管理 Tab */}
-                <IonTab tab="validate">
-                    <IonPage>
-                        <PageHeader title="验券管理" />
-                        <IonContent className={styles.content}>
-                            <CouponValidator onValidationSuccess={handleValidationSuccess} />
-                        </IonContent>
-                    </IonPage>
-                </IonTab>
+    if (result.success) {
+      showToast('优惠券已删除', 'success');
+      setShowDetailModal(false);
+      setSelectedCoupon(null);
+      loadCoupons(); // 刷新列表
+    } else {
+      handleStorageError(result.error);
+    }
+  };
 
-                {/* 底部 Tab 导航栏 */}
-                <IonTabBar slot="bottom" className={styles.tabBar}>
-                    <IonTabButton tab="create" className={styles.tabButton}>
-                        <IonIcon icon={addCircleOutline} />
-                        <IonLabel>创建优惠券</IonLabel>
-                    </IonTabButton>
-                    <IonTabButton tab="list" className={styles.tabButton}>
-                        <IonIcon icon={listOutline} />
-                        <IonLabel>优惠券列表</IonLabel>
-                    </IonTabButton>
-                    <IonTabButton tab="validate" className={styles.tabButton}>
-                        <IonIcon icon={checkmarkCircleOutline} />
-                        <IonLabel>验券管理</IonLabel>
-                    </IonTabButton>
-                </IonTabBar>
-            </IonTabs>
+  /**
+   * 处理保存图片（先预览）
+   */
+  const handleSaveImage = async (coupon) => {
+    // 生成图片
+    const result = await withLoading(async () => {
+      const imageService = new ImageService();
+      const imageData = await imageService.generateCouponImage(coupon);
 
-            {/* 优惠券详情 Modal */}
-            <CouponDetailModal
-                isOpen={showDetailModal}
-                coupon={selectedCoupon}
-                onClose={() => {
-                    setShowDetailModal(false);
-                    setSelectedCoupon(null);
-                }}
-                onDelete={handleDeleteCoupon}
-                onSaveImage={handleSaveImage}
-                isDeleting={isCouponLoading}
-                isSavingImage={isImageGenerating}
-            />
+      if (!imageData) {
+        throw new Error('生成图片失败');
+      }
 
-            {/* 创建结果 Modal */}
-            <CouponResultModal
-                isOpen={showResultModal}
-                coupon={selectedCoupon}
-                onClose={() => {
-                    setShowResultModal(false);
-                    setSelectedCoupon(null);
-                }}
-                onSaveImage={handleSaveImage}
-                isSavingImage={isImageGenerating}
-            />
+      return imageData;
+    }, '生成图片失败，请重试');
 
-            {/* 批量创建结果 Modal */}
-            <BatchCouponResultModal
-                isOpen={showBatchResultModal}
-                coupons={batchCoupons}
-                onClose={() => {
-                    setShowBatchResultModal(false);
-                    setBatchCoupons([]);
-                }}
-            />
+    if (result.success) {
+      // 显示预览
+      setPreviewImageData(result.data);
+      setPreviewCoupon(coupon);
+      setShowImagePreview(true);
+    } else {
+      handleImageError(result.error);
+    }
+  };
 
-            {/* 验证结果 Modal */}
-            <ValidationResultModal
-                isOpen={showValidationModal}
-                result={validationResult}
-                onClose={() => {
-                    setShowValidationModal(false);
-                    setValidationResult(null);
-                }}
-                onUseCoupon={handleUseCoupon}
-                isUsing={isCouponLoading}
-            />
+  /**
+   * 确认保存图片到相册
+   */
+  const handleConfirmSave = async () => {
+    if (!previewImageData || !previewCoupon) return;
 
-            {/* 图片预览 Modal */}
-            <ImagePreviewModal
-                isOpen={showImagePreview}
-                imageData={previewImageData}
-                coupon={previewCoupon}
-                onClose={() => {
-                    setShowImagePreview(false);
-                    setPreviewImageData(null);
-                    setPreviewCoupon(null);
-                }}
-                onSave={handleConfirmSave}
-                isSaving={isImageGenerating}
-            />
+    const result = await withLoading(async () => {
+      const imageService = new ImageService();
+      const filename = `coupon_${previewCoupon.code}_${Date.now()}.png`;
+      const saveResult = await imageService.saveImageToAlbum(previewImageData, filename);
 
-            {/* 全局 Toast 管理 */}
-            <ToastManager 
-                toasts={toasts} 
-                onRemoveToast={removeToast} 
-            />
+      if (!saveResult.success) {
+        throw new Error(saveResult.error || '保存图片失败');
+      }
 
-            {/* 领取优惠券确认 */}
-            <IonAlert
-                isOpen={showReceiveAlert}
-                onDidDismiss={() => {
-                    setShowReceiveAlert(false);
-                    setReceiveCouponCode(null);
-                }}
-                header="领取优惠券"
-                message={`发现优惠券 ${receiveCouponCode}，是否领取？`}
-                buttons={[
-                    {
-                        text: '取消',
-                        role: 'cancel'
-                    },
-                    {
-                        text: '领取',
-                        handler: handleReceiveCoupon
-                    }
-                ]}
-            />
-        </ErrorBoundary>
-    );
+      return saveResult;
+    }, '保存图片失败，请重试');
+
+    if (result.success) {
+      showToast('优惠券图片已保存到相册', 'success');
+      setShowImagePreview(false);
+      setPreviewImageData(null);
+      setPreviewCoupon(null);
+    } else {
+      handleImageError(result.error);
+    }
+  };
+
+  /**
+   * 处理验券
+   */
+  const handleUseCoupon = async (code) => {
+    const result = await withLoading(async () => {
+      const success = await useCoupon(code);
+
+      if (!success) {
+        throw new Error('验券失败');
+      }
+
+      return success;
+    }, '验券失败，请重试');
+
+    if (result.success) {
+      showToast('验券成功！优惠券已使用', 'success');
+      setShowValidationModal(false);
+      setValidationResult(null);
+      loadCoupons(); // 刷新列表
+    } else {
+      handleStorageError(result.error);
+    }
+  };
+
+  return (
+    <ErrorBoundary onError={handleGlobalError}>
+      <IonTabs>
+        {/* 创建优惠券 Tab */}
+        <IonTab tab="create">
+          <IonPage>
+            <PageHeader title="创建优惠券" />
+            <IonContent className={styles.content}>
+              <CouponCreatorEnhanced
+                onCouponCreated={handleCouponCreated}
+                onBatchCreated={handleBatchCreated}
+              />
+            </IonContent>
+          </IonPage>
+        </IonTab>
+
+        {/* 优惠券列表 Tab */}
+        <IonTab tab="list">
+          <IonPage>
+            <PageHeader title="优惠券列表" />
+            <IonContent className={styles.content}>
+              <CouponList
+                coupons={coupons}
+                onCouponClick={handleCouponClick}
+              />
+            </IonContent>
+          </IonPage>
+        </IonTab>
+
+        {/* 验券管理 Tab */}
+        <IonTab tab="validate">
+          <IonPage>
+            <PageHeader title="验券管理" />
+            <IonContent className={styles.content}>
+              <CouponValidator onValidationSuccess={handleValidationSuccess} />
+            </IonContent>
+          </IonPage>
+        </IonTab>
+
+        {/* 底部 Tab 导航栏 */}
+        <IonTabBar slot="bottom" className={styles.tabBar}>
+          <IonTabButton tab="create" className={styles.tabButton}>
+            <IonIcon icon={addCircleOutline} />
+            <IonLabel>创建优惠券</IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="list" className={styles.tabButton}>
+            <IonIcon icon={listOutline} />
+            <IonLabel>优惠券列表</IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="validate" className={styles.tabButton}>
+            <IonIcon icon={checkmarkCircleOutline} />
+            <IonLabel>验券管理</IonLabel>
+          </IonTabButton>
+        </IonTabBar>
+      </IonTabs>
+
+      {/* 优惠券详情 Modal */}
+      <CouponDetailModal
+        isOpen={showDetailModal}
+        coupon={selectedCoupon}
+        onClose={() => {
+          setShowDetailModal(false);
+          setSelectedCoupon(null);
+        }}
+        onDelete={handleDeleteCoupon}
+        onSaveImage={handleSaveImage}
+        isDeleting={isCouponLoading}
+        isSavingImage={isImageGenerating}
+      />
+
+      {/* 创建结果 Modal */}
+      <CouponResultModal
+        isOpen={showResultModal}
+        coupon={selectedCoupon}
+        onClose={() => {
+          setShowResultModal(false);
+          setSelectedCoupon(null);
+        }}
+        onSaveImage={handleSaveImage}
+        isSavingImage={isImageGenerating}
+      />
+
+      {/* 批量创建结果 Modal */}
+      <BatchCouponResultModal
+        isOpen={showBatchResultModal}
+        coupons={batchCoupons}
+        onClose={() => {
+          setShowBatchResultModal(false);
+          setBatchCoupons([]);
+        }}
+      />
+
+      {/* 验证结果 Modal */}
+      <ValidationResultModal
+        isOpen={showValidationModal}
+        result={validationResult}
+        onClose={() => {
+          setShowValidationModal(false);
+          setValidationResult(null);
+        }}
+        onUseCoupon={handleUseCoupon}
+        isUsing={isCouponLoading}
+      />
+
+      {/* 图片预览 Modal */}
+      <ImagePreviewModal
+        isOpen={showImagePreview}
+        imageData={previewImageData}
+        coupon={previewCoupon}
+        onClose={() => {
+          setShowImagePreview(false);
+          setPreviewImageData(null);
+          setPreviewCoupon(null);
+        }}
+        onSave={handleConfirmSave}
+        isSaving={isImageGenerating}
+      />
+
+      {/* 全局 Toast 管理 */}
+      <ToastManager
+        toasts={toasts}
+        onRemoveToast={removeToast}
+      />
+
+      {/* 领取优惠券确认 */}
+      <IonAlert
+        isOpen={showReceiveAlert}
+        onDidDismiss={() => {
+          setShowReceiveAlert(false);
+          setReceiveCouponCode(null);
+        }}
+        header="领取优惠券"
+        message={`发现优惠券 ${receiveCouponCode}，是否领取？`}
+        buttons={[
+          {
+            text: '取消',
+            role: 'cancel'
+          },
+          {
+            text: '领取',
+            handler: handleReceiveCoupon
+          }
+        ]}
+      />
+    </ErrorBoundary>
+  );
 }
