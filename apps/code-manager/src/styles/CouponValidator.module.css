@@ -395,4 +395,60 @@
   }
 }
 
-/* Ionic 会自动处理深色模式 */
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .formCard {
+    --background: #1e1e1e;
+  }
+  
+  .inputItem {
+    --background: #2a2a2a;
+  }
+  
+  .codeValue {
+    color: #e5e7eb;
+  }
+  
+  .codeLabel {
+    color: #9ca3af;
+  }
+  
+  .amountLabel {
+    color: #9ca3af;
+  }
+  
+  .statusLabel {
+    color: #9ca3af;
+  }
+  
+  .loadingOverlay {
+    background: rgba(0, 0, 0, 0.8);
+  }
+  
+  .loadingText {
+    color: #9ca3af;
+  }
+  
+  .couponInfo {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-color: #334155;
+  }
+  
+  .messageSection {
+    background: #0c4a6e;
+  }
+  
+  .errorMessage {
+    background: #450a0a;
+    border-color: #7f1d1d;
+  }
+  
+  .successMessage {
+    background: #0c4a6e;
+    border-color: #075985;
+  }
+  
+  .successText {
+    color: #7dd3fc;
+  }
+}
