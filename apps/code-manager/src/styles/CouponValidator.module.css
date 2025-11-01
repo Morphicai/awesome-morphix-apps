@@ -1,0 +1,461 @@
+/* 优惠券验证组件样式 */
+
+.container {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 查询表单样式 */
+.queryForm {
+  margin-bottom: 20px;
+}
+
+.formCard {
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.inputItem {
+  margin-bottom: 16px;
+  --border-radius: 8px;
+  --background: #f8f9fa;
+}
+
+.inputError {
+  --border-color: var(--ion-color-danger);
+}
+
+.errorText {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.queryButton {
+  margin-top: 16px;
+  --border-radius: 8px;
+  height: 48px;
+  font-weight: 600;
+}
+
+.buttonText {
+  margin-left: 8px;
+}
+
+/* 结果显示样式 */
+.resultDisplay {
+  margin-bottom: 20px;
+}
+
+.resultCard {
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 有效优惠券结果样式 */
+.validResult {
+  text-align: center;
+}
+
+.couponInfo {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+  border-radius: 12px;
+  border: 1px solid #e0e7ff;
+}
+
+.codeSection {
+  margin-bottom: 16px;
+}
+
+.codeLabel {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.codeValue {
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  color: #374151;
+  letter-spacing: 2px;
+}
+
+.amountSection {
+  margin-bottom: 16px;
+}
+
+.amountLabel {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.amountValue {
+  color: #059669;
+  font-weight: bold;
+}
+
+.statusSection {
+  margin-bottom: 8px;
+}
+
+.statusLabel {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.statusValue {
+  font-weight: 600;
+}
+
+.availableStatus {
+  color: #059669;
+}
+
+.usedStatus {
+  color: #dc2626;
+}
+
+.messageSection {
+  margin: 16px 0;
+  padding: 12px;
+  border-radius: 8px;
+  background: #f0f9ff;
+}
+
+.messageText {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* 无效优惠券结果样式 */
+.invalidResult {
+  text-align: center;
+}
+
+.errorMessage {
+  margin: 24px 0;
+  padding: 16px;
+  background: #fef2f2;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+}
+
+/* 操作按钮样式 */
+.actionButtons {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.useButton {
+  --border-radius: 8px;
+  height: 48px;
+  font-weight: 600;
+  --background: #3b82f6;
+  --background-activated: #2563eb;
+}
+
+.newQueryButton {
+  --border-radius: 8px;
+  height: 44px;
+  font-weight: 500;
+  --color: #6b7280;
+  --border-color: #d1d5db;
+}
+
+/* 加载状态增强 */
+.loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  z-index: 10;
+}
+
+.loadingContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.loadingText {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.queryButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.useButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buttonLoading {
+  pointer-events: none;
+}
+
+/* 错误状态增强 */
+.errorText {
+  margin: 8px 0;
+  font-size: 14px;
+  animation: shake 0.5s ease-in-out;
+}
+
+.errorText p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.errorIcon {
+  font-size: 16px;
+}
+
+.errorMessage {
+  margin: 24px 0;
+  padding: 16px;
+  background: #fef2f2;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.errorMessage h3 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 成功状态样式 */
+.successMessage {
+  margin: 16px 0;
+  padding: 12px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.successText {
+  color: #0369a1;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* 状态指示器 */
+.statusIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.availableIndicator {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.usedIndicator {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* 输入焦点状态 */
+.inputItem ion-input:focus-within {
+  --border-color: #4f46e5;
+  --color: #1f2937;
+}
+
+.formCard {
+  position: relative;
+}
+
+/* 动画效果 */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.resultCard {
+  animation: slideIn 0.3s ease-out;
+}
+
+.couponInfo {
+  animation: fadeIn 0.4s ease-out 0.1s both;
+}
+
+.actionButtons {
+  animation: fadeIn 0.4s ease-out 0.2s both;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .couponInfo {
+    padding: 12px;
+  }
+  
+  .amountValue h2 {
+    font-size: 28px;
+  }
+  
+  .codeValue h3 {
+    font-size: 20px;
+  }
+  
+  .actionButtons {
+    gap: 8px;
+  }
+  
+  .queryButton,
+  .useButton,
+  .newQueryButton {
+    height: 44px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 8px;
+  }
+  
+  .couponInfo {
+    padding: 8px;
+  }
+  
+  .amountValue h2 {
+    font-size: 24px;
+  }
+  
+  .codeValue h3 {
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+  
+  .messageSection {
+    margin: 12px 0;
+    padding: 10px;
+  }
+  
+  .errorMessage {
+    margin: 16px 0;
+    padding: 12px;
+  }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .formCard {
+    --background: #374151;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .inputItem {
+    --background: #4b5563;
+  }
+  
+  .inputItem ion-label {
+    color: #f9fafb;
+  }
+  
+  .inputItem ion-input {
+    --color: #f9fafb;
+  }
+  
+  .loadingOverlay {
+    background: rgba(31, 41, 55, 0.8);
+  }
+  
+  .loadingText {
+    color: #d1d5db;
+  }
+  
+  .successMessage {
+    background: #0c4a6e;
+    border-color: #075985;
+  }
+  
+  .successText {
+    color: #7dd3fc;
+  }
+  
+  .errorMessage {
+    background: #450a0a;
+    border-color: #7f1d1d;
+  }
+  
+  .errorMessage h3 {
+    color: #fca5a5;
+  }
+  
+  .availableIndicator {
+    background: #14532d;
+    color: #bbf7d0;
+  }
+  
+  .usedIndicator {
+    background: #7f1d1d;
+    color: #fecaca;
+  }
+  
+  .couponInfo {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+  }
+  
+  .messageSection {
+    background: #0f172a;
+  }
+}

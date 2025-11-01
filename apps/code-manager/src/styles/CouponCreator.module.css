@@ -1,0 +1,354 @@
+/* 优惠券创建组件样式 */
+
+.container {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 创建表单样式 */
+.createForm {
+  width: 100%;
+}
+
+.formCard {
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.inputItem {
+  margin-bottom: 16px;
+  --border-radius: 8px;
+  --background: #f8fafc;
+}
+
+.inputItem ion-label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.inputItem ion-input {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  font-size: 16px;
+}
+
+.inputError {
+  --border-color: #ef4444;
+  --color: #ef4444;
+}
+
+.errorText {
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.errorText p {
+  margin: 0;
+}
+
+.createButton {
+  margin-top: 24px;
+  --border-radius: 8px;
+  --background: #4f46e5;
+  --background-activated: #4338ca;
+  --color: white;
+  font-weight: 600;
+  height: 48px;
+}
+
+.buttonText {
+  margin-left: 8px;
+}
+
+/* 优惠券显示样式 */
+.couponDisplay {
+  width: 100%;
+}
+
+.couponCard {
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+}
+
+.couponCard ion-card-header {
+  text-align: center;
+  padding-bottom: 8px;
+}
+
+.couponCard ion-card-title {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.couponInfo {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.amountSection {
+  margin-bottom: 24px;
+}
+
+.amountLabel p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.amountValue h2 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 700;
+  color: white;
+}
+
+.codeSection {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  margin: 0 16px;
+}
+
+.codeLabel p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.codeValue h3 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: white;
+  font-family: 'Courier New', monospace;
+}
+
+.actionButtons {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.saveButton {
+  --border-radius: 8px;
+  --background: white;
+  --background-activated: #f1f5f9;
+  --color: #4f46e5;
+  font-weight: 600;
+  height: 48px;
+}
+
+.newButton {
+  --border-radius: 8px;
+  --border-color: white;
+  --color: white;
+  font-weight: 600;
+  height: 48px;
+}
+
+/* 加载状态样式 */
+.loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  z-index: 10;
+}
+
+.loadingContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.loadingText {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* 成功状态样式 */
+.successMessage {
+  margin: 16px 0;
+  padding: 12px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.successText {
+  color: #0369a1;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* 错误状态增强 */
+.errorText {
+  margin-top: 8px;
+  font-size: 14px;
+  animation: shake 0.5s ease-in-out;
+}
+
+.errorText p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.errorIcon {
+  font-size: 16px;
+}
+
+/* 按钮状态增强 */
+.createButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.saveButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buttonLoading {
+  pointer-events: none;
+}
+
+/* 动画效果 */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.couponDisplay {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.formCard {
+  position: relative;
+}
+
+/* 输入焦点状态 */
+.inputItem ion-input:focus-within {
+  --border-color: #4f46e5;
+  --color: #1f2937;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .amountValue h2 {
+    font-size: 32px;
+  }
+  
+  .codeValue h3 {
+    font-size: 20px;
+  }
+  
+  .actionButtons {
+    gap: 8px;
+  }
+  
+  .createButton,
+  .saveButton,
+  .newButton {
+    height: 44px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 8px;
+  }
+  
+  .couponInfo {
+    padding: 16px 0;
+  }
+  
+  .amountValue h2 {
+    font-size: 28px;
+  }
+  
+  .codeValue h3 {
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+  
+  .codeSection {
+    margin: 0 8px;
+    padding: 12px;
+  }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .formCard {
+    --background: #374151;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .inputItem {
+    --background: #4b5563;
+  }
+  
+  .inputItem ion-label {
+    color: #f9fafb;
+  }
+  
+  .inputItem ion-input {
+    --color: #f9fafb;
+  }
+  
+  .loadingOverlay {
+    background: rgba(31, 41, 55, 0.8);
+  }
+  
+  .loadingText {
+    color: #d1d5db;
+  }
+  
+  .successMessage {
+    background: #0c4a6e;
+    border-color: #075985;
+  }
+  
+  .successText {
+    color: #7dd3fc;
+  }
+}

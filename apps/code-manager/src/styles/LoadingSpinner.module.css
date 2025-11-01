@@ -1,0 +1,179 @@
+/* 加载状态组件样式 */
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px);
+  z-index: 100;
+}
+
+.fullScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+.spinnerSmall {
+  width: 16px;
+  height: 16px;
+}
+
+.spinnerMedium {
+  width: 24px;
+  height: 24px;
+}
+
+.spinnerLarge {
+  width: 32px;
+  height: 32px;
+}
+
+.message {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* 卡片加载器 */
+.cardLoader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.cardMessage {
+  margin: 0;
+  font-size: 16px;
+  color: #6b7280;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* 动画效果 */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.content {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .message {
+    font-size: 13px;
+  }
+  
+  .cardLoader {
+    padding: 32px 16px;
+  }
+  
+  .cardMessage {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .message {
+    font-size: 12px;
+  }
+  
+  .cardLoader {
+    padding: 24px 12px;
+  }
+  
+  .cardMessage {
+    font-size: 14px;
+  }
+  
+  .spinnerLarge {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .overlay {
+    background: rgba(31, 41, 55, 0.8);
+  }
+  
+  .fullScreen {
+    background: rgba(31, 41, 55, 0.9);
+  }
+  
+  .message {
+    color: #d1d5db;
+  }
+  
+  .cardLoader {
+    background: #374151;
+    border-color: #4b5563;
+  }
+  
+  .cardMessage {
+    color: #d1d5db;
+  }
+}

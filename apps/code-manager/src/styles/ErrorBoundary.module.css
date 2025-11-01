@@ -1,0 +1,184 @@
+/* 错误边界组件样式 */
+
+.errorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: #f9fafb;
+}
+
+.errorCard {
+  max-width: 500px;
+  width: 100%;
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.errorTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #dc2626;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.errorIcon {
+  font-size: 24px;
+  color: #dc2626;
+}
+
+.errorContent {
+  text-align: center;
+}
+
+.errorMessage {
+  color: #6b7280;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 0 24px 0;
+}
+
+.errorDetails {
+  text-align: left;
+  margin: 20px 0;
+  padding: 16px;
+  background: #f3f4f6;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+.errorDetails summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 12px;
+}
+
+.errorStack {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #dc2626;
+  background: #fef2f2;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #fecaca;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.errorActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.reloadButton {
+  --border-radius: 8px;
+  height: 48px;
+  font-weight: 600;
+}
+
+.resetButton {
+  --border-radius: 8px;
+  height: 44px;
+  font-weight: 500;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .errorContainer {
+    padding: 16px;
+  }
+  
+  .errorCard {
+    max-width: none;
+  }
+  
+  .errorTitle {
+    font-size: 18px;
+  }
+  
+  .errorMessage {
+    font-size: 15px;
+  }
+  
+  .errorActions {
+    gap: 8px;
+  }
+  
+  .reloadButton,
+  .resetButton {
+    height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .errorContainer {
+    padding: 12px;
+  }
+  
+  .errorTitle {
+    font-size: 16px;
+    gap: 8px;
+  }
+  
+  .errorIcon {
+    font-size: 20px;
+  }
+  
+  .errorMessage {
+    font-size: 14px;
+  }
+  
+  .errorStack {
+    font-size: 11px;
+    padding: 8px;
+  }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .errorContainer {
+    background: #1f2937;
+  }
+  
+  .errorCard {
+    --background: #374151;
+    border-color: #4b5563;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .errorTitle {
+    color: #fca5a5;
+  }
+  
+  .errorIcon {
+    color: #fca5a5;
+  }
+  
+  .errorMessage {
+    color: #d1d5db;
+  }
+  
+  .errorDetails {
+    background: #4b5563;
+    border-color: #6b7280;
+  }
+  
+  .errorDetails summary {
+    color: #f9fafb;
+  }
+  
+  .errorStack {
+    background: #450a0a;
+    border-color: #7f1d1d;
+    color: #fca5a5;
+  }
+}
