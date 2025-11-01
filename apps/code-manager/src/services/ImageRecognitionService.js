@@ -123,7 +123,7 @@ class ImageRecognitionService {
 只返回识别到的6位编码，不要包含任何其他文字。如果图片中有多个编码，返回最清晰的一个。
 如果无法识别，返回"NONE"。`;
 
-      const result = await AppSdk.ai.chat({
+      const result = await AppSdk.AI.chat({
         messages: [
           {
             role: 'user',
@@ -133,16 +133,20 @@ class ImageRecognitionService {
                 text: prompt
               },
               {
-                type: 'image',
-                image: pureBase64
+                type: 'image_url',
+                image_url: {
+                  url: `data:image/jpeg;base64,${pureBase64}`
+                }
               }
             ]
           }
         ],
-        temperature: 0.1 // 使用较低的温度以获得更准确的结果
+        options: {
+          temperature: 0.1 // 使用较低的温度以获得更准确的结果
+        }
       });
 
-      if (result.success && result.content) {
+      if (result && result.content) {
         const recognizedText = result.content.trim().toUpperCase();
         
         // 验证识别结果是否为有效的6位编码
