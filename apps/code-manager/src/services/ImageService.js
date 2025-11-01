@@ -4,6 +4,7 @@
  */
 
 import AppSdk from '@morphixai/app-sdk';
+import QRCode from 'qrcode';
 import { createCouponImageConfig, CouponErrorType, createCouponError } from '../utils/types';
 
 class ImageService {
@@ -21,32 +22,32 @@ class ImageService {
   async generateCouponImage(coupon, config = {}) {
     try {
       const imageConfig = { ...this.defaultConfig, ...config };
-      
+
       // 创建高分辨率Canvas元素（2倍分辨率提高清晰度）
       const scale = 2;
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      
+
       // 设置画布尺寸（使用2倍分辨率）
       canvas.width = imageConfig.width * scale;
       canvas.height = imageConfig.height * scale;
-      
+
       // 缩放上下文以匹配高分辨率
       ctx.scale(scale, scale);
-      
+
       // 启用抗锯齿和图像平滑
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
-      
+
       // 绘制背景渐变
       this._drawBackground(ctx, imageConfig);
-      
-      // 绘制优惠券内容
-      this._drawCouponContent(ctx, coupon, imageConfig);
-      
+
+      // 绘制优惠券内容（异步，因为包含二维码生成）
+      await this._drawCouponContent(ctx, coupon, imageConfig);
+
       // 转换为Base64（使用最高质量）
       const base64Data = canvas.toDataURL('image/png', 1.0);
-      
+
       return base64Data;
     } catch (error) {
       console.error('Error generating coupon image:', error);
@@ -68,16 +69,16 @@ class ImageService {
     try {
       // 提取纯Base64数据（去除data:image/png;base64,前缀）
       const pureBase64 = base64Data.replace(/^data:image\/[a-z]+;base64,/, '');
-      
+
       // 生成文件名（如果未提供）
       const finalFilename = filename || `coupon_${Date.now()}.png`;
-      
+
       // 调用AppSdk保存到相册
       const result = await AppSdk.fileSystem.saveImageToAlbum({
         base64Data: pureBase64,
         filename: finalFilename
       });
-      
+
       return {
         success: result.success,
         filename: finalFilename,
@@ -103,13 +104,13 @@ class ImageService {
     try {
       // 生成图片
       const base64Data = await this.generateCouponImage(coupon, config);
-      
+
       // 生成文件名
       const filename = `coupon_${coupon.code}_${Date.now()}.png`;
-      
+
       // 保存到相册
       const saveResult = await this.saveImageToAlbum(base64Data, filename);
-      
+
       return {
         success: saveResult.success,
         base64Data: saveResult.success ? base64Data : null,
@@ -139,14 +140,14 @@ class ImageService {
     gradient.addColorStop(0, '#DC2626'); // 深红色
     gradient.addColorStop(0.5, '#EF4444'); // 红色
     gradient.addColorStop(1, '#F87171'); // 浅红色
-    
+
     // 填充背景
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, config.width, config.height);
-    
+
     // 添加装饰性图案（红包纹理）
     this._drawRedEnvelopePattern(ctx, config);
-    
+
     // 添加圆角效果
     ctx.save();
     ctx.globalCompositeOperation = 'destination-in';
@@ -162,26 +163,26 @@ class ImageService {
    */
   _drawRedEnvelopePattern(ctx, config) {
     ctx.save();
-    
+
     // 绘制半透明的装饰圆圈
     ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-    
+
     // 左上角大圆
     ctx.beginPath();
     ctx.arc(-30, -30, 120, 0, Math.PI * 2);
     ctx.fill();
-    
+
     // 右下角大圆
     ctx.beginPath();
     ctx.arc(config.width + 30, config.height + 30, 120, 0, Math.PI * 2);
     ctx.fill();
-    
+
     // 中间装饰圆
     ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
     ctx.beginPath();
     ctx.arc(config.width / 2, config.height / 2, 180, 0, Math.PI * 2);
     ctx.fill();
-    
+
     ctx.restore();
   }
 
@@ -190,16 +191,17 @@ class ImageService {
    * @param {CanvasRenderingContext2D} ctx - Canvas上下文
    * @param {Object} coupon - 优惠券对象
    * @param {Object} config - 图片配置
+   * @returns {Promise<void>}
    * @private
    */
-  _drawCouponContent(ctx, coupon, config) {
+  async _drawCouponContent(ctx, coupon, config) {
     ctx.fillStyle = config.textColor;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    
+
     const centerX = config.width / 2;
     let currentY = 60;
-    
+
     // 绘制公司名称（如果有）
     if (coupon.companyName) {
       ctx.font = `600 ${config.fontSize.label + 4}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
@@ -208,12 +210,12 @@ class ImageService {
     } else {
       currentY += 15;
     }
-    
+
     // 绘制"优惠券"标题
     ctx.font = `${config.fontSize.label}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
     ctx.fillText('优惠券', centerX, currentY);
     currentY += 50;
-    
+
     // 绘制金额或折扣
     ctx.font = `bold ${config.fontSize.amount + 12}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
     if (coupon.type === 'discount') {
@@ -222,40 +224,100 @@ class ImageService {
       ctx.fillText(`¥${coupon.amount}`, centerX, currentY);
     }
     currentY += 65;
-    
+
     // 绘制备注（如果有）
     if (coupon.note) {
       ctx.font = `${config.fontSize.label - 2}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
       ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-      
+
       // 处理长文本换行
       const maxWidth = config.width - 100;
       const words = coupon.note;
       const lines = this._wrapText(ctx, words, maxWidth);
-      
+
       lines.forEach((line, index) => {
         ctx.fillText(line, centerX, currentY + (index * 26));
       });
-      
+
       currentY += lines.length * 26 + 30;
       ctx.fillStyle = config.textColor;
     } else {
       currentY += 15;
     }
-    
-    // 绘制条形码
-    const barcodeY = currentY;
-    this._drawBarcode(ctx, coupon.code, centerX, barcodeY, config);
-    currentY += 90;
-    
+
+    // 绘制二维码（替代条形码）
+    const qrCodeY = currentY;
+    await this._drawQRCode(ctx, coupon.code, centerX, qrCodeY, config);
+    currentY += 180;
+
     // 绘制编码文字（白色30%透明度，加粗）
     ctx.font = `bold ${config.fontSize.label + 2}px 'Courier New', monospace`;
     ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
     ctx.fillText(coupon.code, centerX, currentY);
-    
+
     // 如果已使用，添加水印
     if (coupon.isUsed) {
       this._drawUsedWatermark(ctx, config);
+    }
+  }
+
+  /**
+   * 绘制二维码
+   * @param {CanvasRenderingContext2D} ctx - Canvas上下文
+   * @param {string} code - 优惠券编码
+   * @param {number} x - 中心X坐标
+   * @param {number} y - Y坐标
+   * @param {Object} config - 图片配置
+   * @returns {Promise<void>}
+   * @private
+   */
+  async _drawQRCode(ctx, code, x, y, config) {
+    try {
+      // 动态导入 qrcode 库
+      const QRCode = await import('qrcode');
+
+      // 生成二维码 URL（当前 URL + code 参数）
+      const baseUrl = window.location.origin + window.location.pathname;
+      const qrCodeUrl = `${baseUrl}?code=${code}`;
+
+      console.log('生成二维码 URL:', qrCodeUrl);
+
+      // 生成二维码为 Data URL
+      const qrDataUrl = await QRCode.default.toDataURL(qrCodeUrl, {
+        width: 160,
+        margin: 1,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+
+      // 加载二维码图片
+      const qrImage = new Image();
+      await new Promise((resolve, reject) => {
+        qrImage.onload = resolve;
+        qrImage.onerror = reject;
+        qrImage.src = qrDataUrl;
+      });
+
+      // 绘制白色背景
+      const qrSize = 160;
+      const bgPadding = 10;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(
+        x - qrSize / 2 - bgPadding,
+        y - bgPadding,
+        qrSize + bgPadding * 2,
+        qrSize + bgPadding * 2
+      );
+
+      // 绘制二维码
+      ctx.drawImage(qrImage, x - qrSize / 2, y, qrSize, qrSize);
+
+    } catch (error) {
+      console.error('绘制二维码失败:', error);
+      // 如果二维码生成失败，回退到条形码
+      this._drawBarcode(ctx, code, x, y, config);
     }
   }
 
@@ -273,20 +335,20 @@ class ImageService {
     const barcodeWidth = 300;
     const barcodeHeight = 60;
     const barWidth = 4;
-    
+
     // 将编码转换为条形码模式（简化版Code 128）
     const pattern = this._generateBarcodePattern(code);
-    
+
     // 绘制白色背景
     ctx.fillStyle = '#FFFFFF';
     const bgX = x - barcodeWidth / 2 - 15;
     const bgY = y - 8;
     ctx.fillRect(bgX, bgY, barcodeWidth + 30, barcodeHeight + 16);
-    
+
     // 绘制条形码
     ctx.fillStyle = '#000000';
     const startX = x - (pattern.length * barWidth) / 2;
-    
+
     pattern.forEach((bar, index) => {
       if (bar === 1) {
         ctx.fillRect(
@@ -307,10 +369,10 @@ class ImageService {
    */
   _generateBarcodePattern(code) {
     const pattern = [];
-    
+
     // 起始标记
     pattern.push(1, 0, 1, 0, 1);
-    
+
     // 为每个字符生成条纹
     for (let i = 0; i < code.length; i++) {
       const char = code.charCodeAt(i);
@@ -324,16 +386,16 @@ class ImageService {
         (char >> 5) % 2
       ];
       pattern.push(...charPattern);
-      
+
       // 字符间隔
       if (i < code.length - 1) {
         pattern.push(0);
       }
     }
-    
+
     // 结束标记
     pattern.push(1, 0, 1, 0, 1);
-    
+
     return pattern;
   }
 
@@ -348,11 +410,11 @@ class ImageService {
   _wrapText(ctx, text, maxWidth) {
     const lines = [];
     let currentLine = '';
-    
+
     for (let i = 0; i < text.length; i++) {
       const testLine = currentLine + text[i];
       const metrics = ctx.measureText(testLine);
-      
+
       if (metrics.width > maxWidth && currentLine.length > 0) {
         lines.push(currentLine);
         currentLine = text[i];
@@ -360,11 +422,11 @@ class ImageService {
         currentLine = testLine;
       }
     }
-    
+
     if (currentLine.length > 0) {
       lines.push(currentLine);
     }
-    
+
     // 最多显示2行
     return lines.slice(0, 2);
   }
@@ -377,25 +439,25 @@ class ImageService {
    */
   _drawUsedWatermark(ctx, config) {
     ctx.save();
-    
+
     // 设置半透明红色
     ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
     ctx.strokeStyle = 'rgba(239, 68, 68, 1)';
     ctx.lineWidth = 2;
-    
+
     // 旋转画布
     ctx.translate(config.width / 2, config.height / 2);
     ctx.rotate(-Math.PI / 6); // -30度
-    
+
     // 绘制水印文字
     ctx.font = `bold 28px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    
+
     // 绘制文字描边和填充
     ctx.strokeText('已使用', 0, 0);
     ctx.fillText('已使用', 0, 0);
-    
+
     ctx.restore();
   }
 

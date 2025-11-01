@@ -4,6 +4,7 @@
  */
 
 import AppSdk from '@morphixai/app-sdk';
+import { Html5Qrcode } from 'html5-qrcode';
 
 class ImageRecognitionService {
   /**
@@ -12,10 +13,24 @@ class ImageRecognitionService {
    * @returns {Promise<Object>} 识别结果
    */
   async recognizeCouponCode(base64Image) {
+    console.log('🔍 [识别开始] 开始识别优惠券编码');
+    console.log('📷 [图片信息] 图片大小:', Math.round(base64Image.length / 1024), 'KB');
+
     try {
       // 首先尝试条形码识别
+      console.log('📊 [条形码识别] 开始条形码识别...');
+      const startBarcode = Date.now();
+
       const barcodeResult = await this.recognizeBarcode(base64Image);
+      const barcodeTime = Date.now() - startBarcode;
+
+      console.log(`⏱️  [条形码识别] 耗时: ${barcodeTime}ms`);
+
       if (barcodeResult.success && barcodeResult.code) {
+        console.log('✅ [条形码识别] 识别成功!');
+        console.log('🎯 [识别结果] 编码:', barcodeResult.code);
+        console.log('📈 [置信度]', (barcodeResult.confidence * 100).toFixed(1) + '%');
+
         return {
           success: true,
           code: barcodeResult.code,
@@ -24,9 +39,22 @@ class ImageRecognitionService {
         };
       }
 
+      console.log('❌ [条形码识别] 识别失败，切换到AI识别');
+
       // 如果条形码识别失败，使用AI识别
+      console.log('🤖 [AI识别] 开始AI识别...');
+      const startAI = Date.now();
+
       const aiResult = await this.recognizeWithAI(base64Image);
+      const aiTime = Date.now() - startAI;
+
+      console.log(`⏱️  [AI识别] 耗时: ${aiTime}ms`);
+
       if (aiResult.success && aiResult.code) {
+        console.log('✅ [AI识别] 识别成功!');
+        console.log('🎯 [识别结果] 编码:', aiResult.code);
+        console.log('📈 [置信度]', (aiResult.confidence * 100).toFixed(1) + '%');
+
         return {
           success: true,
           code: aiResult.code,
@@ -35,6 +63,9 @@ class ImageRecognitionService {
         };
       }
 
+      console.log('❌ [AI识别] 识别失败');
+      console.log('⚠️  [识别结束] 所有识别方法均失败');
+
       return {
         success: false,
         code: null,
@@ -42,7 +73,7 @@ class ImageRecognitionService {
         error: '未能识别出优惠券编码'
       };
     } catch (error) {
-      console.error('Error recognizing coupon code:', error);
+      console.error('💥 [识别错误] 识别过程发生错误:', error);
       return {
         success: false,
         code: null,
@@ -53,59 +84,112 @@ class ImageRecognitionService {
   }
 
   /**
-   * 条形码识别
+   * 条形码识别（使用 html5-qrcode）
    * @param {string} base64Image - Base64格式的图片数据
    * @returns {Promise<Object>} 识别结果
    */
   async recognizeBarcode(base64Image) {
+    console.log('  📊 [html5-qrcode] 初始化识别器...');
+
     try {
-      // 使用Canvas进行图像处理
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
+      // 动态导入 html5-qrcode 库
+      const { Html5Qrcode } = await import('html5-qrcode');
 
-      return new Promise((resolve) => {
-        img.onload = () => {
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
+      console.log('  📊 [html5-qrcode] 准备图片数据...');
 
-          // 获取图像数据
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          
-          // 简化版条形码识别（扫描黑白条纹）
-          const code = this._scanBarcode(imageData);
-          
-          if (code) {
-            resolve({
-              success: true,
-              code: code,
-              confidence: 0.9
-            });
-          } else {
-            resolve({
-              success: false,
-              code: null
-            });
-          }
-        };
+      // 将 base64 转换为 File 对象
+      const blob = await this._base64ToBlob(base64Image);
+      const file = new File([blob], 'coupon.jpg', { type: blob.type });
 
-        img.onerror = () => {
-          resolve({
+      console.log('  📊 [html5-qrcode] 文件大小:', Math.round(file.size / 1024), 'KB');
+
+      // 创建临时容器元素（html5-qrcode 需要）
+      const tempDiv = document.createElement('div');
+      tempDiv.id = 'temp-qr-reader-' + Date.now();
+      tempDiv.style.display = 'none';
+      document.body.appendChild(tempDiv);
+
+      try {
+        const html5QrCode = new Html5Qrcode(tempDiv.id);
+
+        console.log('  📊 [html5-qrcode] 开始扫描文件...');
+
+        // 扫描文件
+        const decodedText = await html5QrCode.scanFile(file, false);
+
+        console.log('  📊 [html5-qrcode] 原始识别结果:', decodedText);
+
+        // 清理临时元素
+        document.body.removeChild(tempDiv);
+
+        // 尝试从识别结果中提取 code
+        const extractedCode = this._extractCodeFromText(decodedText);
+        
+        if (extractedCode) {
+          console.log('  📊 [html5-qrcode] ✅ 识别成功，编码:', extractedCode);
+          return {
+            success: true,
+            code: extractedCode,
+            confidence: 0.95
+          };
+        } else {
+          console.log('  📊 [html5-qrcode] ⚠️ 识别到内容但无法提取编码:', decodedText);
+          return {
             success: false,
-            code: null
-          });
-        };
+            code: null,
+            rawText: decodedText
+          };
+        }
+      } catch (error) {
+        // 清理临时元素
+        if (document.body.contains(tempDiv)) {
+          document.body.removeChild(tempDiv);
+        }
 
-        img.src = base64Image;
-      });
+        console.log('  📊 [html5-qrcode] ❌ 识别失败:', error.message);
+        return {
+          success: false,
+          code: null
+        };
+      }
     } catch (error) {
-      console.error('Barcode recognition error:', error);
+      console.error('  📊 [html5-qrcode] 初始化失败:', error);
       return {
         success: false,
-        code: null
+        code: null,
+        error: error.message
       };
     }
+  }
+
+  /**
+   * 将 base64 转换为 Blob
+   * @param {string} base64Image - Base64格式的图片数据
+   * @returns {Promise<Blob>} Blob 对象
+   * @private
+   */
+  async _base64ToBlob(base64Image) {
+    // 如果是 data URL，提取 base64 部分
+    let base64Data = base64Image;
+    let mimeType = 'image/jpeg';
+
+    if (base64Image.startsWith('data:')) {
+      const matches = base64Image.match(/^data:([^;]+);base64,(.+)$/);
+      if (matches) {
+        mimeType = matches[1];
+        base64Data = matches[2];
+      }
+    }
+
+    // 将 base64 转换为二进制
+    const binaryString = atob(base64Data);
+    const bytes = new Uint8Array(binaryString.length);
+
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+
+    return new Blob([bytes], { type: mimeType });
   }
 
   /**
@@ -149,13 +233,16 @@ class ImageRecognitionService {
       if (result && result.content) {
         const recognizedText = result.content.trim().toUpperCase();
         
-        // 验证识别结果是否为有效的6位编码
-        const codeMatch = recognizedText.match(/[A-Z0-9]{6}/);
+        console.log('  🤖 [AI] 原始识别内容:', recognizedText);
         
-        if (codeMatch) {
+        // 尝试从识别结果中提取 code
+        const extractedCode = this._extractCodeFromText(recognizedText);
+        
+        if (extractedCode) {
+          console.log('  🤖 [AI] 提取到编码:', extractedCode);
           return {
             success: true,
-            code: codeMatch[0],
+            code: extractedCode,
             confidence: 0.8
           };
         }
@@ -176,160 +263,30 @@ class ImageRecognitionService {
   }
 
   /**
-   * 简化版条形码扫描
-   * @param {ImageData} imageData - 图像数据
-   * @returns {string|null} 识别到的编码
+   * 从文本中提取优惠券编码
+   * @param {string} text - 识别到的文本
+   * @returns {string|null} 提取到的编码
    * @private
    */
-  _scanBarcode(imageData) {
-    try {
-      const { width, height, data } = imageData;
-      
-      // 扫描图像中间区域寻找条形码
-      const centerY = Math.floor(height / 2);
-      const scanLines = 5; // 扫描多行以提高准确率
-      
-      for (let offsetY = -scanLines; offsetY <= scanLines; offsetY++) {
-        const y = centerY + offsetY * 10;
-        if (y < 0 || y >= height) continue;
-        
-        const pattern = [];
-        let lastPixel = null;
-        let count = 0;
-        
-        // 扫描一行像素
-        for (let x = 0; x < width; x++) {
-          const idx = (y * width + x) * 4;
-          const r = data[idx];
-          const g = data[idx + 1];
-          const b = data[idx + 2];
-          
-          // 计算灰度值
-          const gray = (r + g + b) / 3;
-          const isBlack = gray < 128;
-          
-          if (lastPixel === null) {
-            lastPixel = isBlack;
-            count = 1;
-          } else if (lastPixel === isBlack) {
-            count++;
-          } else {
-            pattern.push({ color: lastPixel ? 1 : 0, width: count });
-            lastPixel = isBlack;
-            count = 1;
-          }
-        }
-        
-        // 尝试从条形码模式解码
-        if (pattern.length > 20) {
-          const code = this._decodeBarcode(pattern);
-          if (code) {
-            return code;
-          }
-        }
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('Barcode scanning error:', error);
-      return null;
+  _extractCodeFromText(text) {
+    // 1. 尝试从 URL 中提取 code 参数
+    const urlMatch = text.match(/[?&]code=([A-Z0-9]{6})/i);
+    if (urlMatch) {
+      console.log('  🤖 [AI] 从 URL 提取编码');
+      return urlMatch[1].toUpperCase();
     }
-  }
-
-  /**
-   * 从条形码模式解码
-   * @param {Array} pattern - 条形码模式
-   * @returns {string|null} 解码后的编码
-   * @private
-   */
-  _decodeBarcode(pattern) {
-    // 这是一个简化版本，实际应用中应使用专业的条形码解码库
-    // 这里我们只是尝试识别我们自己生成的条形码格式
     
-    try {
-      // 查找起始和结束标记
-      const startMarker = this._findMarker(pattern, 0);
-      const endMarker = this._findMarker(pattern, pattern.length - 10);
-      
-      if (!startMarker || !endMarker) {
-        return null;
-      }
-      
-      // 提取中间的数据部分
-      const dataPattern = pattern.slice(startMarker.end, endMarker.start);
-      
-      // 解码数据
-      const code = this._decodeDataPattern(dataPattern);
-      
-      // 验证编码格式
-      if (code && /^[A-Z0-9]{6}$/.test(code)) {
-        return code;
-      }
-      
-      return null;
-    } catch (error) {
-      return null;
+    // 2. 尝试直接匹配6位编码
+    const codeMatch = text.match(/[A-Z0-9]{6}/);
+    if (codeMatch) {
+      console.log('  🤖 [AI] 直接匹配编码');
+      return codeMatch[0];
     }
-  }
-
-  /**
-   * 查找条形码标记
-   * @param {Array} pattern - 条形码模式
-   * @param {number} startIndex - 开始索引
-   * @returns {Object|null} 标记位置
-   * @private
-   */
-  _findMarker(pattern, startIndex) {
-    // 查找 1-0-1-0-1 模式
-    for (let i = startIndex; i < Math.min(startIndex + 10, pattern.length - 4); i++) {
-      if (pattern[i].color === 1 &&
-          pattern[i + 1].color === 0 &&
-          pattern[i + 2].color === 1 &&
-          pattern[i + 3].color === 0 &&
-          pattern[i + 4].color === 1) {
-        return {
-          start: i,
-          end: i + 5
-        };
-      }
-    }
+    
     return null;
   }
 
-  /**
-   * 解码数据模式
-   * @param {Array} dataPattern - 数据模式
-   * @returns {string|null} 解码后的字符串
-   * @private
-   */
-  _decodeDataPattern(dataPattern) {
-    // 简化版解码，实际应用中需要更复杂的算法
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let code = '';
-    
-    // 每7个条纹代表一个字符
-    for (let i = 0; i < dataPattern.length - 6; i += 7) {
-      const charPattern = dataPattern.slice(i, i + 6);
-      
-      // 将模式转换为数字
-      let value = 0;
-      charPattern.forEach((bar, idx) => {
-        if (bar.color === 1) {
-          value += Math.pow(2, idx);
-        }
-      });
-      
-      // 映射到字符
-      const charIndex = value % chars.length;
-      code += chars[charIndex];
-      
-      if (code.length >= 6) {
-        break;
-      }
-    }
-    
-    return code.length === 6 ? code : null;
-  }
+
 
   /**
    * 从相机拍照
