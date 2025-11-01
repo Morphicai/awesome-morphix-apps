@@ -92,9 +92,6 @@ class ImageRecognitionService {
     console.log('  📊 [html5-qrcode] 初始化识别器...');
 
     try {
-      // 动态导入 html5-qrcode 库
-      const { Html5Qrcode } = await import('html5-qrcode');
-
       console.log('  📊 [html5-qrcode] 准备图片数据...');
 
       // 将 base64 转换为 File 对象
@@ -110,6 +107,7 @@ class ImageRecognitionService {
       document.body.appendChild(tempDiv);
 
       try {
+        // 使用顶部导入的 Html5Qrcode
         const html5QrCode = new Html5Qrcode(tempDiv.id);
 
         console.log('  📊 [html5-qrcode] 开始扫描文件...');
@@ -124,7 +122,7 @@ class ImageRecognitionService {
 
         // 尝试从识别结果中提取 code
         const extractedCode = this._extractCodeFromText(decodedText);
-        
+
         if (extractedCode) {
           console.log('  📊 [html5-qrcode] ✅ 识别成功，编码:', extractedCode);
           return {
@@ -232,12 +230,12 @@ class ImageRecognitionService {
 
       if (result && result.content) {
         const recognizedText = result.content.trim().toUpperCase();
-        
+
         console.log('  🤖 [AI] 原始识别内容:', recognizedText);
-        
+
         // 尝试从识别结果中提取 code
         const extractedCode = this._extractCodeFromText(recognizedText);
-        
+
         if (extractedCode) {
           console.log('  🤖 [AI] 提取到编码:', extractedCode);
           return {
@@ -275,14 +273,14 @@ class ImageRecognitionService {
       console.log('  🤖 [AI] 从 URL 提取编码');
       return urlMatch[1].toUpperCase();
     }
-    
+
     // 2. 尝试直接匹配6位编码
     const codeMatch = text.match(/[A-Z0-9]{6}/);
     if (codeMatch) {
       console.log('  🤖 [AI] 直接匹配编码');
       return codeMatch[0];
     }
-    
+
     return null;
   }
 
