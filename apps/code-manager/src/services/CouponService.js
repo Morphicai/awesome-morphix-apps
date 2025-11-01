@@ -39,7 +39,7 @@ class CouponService {
     if (type === 'amount' && !validateAmount(amount)) {
       throw new Error('Invalid amount format');
     }
-    
+
     if (type === 'discount' && !validateAmount(discount)) {
       throw new Error('Invalid discount format');
     }
@@ -52,7 +52,7 @@ class CouponService {
     do {
       code = this.generateCouponCode();
       attempts++;
-      
+
       if (attempts > maxAttempts) {
         throw new Error('Failed to generate unique coupon code');
       }
@@ -82,7 +82,7 @@ class CouponService {
    */
   async createBatchCoupons(couponData, quantity) {
     const coupons = [];
-    
+
     for (let i = 0; i < quantity; i++) {
       try {
         const coupon = await this.createCoupon(couponData);
@@ -92,7 +92,7 @@ class CouponService {
         // 继续创建其他优惠券
       }
     }
-    
+
     return coupons;
   }
 
@@ -112,7 +112,7 @@ class CouponService {
 
     try {
       const coupon = await this.storageService.getCoupon(code);
-      
+
       if (!coupon) {
         return createValidationResult({
           isValid: false,
@@ -153,7 +153,7 @@ class CouponService {
   async useCoupon(code) {
     try {
       const coupon = await this.storageService.getCoupon(code);
-      
+
       if (!coupon) {
         throw new Error('Coupon not found');
       }
@@ -163,7 +163,7 @@ class CouponService {
       }
 
       const updatedCoupon = await this.storageService.updateCoupon(code, {
-        ...coupon??{},
+        ...coupon ?? {},
         isUsed: true,
         usedAt: new Date()
       });
@@ -195,23 +195,41 @@ class CouponService {
    */
   async receiveCoupon(code) {
     try {
-      // 先验证优惠券是否存在（从创建的列表中查找）
-      const existingCoupon = await this.storageService.getCoupon(code);
-      
-      if (!existingCoupon) {
-        throw new Error('Coupon not found');
+      // 检查是否已经在"我收到的"列表中
+      const receivedCoupon = await this.storageService.getReceivedCoupon(code);
+      if (receivedCoupon) {
+        // 已经领取过了
+        return receivedCoupon;
       }
 
-      // 如果已经在收到的列表中，不重复添加
-      if (existingCoupon.source === 'received') {
-        return existingCoupon;
+      // 检查是否是自己创建的
+      const createdCoupon = await this.storageService.getCreatedCoupon(code);
+      if (createdCoupon) {
+        // 不能领取自己创建的优惠券
+        throw new Error('Cannot receive your own coupon');
       }
+
+      // 创建一个基础的优惠券对象（只有 code）
+      // 注意：由于无法跨用户访问数据，这里只能保存 code
+      // 实际的优惠券信息需要在验证时从创建者那里获取
+      const newCoupon = createCoupon({
+        id: code,
+        code,
+        type: 'amount',
+        amount: 0,
+        discount: null,
+        note: '待验证',
+        companyName: '',
+        expiryDate: null,
+        isUsed: false,
+        createdAt: new Date()
+      });
 
       // 保存到收到的列表
-      return await this.storageService.saveReceivedCoupon(existingCoupon);
+      return await this.storageService.saveReceivedCoupon(newCoupon);
     } catch (error) {
       console.error('Error receiving coupon:', error);
-      return null;
+      throw error;
     }
   }
 

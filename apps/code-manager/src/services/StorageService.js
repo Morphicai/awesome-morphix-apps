@@ -116,6 +116,52 @@ class StorageService {
   }
 
   /**
+   * 获取单个我创建的优惠券
+   * @param {string} code - 优惠券编码
+   * @returns {Promise<Object|null>} 优惠券对象或null
+   */
+  async getCreatedCoupon(code) {
+    try {
+      const result = await AppSdk.appData.getData({
+        collection: this.createdCollection,
+        id: code
+      });
+      if (result) {
+        const coupon = this._deserializeCoupon(result);
+        coupon.source = 'created';
+        return coupon;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting created coupon:', error);
+      return null;
+    }
+  }
+
+  /**
+   * 获取单个我收到的优惠券
+   * @param {string} code - 优惠券编码
+   * @returns {Promise<Object|null>} 优惠券对象或null
+   */
+  async getReceivedCoupon(code) {
+    try {
+      const result = await AppSdk.appData.getData({
+        collection: this.receivedCollection,
+        id: code
+      });
+      if (result) {
+        const coupon = this._deserializeCoupon(result);
+        coupon.source = 'received';
+        return coupon;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting received coupon:', error);
+      return null;
+    }
+  }
+
+  /**
    * 获取我创建的优惠券
    * @returns {Promise<Array>} 优惠券列表
    */
