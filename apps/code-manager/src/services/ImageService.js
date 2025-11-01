@@ -165,7 +165,7 @@ class ImageService {
     ctx.save();
 
     // 绘制半透明的装饰圆圈
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
 
     // 左上角大圆
     ctx.beginPath();
@@ -175,12 +175,6 @@ class ImageService {
     // 右下角大圆
     ctx.beginPath();
     ctx.arc(config.width + 30, config.height + 30, 120, 0, Math.PI * 2);
-    ctx.fill();
-
-    // 中间装饰圆
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
-    ctx.beginPath();
-    ctx.arc(config.width / 2, config.height / 2, 180, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.restore();
