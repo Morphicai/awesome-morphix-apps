@@ -1,0 +1,162 @@
+/* 批量创建结果模态框样式 */
+
+.content {
+  --padding-top: 20px;
+  --padding-bottom: 20px;
+}
+
+.container {
+  padding: 0 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 成功提示 */
+.successHeader {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.successIcon {
+  font-size: 64px;
+  color: #10b981;
+  margin-bottom: 16px;
+}
+
+.successText h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* 操作按钮 */
+.actionButtons {
+  margin-bottom: 24px;
+}
+
+.actionButton {
+  --border-radius: 8px;
+  height: 44px;
+  font-weight: 600;
+}
+
+/* 优惠券列表 */
+.couponList {
+  margin-bottom: 24px;
+}
+
+.listTitle h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.list {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.couponItem {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --min-height: 60px;
+}
+
+.couponInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.couponIndex {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 30px;
+}
+
+.couponCode {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  letter-spacing: 1px;
+  flex: 1;
+}
+
+.couponAmount {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.couponNote {
+  margin: 4px 0 0 42px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* 关闭按钮 */
+.closeButtonContainer {
+  margin-top: 24px;
+}
+
+.closeButton {
+  --border-radius: 8px;
+  height: 48px;
+  font-weight: 600;
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .successText h2 {
+    color: #e5e7eb;
+  }
+  
+  .listTitle h3 {
+    color: #e5e7eb;
+  }
+  
+  .couponCode {
+    color: #e5e7eb;
+  }
+  
+  .couponIndex {
+    color: #9ca3af;
+  }
+  
+  .couponNote {
+    color: #9ca3af;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 12px;
+  }
+  
+  .successIcon {
+    font-size: 56px;
+  }
+  
+  .successText h2 {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 8px;
+  }
+  
+  .couponInfo {
+    gap: 8px;
+  }
+  
+  .couponCode {
+    font-size: 14px;
+  }
+}

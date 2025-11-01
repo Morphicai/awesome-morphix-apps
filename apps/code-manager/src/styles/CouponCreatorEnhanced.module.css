@@ -1,0 +1,168 @@
+/* 增强版优惠券创建组件样式 */
+
+.container {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.formCard {
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 类型选择区域 */
+.typeSection {
+  margin-bottom: 20px;
+}
+
+.sectionLabel {
+  display: block;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+/* 输入项样式 */
+.inputItem {
+  margin-bottom: 16px;
+  --border-radius: 8px;
+  --background: #f8fafc;
+}
+
+.inputItem ion-label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.inputItem ion-input,
+.inputItem ion-textarea,
+.inputItem ion-select {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  font-size: 16px;
+}
+
+.inputError {
+  --border-color: #ef4444;
+  --color: #ef4444;
+}
+
+/* 复选框样式 */
+.checkboxItem {
+  margin: 16px 0;
+  --background: transparent;
+}
+
+.checkboxLabel {
+  margin-left: 12px;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* 错误提示 */
+.errorText {
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.errorText p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 操作按钮 */
+.actionButtons {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.createButton {
+  --border-radius: 8px;
+  --background: #4f46e5;
+  --background-activated: #4338ca;
+  --color: white;
+  font-weight: 600;
+  height: 48px;
+}
+
+.saveTemplateButton {
+  --border-radius: 8px;
+  --border-color: #4f46e5;
+  --color: #4f46e5;
+  font-weight: 600;
+  height: 44px;
+}
+
+.buttonText {
+  margin-left: 8px;
+}
+
+/* 按钮禁用状态 */
+.createButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .formCard {
+    --background: #1e1e1e;
+  }
+  
+  .inputItem {
+    --background: #2a2a2a;
+    --color: #e5e7eb;
+  }
+  
+  .inputItem ion-label {
+    color: #e5e7eb;
+  }
+  
+  .inputItem ion-input,
+  .inputItem ion-textarea,
+  .inputItem ion-select {
+    --color: #e5e7eb;
+    --placeholder-color: #6b7280;
+  }
+  
+  .sectionLabel {
+    color: #e5e7eb;
+  }
+  
+  .checkboxLabel {
+    color: #e5e7eb;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .actionButtons {
+    gap: 8px;
+  }
+  
+  .createButton,
+  .saveTemplateButton {
+    height: 44px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 8px;
+  }
+}

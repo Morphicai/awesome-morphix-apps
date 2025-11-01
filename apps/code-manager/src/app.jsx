@@ -14,11 +14,12 @@ import {
 } from '@ionic/react';
 import { addCircleOutline, listOutline, checkmarkCircleOutline } from 'ionicons/icons';
 import { PageHeader } from '@morphixai/components';
-import CouponCreator from './components/CouponCreator';
+import CouponCreatorEnhanced from './components/CouponCreatorEnhanced';
 import CouponValidator from './components/CouponValidator';
 import CouponList from './components/CouponList';
 import CouponDetailModal from './components/CouponDetailModal';
 import CouponResultModal from './components/CouponResultModal';
+import BatchCouponResultModal from './components/BatchCouponResultModal';
 import ValidationResultModal from './components/ValidationResultModal';
 import ErrorBoundary from './components/ErrorBoundary';
 import ToastManager from './components/ToastManager';
@@ -35,8 +36,10 @@ import styles from './styles/App.module.css';
  */
 export default function App() {
     const [selectedCoupon, setSelectedCoupon] = useState(null);
+    const [batchCoupons, setBatchCoupons] = useState([]);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [showResultModal, setShowResultModal] = useState(false);
+    const [showBatchResultModal, setShowBatchResultModal] = useState(false);
     const [showValidationModal, setShowValidationModal] = useState(false);
     const [validationResult, setValidationResult] = useState(null);
     
@@ -85,6 +88,15 @@ export default function App() {
     const handleCouponCreated = (coupon) => {
         setSelectedCoupon(coupon);
         setShowResultModal(true);
+        loadCoupons(); // 刷新列表
+    };
+
+    /**
+     * 处理批量创建成功
+     */
+    const handleBatchCreated = (coupons) => {
+        setBatchCoupons(coupons);
+        setShowBatchResultModal(true);
         loadCoupons(); // 刷新列表
     };
 
@@ -182,7 +194,10 @@ export default function App() {
                     <IonPage>
                         <PageHeader title="创建优惠券" />
                         <IonContent className={styles.content}>
-                            <CouponCreator onCouponCreated={handleCouponCreated} />
+                            <CouponCreatorEnhanced 
+                                onCouponCreated={handleCouponCreated}
+                                onBatchCreated={handleBatchCreated}
+                            />
                         </IonContent>
                     </IonPage>
                 </IonTab>
@@ -251,6 +266,16 @@ export default function App() {
                 }}
                 onSaveImage={handleSaveImage}
                 isSavingImage={isImageGenerating}
+            />
+
+            {/* 批量创建结果 Modal */}
+            <BatchCouponResultModal
+                isOpen={showBatchResultModal}
+                coupons={batchCoupons}
+                onClose={() => {
+                    setShowBatchResultModal(false);
+                    setBatchCoupons([]);
+                }}
             />
 
             {/* 验证结果 Modal */}

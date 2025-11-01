@@ -28,13 +28,20 @@ class CouponService {
 
   /**
    * 创建新优惠券
-   * @param {number} amount - 优惠券金额
+   * @param {Object} couponData - 优惠券数据
    * @returns {Promise<Object>} 创建的优惠券对象
-   * @throws {Error} 当金额无效时抛出错误
+   * @throws {Error} 当数据无效时抛出错误
    */
-  async createCoupon(amount) {
-    if (!validateAmount(amount)) {
+  async createCoupon(couponData) {
+    const { type = 'amount', amount, discount, note = '', companyName = '' } = couponData;
+
+    // 验证金额或折扣
+    if (type === 'amount' && !validateAmount(amount)) {
       throw new Error('Invalid amount format');
+    }
+    
+    if (type === 'discount' && !validateAmount(discount)) {
+      throw new Error('Invalid discount format');
     }
 
     // 生成唯一编码，确保不重复
@@ -52,14 +59,40 @@ class CouponService {
     } while (await this.storageService.getCoupon(code));
 
     const coupon = createCoupon({
-      id: code, // 使用编码作为ID
+      id: code,
       code,
-      amount: Number(amount),
+      type,
+      amount: type === 'amount' ? Number(amount) : 0,
+      discount: type === 'discount' ? Number(discount) : null,
+      note,
+      companyName,
       isUsed: false,
       createdAt: new Date()
     });
 
     return await this.storageService.saveCoupon(coupon);
+  }
+
+  /**
+   * 批量创建优惠券
+   * @param {Object} couponData - 优惠券数据
+   * @param {number} quantity - 创建数量
+   * @returns {Promise<Array>} 创建的优惠券数组
+   */
+  async createBatchCoupons(couponData, quantity) {
+    const coupons = [];
+    
+    for (let i = 0; i < quantity; i++) {
+      try {
+        const coupon = await this.createCoupon(couponData);
+        coupons.push(coupon);
+      } catch (error) {
+        console.error(`Failed to create coupon ${i + 1}:`, error);
+        // 继续创建其他优惠券
+      }
+    }
+    
+    return coupons;
   }
 
   /**

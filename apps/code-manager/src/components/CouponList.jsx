@@ -45,6 +45,23 @@ const CouponList = ({ coupons, onCouponClick }) => {
     }
   };
 
+  /**
+   * 排序优惠券：未使用的在前，按创建时间倒序
+   */
+  const sortCoupons = (coupons) => {
+    return [...coupons].sort((a, b) => {
+      // 首先按使用状态排序（未使用在前）
+      if (a.isUsed !== b.isUsed) {
+        return a.isUsed ? 1 : -1;
+      }
+      
+      // 然后按创建时间倒序（新的在前）
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
+    });
+  };
+
   if (!coupons || coupons.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -55,9 +72,11 @@ const CouponList = ({ coupons, onCouponClick }) => {
     );
   }
 
+  const sortedCoupons = sortCoupons(coupons);
+
   return (
     <div className={styles.listContainer}>
-      {coupons.map((coupon) => (
+      {sortedCoupons.map((coupon) => (
         <IonCard 
           key={coupon.code} 
           className={styles.couponItem}
@@ -67,9 +86,23 @@ const CouponList = ({ coupons, onCouponClick }) => {
           <IonCardContent className={styles.cardContent}>
             <div className={styles.leftSection}>
               <div className={styles.amountSection}>
-                <IonText className={styles.currency}>¥</IonText>
-                <IonText className={styles.amount}>{coupon.amount}</IonText>
+                {coupon.type === 'discount' ? (
+                  <>
+                    <IonText className={styles.amount}>{coupon.discount}</IonText>
+                    <IonText className={styles.discountLabel}>折</IonText>
+                  </>
+                ) : (
+                  <>
+                    <IonText className={styles.currency}>¥</IonText>
+                    <IonText className={styles.amount}>{coupon.amount}</IonText>
+                  </>
+                )}
               </div>
+              {coupon.companyName && (
+                <div className={styles.companyName}>
+                  <IonText className={styles.companyText}>{coupon.companyName}</IonText>
+                </div>
+              )}
             </div>
             
             <div className={styles.rightSection}>
@@ -79,6 +112,14 @@ const CouponList = ({ coupons, onCouponClick }) => {
                   {maskCouponCode(coupon.code)}
                 </IonText>
               </div>
+              
+              {coupon.note && (
+                <div className={styles.noteSection}>
+                  <IonText className={styles.noteText}>
+                    {coupon.note.length > 20 ? `${coupon.note.substring(0, 20)}...` : coupon.note}
+                  </IonText>
+                </div>
+              )}
               
               <div className={styles.statusSection}>
                 <IonBadge 

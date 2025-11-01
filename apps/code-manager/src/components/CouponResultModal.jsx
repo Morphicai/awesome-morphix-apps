@@ -55,11 +55,25 @@ const CouponResultModal = ({
 
           {/* 优惠券信息卡片 */}
           <div className={styles.couponCard}>
+            {coupon.companyName && (
+              <div className={styles.companySection}>
+                <IonText className={styles.companyName}>{coupon.companyName}</IonText>
+              </div>
+            )}
+
             <div className={styles.amountSection}>
-              <IonText className={styles.amountLabel}>优惠金额</IonText>
+              <IonText className={styles.amountLabel}>
+                {coupon.type === 'discount' ? '折扣' : '优惠金额'}
+              </IonText>
               <div className={styles.amountDisplay}>
-                <IonText className={styles.currency}>¥</IonText>
-                <IonText className={styles.amount}>{coupon.amount}</IonText>
+                {coupon.type === 'discount' ? (
+                  <IonText className={styles.amount}>{coupon.discount}折</IonText>
+                ) : (
+                  <>
+                    <IonText className={styles.currency}>¥</IonText>
+                    <IonText className={styles.amount}>{coupon.amount}</IonText>
+                  </>
+                )}
               </div>
             </div>
 
@@ -69,6 +83,15 @@ const CouponResultModal = ({
                 {coupon.code}
               </IonText>
             </div>
+
+            {coupon.note && (
+              <div className={styles.noteSection}>
+                <IonText className={styles.noteLabel}>备注</IonText>
+                <IonText className={styles.noteValue}>
+                  {coupon.note}
+                </IonText>
+              </div>
+            )}
           </div>
 
           {/* 操作按钮 */}

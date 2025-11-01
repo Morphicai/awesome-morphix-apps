@@ -90,10 +90,21 @@ const CouponDetailModal = ({
           <div className={styles.detailContainer}>
             {/* 金额展示 */}
             <div className={styles.amountCard}>
-              <IonText className={styles.amountLabel}>优惠金额</IonText>
+              {coupon.companyName && (
+                <IonText className={styles.companyName}>{coupon.companyName}</IonText>
+              )}
+              <IonText className={styles.amountLabel}>
+                {coupon.type === 'discount' ? '折扣' : '优惠金额'}
+              </IonText>
               <div className={styles.amountDisplay}>
-                <IonText className={styles.currency}>¥</IonText>
-                <IonText className={styles.amount}>{coupon.amount}</IonText>
+                {coupon.type === 'discount' ? (
+                  <IonText className={styles.amount}>{coupon.discount}折</IonText>
+                ) : (
+                  <>
+                    <IonText className={styles.currency}>¥</IonText>
+                    <IonText className={styles.amount}>{coupon.amount}</IonText>
+                  </>
+                )}
               </div>
             </div>
 
@@ -105,6 +116,15 @@ const CouponDetailModal = ({
                   {coupon.code}
                 </IonText>
               </div>
+
+              {coupon.note && (
+                <div className={styles.infoItem}>
+                  <IonText className={styles.infoLabel}>备注信息</IonText>
+                  <IonText className={styles.infoValue}>
+                    {coupon.note}
+                  </IonText>
+                </div>
+              )}
 
               <div className={styles.infoItem}>
                 <IonText className={styles.infoLabel}>使用状态</IonText>
@@ -177,7 +197,7 @@ const CouponDetailModal = ({
         isOpen={showDeleteConfirm}
         onDidDismiss={cancelDelete}
         header="确认删除"
-        message={`确定要删除这张 ¥${coupon.amount} 的优惠券吗？删除后将无法恢复。`}
+        message={`确定要删除这张 ${coupon.type === 'discount' ? `${coupon.discount}折` : `¥${coupon.amount}`} 的优惠券吗？删除后将无法恢复。`}
         buttons={[
           {
             text: '取消',

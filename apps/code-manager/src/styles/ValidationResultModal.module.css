@@ -96,6 +96,38 @@
   color: white;
 }
 
+.companySection {
+  text-align: center;
+  padding-bottom: 16px;
+}
+
+.companyName {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.noteSection {
+  text-align: center;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.noteLabel {
+  display: block;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 8px;
+}
+
+.noteValue {
+  display: block;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.6;
+}
+
 .codeSection {
   text-align: center;
   padding-bottom: 24px;

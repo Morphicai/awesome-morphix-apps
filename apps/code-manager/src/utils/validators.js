@@ -67,6 +67,46 @@ export function formatDate(date) {
 }
 
 /**
+ * 验证折扣值
+ * @param {string|number} discount - 折扣值
+ * @returns {boolean} 是否有效
+ */
+export function validateDiscount(discount) {
+  const numDiscount = Number(discount);
+  return !isNaN(numDiscount) && numDiscount > 0 && numDiscount <= 100;
+}
+
+/**
+ * 验证备注长度
+ * @param {string} note - 备注内容
+ * @returns {boolean} 是否有效
+ */
+export function validateNote(note) {
+  if (!note) return true; // 备注可选
+  return typeof note === 'string' && note.length <= 200;
+}
+
+/**
+ * 验证公司名称
+ * @param {string} companyName - 公司名称
+ * @returns {boolean} 是否有效
+ */
+export function validateCompanyName(companyName) {
+  if (!companyName) return true; // 公司名称可选
+  return typeof companyName === 'string' && companyName.length <= 50;
+}
+
+/**
+ * 验证批量创建数量
+ * @param {string|number} quantity - 数量
+ * @returns {boolean} 是否有效
+ */
+export function validateQuantity(quantity) {
+  const numQuantity = Number(quantity);
+  return !isNaN(numQuantity) && numQuantity > 0 && numQuantity <= 100;
+}
+
+/**
  * 清理和标准化优惠券编码输入
  * @param {string} input - 用户输入
  * @returns {string} 清理后的编码

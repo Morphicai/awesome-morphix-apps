@@ -77,11 +77,25 @@ const ValidationResultModal = ({
 
               {/* 优惠券信息 */}
               <div className={styles.couponCard}>
+                {result.coupon.companyName && (
+                  <div className={styles.companySection}>
+                    <IonText className={styles.companyName}>{result.coupon.companyName}</IonText>
+                  </div>
+                )}
+
                 <div className={styles.amountSection}>
-                  <IonText className={styles.amountLabel}>优惠金额</IonText>
+                  <IonText className={styles.amountLabel}>
+                    {result.coupon.type === 'discount' ? '折扣' : '优惠金额'}
+                  </IonText>
                   <div className={styles.amountDisplay}>
-                    <IonText className={styles.currency}>¥</IonText>
-                    <IonText className={styles.amount}>{result.coupon.amount}</IonText>
+                    {result.coupon.type === 'discount' ? (
+                      <IonText className={styles.amount}>{result.coupon.discount}折</IonText>
+                    ) : (
+                      <>
+                        <IonText className={styles.currency}>¥</IonText>
+                        <IonText className={styles.amount}>{result.coupon.amount}</IonText>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -91,6 +105,13 @@ const ValidationResultModal = ({
                     {result.coupon.code}
                   </IonText>
                 </div>
+
+                {result.coupon.note && (
+                  <div className={styles.noteSection}>
+                    <IonText className={styles.noteLabel}>备注</IonText>
+                    <IonText className={styles.noteValue}>{result.coupon.note}</IonText>
+                  </div>
+                )}
 
                 <div className={styles.statusSection}>
                   <IonText className={styles.statusLabel}>使用状态</IonText>
@@ -179,7 +200,7 @@ const ValidationResultModal = ({
         isOpen={showUseConfirm}
         onDidDismiss={cancelUse}
         header="确认验券"
-        message={`确定要使用这张 ¥${result?.coupon?.amount} 的优惠券吗？使用后将无法撤销。`}
+        message={`确定要使用这张 ${result?.coupon?.type === 'discount' ? `${result?.coupon?.discount}折` : `¥${result?.coupon?.amount}`} 的优惠券吗？使用后将无法撤销。`}
         buttons={[
           {
             text: '取消',
