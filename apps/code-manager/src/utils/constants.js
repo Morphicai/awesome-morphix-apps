@@ -17,16 +17,16 @@ export const STORAGE_COLLECTION_NAME = 'coupons';
 
 // 图片生成相关常量
 export const DEFAULT_IMAGE_CONFIG = {
-  width: 400,
-  height: 280,
+  width: 600,  // 增加宽度提高清晰度
+  height: 420, // 增加高度提高清晰度
   backgroundColor: '#DC2626',
   textColor: '#FFFFFF',
   fontSize: {
-    amount: 32,
-    code: 20,
-    label: 16
+    amount: 48,  // 增大字号
+    code: 28,    // 增大字号
+    label: 22    // 增大字号
   },
-  padding: 20
+  padding: 30
 };
 
 // 验证消息常量

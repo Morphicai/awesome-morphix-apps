@@ -22,13 +22,21 @@ class ImageService {
     try {
       const imageConfig = { ...this.defaultConfig, ...config };
       
-      // 创建Canvas元素
+      // 创建高分辨率Canvas元素（2倍分辨率提高清晰度）
+      const scale = 2;
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       
-      // 设置画布尺寸
-      canvas.width = imageConfig.width;
-      canvas.height = imageConfig.height;
+      // 设置画布尺寸（使用2倍分辨率）
+      canvas.width = imageConfig.width * scale;
+      canvas.height = imageConfig.height * scale;
+      
+      // 缩放上下文以匹配高分辨率
+      ctx.scale(scale, scale);
+      
+      // 启用抗锯齿和图像平滑
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
       
       // 绘制背景渐变
       this._drawBackground(ctx, imageConfig);
@@ -36,8 +44,8 @@ class ImageService {
       // 绘制优惠券内容
       this._drawCouponContent(ctx, coupon, imageConfig);
       
-      // 转换为Base64
-      const base64Data = canvas.toDataURL('image/png');
+      // 转换为Base64（使用最高质量）
+      const base64Data = canvas.toDataURL('image/png', 1.0);
       
       return base64Data;
     } catch (error) {
@@ -142,7 +150,7 @@ class ImageService {
     // 添加圆角效果
     ctx.save();
     ctx.globalCompositeOperation = 'destination-in';
-    this._drawRoundedRect(ctx, 0, 0, config.width, config.height, 16);
+    this._drawRoundedRect(ctx, 0, 0, config.width, config.height, 24);
     ctx.restore();
   }
 
@@ -160,18 +168,18 @@ class ImageService {
     
     // 左上角大圆
     ctx.beginPath();
-    ctx.arc(-20, -20, 80, 0, Math.PI * 2);
+    ctx.arc(-30, -30, 120, 0, Math.PI * 2);
     ctx.fill();
     
     // 右下角大圆
     ctx.beginPath();
-    ctx.arc(config.width + 20, config.height + 20, 80, 0, Math.PI * 2);
+    ctx.arc(config.width + 30, config.height + 30, 120, 0, Math.PI * 2);
     ctx.fill();
     
     // 中间装饰圆
     ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
     ctx.beginPath();
-    ctx.arc(config.width / 2, config.height / 2, 120, 0, Math.PI * 2);
+    ctx.arc(config.width / 2, config.height / 2, 180, 0, Math.PI * 2);
     ctx.fill();
     
     ctx.restore();
@@ -190,30 +198,30 @@ class ImageService {
     ctx.textBaseline = 'middle';
     
     const centerX = config.width / 2;
-    let currentY = 40;
+    let currentY = 60;
     
     // 绘制公司名称（如果有）
     if (coupon.companyName) {
-      ctx.font = `600 ${config.fontSize.label + 2}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
+      ctx.font = `600 ${config.fontSize.label + 4}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
       ctx.fillText(coupon.companyName, centerX, currentY);
-      currentY += 30;
+      currentY += 45;
     } else {
-      currentY += 10;
+      currentY += 15;
     }
     
     // 绘制"优惠券"标题
     ctx.font = `${config.fontSize.label}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
     ctx.fillText('优惠券', centerX, currentY);
-    currentY += 35;
+    currentY += 50;
     
     // 绘制金额或折扣
-    ctx.font = `bold ${config.fontSize.amount + 8}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
+    ctx.font = `bold ${config.fontSize.amount + 12}px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
     if (coupon.type === 'discount') {
       ctx.fillText(`${coupon.discount}折`, centerX, currentY);
     } else {
       ctx.fillText(`¥${coupon.amount}`, centerX, currentY);
     }
-    currentY += 45;
+    currentY += 65;
     
     // 绘制备注（如果有）
     if (coupon.note) {
@@ -221,27 +229,28 @@ class ImageService {
       ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
       
       // 处理长文本换行
-      const maxWidth = config.width - 60;
+      const maxWidth = config.width - 100;
       const words = coupon.note;
       const lines = this._wrapText(ctx, words, maxWidth);
       
       lines.forEach((line, index) => {
-        ctx.fillText(line, centerX, currentY + (index * 18));
+        ctx.fillText(line, centerX, currentY + (index * 26));
       });
       
-      currentY += lines.length * 18 + 20;
+      currentY += lines.length * 26 + 30;
       ctx.fillStyle = config.textColor;
     } else {
-      currentY += 10;
+      currentY += 15;
     }
     
     // 绘制条形码
     const barcodeY = currentY;
     this._drawBarcode(ctx, coupon.code, centerX, barcodeY, config);
-    currentY += 60;
+    currentY += 90;
     
-    // 绘制编码文字
-    ctx.font = `${config.fontSize.label}px 'Courier New', monospace`;
+    // 绘制编码文字（白色30%透明度，加粗）
+    ctx.font = `bold ${config.fontSize.label + 2}px 'Courier New', monospace`;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
     ctx.fillText(coupon.code, centerX, currentY);
     
     // 如果已使用，添加水印
@@ -260,19 +269,19 @@ class ImageService {
    * @private
    */
   _drawBarcode(ctx, code, x, y, config) {
-    // 条形码参数
-    const barcodeWidth = 200;
-    const barcodeHeight = 40;
-    const barWidth = 3;
+    // 条形码参数（根据画布大小调整）
+    const barcodeWidth = 300;
+    const barcodeHeight = 60;
+    const barWidth = 4;
     
     // 将编码转换为条形码模式（简化版Code 128）
     const pattern = this._generateBarcodePattern(code);
     
     // 绘制白色背景
     ctx.fillStyle = '#FFFFFF';
-    const bgX = x - barcodeWidth / 2 - 10;
-    const bgY = y - 5;
-    ctx.fillRect(bgX, bgY, barcodeWidth + 20, barcodeHeight + 10);
+    const bgX = x - barcodeWidth / 2 - 15;
+    const bgY = y - 8;
+    ctx.fillRect(bgX, bgY, barcodeWidth + 30, barcodeHeight + 16);
     
     // 绘制条形码
     ctx.fillStyle = '#000000';

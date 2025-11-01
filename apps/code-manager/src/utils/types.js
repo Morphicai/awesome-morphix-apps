@@ -111,16 +111,16 @@ export function createCouponError({ type, message, details = null }) {
  * @returns {Object} 图片配置对象
  */
 export function createCouponImageConfig({
-  width = 400,
-  height = 280,
+  width = 600,
+  height = 420,
   backgroundColor = '#DC2626',
   textColor = '#FFFFFF',
   fontSize = {
-    amount: 32,
-    code: 20,
-    label: 16
+    amount: 48,
+    code: 28,
+    label: 22
   },
-  padding = 20
+  padding = 30
 } = {}) {
   return {
     width,
