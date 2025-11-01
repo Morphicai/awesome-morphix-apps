@@ -129,6 +129,7 @@ class CouponService {
       }
 
       const updatedCoupon = await this.storageService.updateCoupon(code, {
+        ...coupon??{},
         isUsed: true,
         usedAt: new Date()
       });

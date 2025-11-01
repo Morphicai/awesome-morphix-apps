@@ -56,15 +56,12 @@ const CouponValidator = ({ onValidationSuccess }) => {
     const value = e.detail.value.toUpperCase(); // 转换为大写
     setInputCode(value);
     
-    // 清除之前的错误和结果
+    // 清除之前的错误
     if (codeError) {
       setCodeError('');
     }
     if (serviceError) {
       clearError();
-    }
-    if (validationResult) {
-      setValidationResult(null);
     }
   };
 

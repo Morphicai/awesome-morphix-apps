@@ -403,6 +403,16 @@
   
   .inputItem {
     --background: #2a2a2a;
+    --color: #e5e7eb;
+  }
+  
+  .inputItem ion-input {
+    --color: #e5e7eb;
+    --placeholder-color: #6b7280;
+  }
+  
+  .inputItem ion-label {
+    color: #e5e7eb;
   }
   
   .codeValue {
